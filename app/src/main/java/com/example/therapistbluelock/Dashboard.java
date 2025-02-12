@@ -359,8 +359,8 @@ public class Dashboard extends AppCompatActivity implements ViewAnimator.ViewAni
                 transaction.replace(R.id.content_frame, callFragment);
                 break;
             case ContentFragment.SETTINGS:
-                SettingsFragment settingsFragment = SettingsFragment.newInstance();
-                transaction.replace(R.id.content_frame, settingsFragment);
+//                SettingsFragment settingsFragment = SettingsFragment.newInstance();
+//                transaction.replace(R.id.content_frame, settingsFragment);
                 break;
             case ContentFragment.LOGOUT:
                 // Clear saved user UID and password from SharedPreferences

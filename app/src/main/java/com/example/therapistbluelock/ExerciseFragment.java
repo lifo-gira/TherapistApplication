@@ -791,7 +791,11 @@ public class ExerciseFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        if("null".equalsIgnoreCase(error.getMessage())){
+                            Toast.makeText(getContext(), "Dicom Not applicable", Toast.LENGTH_SHORT).show();
+                        }
+
+                        Log.e("Dicom Not found", String.valueOf(error));
                     }
                 }
         );
