@@ -83,7 +83,7 @@ public class ExerciseFragment extends Fragment {
 
     ImageView dicomimage;
 
-    TextView dicomdeform,lefthka,righthka;
+    TextView dicomdeform,lefthka,righthka,mptaleft,mptaright,ldfaleft,ldfaright;
 
     @SuppressLint({"ResourceAsColor", "MissingInflatedId"})
     @Override
@@ -125,8 +125,12 @@ public class ExerciseFragment extends Fragment {
         dicomimage = rootView.findViewById(R.id.dicomimage);
         dicomdeform = rootView.findViewById(R.id.dicomdeform);
 
-        lefthka = rootView.findViewById(R.id.lefthka);
-        righthka = rootView.findViewById(R.id.righthka);
+        lefthka = rootView.findViewById(R.id.hkaleft);
+        righthka = rootView.findViewById(R.id.hkaright);
+        mptaleft = rootView.findViewById(R.id.mptaleft);
+        mptaright = rootView.findViewById(R.id.mptaright);
+        ldfaleft = rootView.findViewById(R.id.ldfaleft);
+        ldfaright = rootView.findViewById(R.id.ldfaright);
 
         Log.e("Selected Patient Data", String.valueOf(MainActivity.selectedpatientdata));
 
@@ -780,8 +784,8 @@ public class ExerciseFragment extends Fragment {
                             String base64Image = jsonObject.getString("dicom_image");
                             displayBase64Image(base64Image, dicomimage);
                             dicomdeform.setText("Deformity: "+jsonArray1.getString(2));
-                            lefthka.setText(String.format("%.2f", jsonArray1.getDouble(0)));
-                            righthka.setText(String.format("%.2f", jsonArray1.getDouble(1)));
+                            lefthka.setText(String.format("%.2f", jsonArray1.getDouble(1)));
+                            righthka.setText(String.format("%.2f", jsonArray1.getDouble(0)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(getContext(), "JSON Parsing error: " + e.getMessage(), Toast.LENGTH_SHORT).show();

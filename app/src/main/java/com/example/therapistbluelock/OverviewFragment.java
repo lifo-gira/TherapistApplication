@@ -76,7 +76,7 @@ public class OverviewFragment extends Fragment {
 
     ImageView dicomimage;
 
-    TextView dicomdeform,lefthka,righthka;
+    TextView dicomdeform,lefthka,righthka,mptaleft,mptaright,ldfaleft,ldfaright;
 
 
     public OverviewFragment() {
@@ -120,8 +120,12 @@ public class OverviewFragment extends Fragment {
         dicomimage = view.findViewById(R.id.dicomimage);
         dicomdeform = view.findViewById(R.id.dicomdeform);
 
-        lefthka = view.findViewById(R.id.lefthka);
-        righthka = view.findViewById(R.id.righthka);
+        lefthka = view.findViewById(R.id.hkaleft);
+        righthka = view.findViewById(R.id.hkaright);
+        mptaleft = view.findViewById(R.id.mptaleft);
+        mptaright = view.findViewById(R.id.mptaright);
+        ldfaleft = view.findViewById(R.id.ldfaleft);
+        ldfaright = view.findViewById(R.id.ldfaright);
 
         Log.e("Selected Patient Data", String.valueOf(MainActivity.selectedpatientdata));
 
@@ -847,8 +851,8 @@ public class OverviewFragment extends Fragment {
                             String base64Image = jsonObject.getString("dicom_image");
                             displayBase64Image(base64Image, dicomimage);
                             dicomdeform.setText("Deformity: "+jsonArray1.getString(2));
-                            lefthka.setText(String.format("%.2f", jsonArray1.getDouble(0)));
-                            righthka.setText(String.format("%.2f", jsonArray1.getDouble(1)));
+                            lefthka.setText(String.format("%.2f", jsonArray1.getDouble(1)));
+                            righthka.setText(String.format("%.2f", jsonArray1.getDouble(0)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(getContext(), "JSON Parsing error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
