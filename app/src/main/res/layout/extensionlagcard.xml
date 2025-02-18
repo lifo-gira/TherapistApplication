@@ -58,6 +58,7 @@
                     android:textColor="@color/black" />
 
                 <TextView
+                    android:id="@+id/activeedtext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Active ED"
@@ -89,6 +90,7 @@
                     android:textColor="@color/black" />
 
                 <TextView
+                    android:id="@+id/passiveedtext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Passive Ed"
@@ -120,6 +122,7 @@
                 android:textColor="@color/black" />
 
             <TextView
+                android:id="@+id/totaledtext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Total ED"

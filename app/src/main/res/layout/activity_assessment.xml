@@ -90,6 +90,20 @@
             android:fontFamily="@font/poppinssemibold"
             android:gravity="start" />
 
+        <TextView
+            android:id="@+id/dynamicbalancetestinfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/common_bar"
+            android:layout_marginTop="5dp"
+            android:text="*The Walking Distance should be of 10 feet."
+            android:textSize="20sp"
+            android:visibility="gone"
+            android:layout_marginStart="50dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppinssemibold"
+            android:gravity="start" />
+
         <LinearLayout
             android:id="@+id/activepassiveswitch"
             android:layout_width="wrap_content"
@@ -490,29 +504,68 @@
 
                     </LinearLayout>
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/play_pause_button"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
                         android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="16dp"
-                        android:backgroundTint="#fff"
-                        android:gravity="center"
-                        android:padding="32dp"
-                        app:cardCornerRadius="100dp"
-                        app:cardElevation="6dp"
-                        app:cardBackgroundColor="#fff">
+                        android:gravity="center">
 
-                        <ImageView
-                            android:id="@+id/center_button"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/play_pause_button"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/baseline_play_arrow_24"
-                            android:textColor="@color/white"
-                            android:textSize="14sp" />
-                    </androidx.cardview.widget.CardView>
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="16dp"
+                            android:backgroundTint="#fff"
+                            android:layout_marginEnd="10dp"
+                            android:gravity="center"
+                            android:padding="32dp"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="6dp"
+                            app:cardBackgroundColor="#fff">
+
+                            <ImageView
+                                android:id="@+id/center_button"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/baseline_play_arrow_24"
+                                android:textColor="@color/white"
+                                android:textSize="14sp" />
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/proprionextcycle"
+                            android:layout_width="90dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="16dp"
+                            android:backgroundTint="#fff"
+                            android:gravity="center"
+                            app:cardElevation="6dp"
+                            app:cardCornerRadius="10dp"
+                            android:layout_marginStart="10dp"
+                            app:cardBackgroundColor="#fff"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/proprionextcyclebtn"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:text="Next Cycle"
+                                android:gravity="center"
+                                android:padding="10dp"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+
 
 <!--                    <LinearLayout-->
 <!--                        android:id="@+id/play_pause_button"-->

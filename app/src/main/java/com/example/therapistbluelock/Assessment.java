@@ -250,6 +250,19 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
 
     int leftstepflag =0,rightstepflag=0;
 
+    TextView dynamicbalancetestinfo;
+
+    int proprioflag=0;
+
+    CardView proprionextcycle;
+    TextView proprionextcyclebtn;
+
+    int proprioswitchflag =0;
+    float propriopassvalue=0, proprioactvalue =0, propriototalvalue=0;
+
+
+    JSONObject propriopassive = new JSONObject();
+    JSONObject proprioactive = new JSONObject();
 
 
     @SuppressLint("MissingInflatedId")
@@ -277,8 +290,12 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
         speedometer2 = findViewById(R.id.speedometer2);
         speedometer2.setTextColor(0x00000000);
 
+        dynamicbalancetestinfo = findViewById(R.id.dynamicbalancetestinfo);
         therapistname = findViewById(R.id.therapistname);
         therapistname.setText(MainActivity.therapistname);
+
+        proprionextcycle = findViewById(R.id.proprionextcycle);
+        proprionextcyclebtn = findViewById(R.id.proprionextcyclebtn);
 
 //        gaugeView1 = findViewById(R.id.gaugeView1);
 //        gaugeView2 = findViewById(R.id.gaugeView2);
@@ -327,7 +344,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
 
 
         if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            number_picker_text.setText("remaining time");
+            number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.VISIBLE);
             switch_button.setVisibility(View.VISIBLE);
             switch_button.setTextOff("Active");
@@ -336,9 +353,14 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             Right.setVisibility(View.VISIBLE);
             assess_cycles_passive.setVisibility(View.GONE);
             assess_cycles_active.setVisibility(View.VISIBLE);
+            dynamicbalancetestinfo.setVisibility(View.GONE);
+            pickerContainer.setVisibility(View.GONE);
+            proprionextcycle.setVisibility(View.GONE);
+            proprionextcyclebtn.setVisibility(View.GONE);
+
         }
         else if ("Extension Lag Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            number_picker_text.setText("time elapsed");
+            number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.VISIBLE);
             Left.setVisibility(View.VISIBLE);
             Right.setVisibility(View.VISIBLE);
@@ -348,9 +370,12 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             assess_cycles_active.setVisibility(View.GONE);
             switch_button.setVisibility(View.GONE);
             pickerContainer.setVisibility(View.GONE);
+            dynamicbalancetestinfo.setVisibility(View.GONE);
+            proprionextcycle.setVisibility(View.GONE);
+            proprionextcyclebtn.setVisibility(View.GONE);
         }
         else if ("Dynamic Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            number_picker_text.setText("time elapsed");
+            number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.VISIBLE);
             Left.setVisibility(View.INVISIBLE);
             Right.setVisibility(View.INVISIBLE);
@@ -360,9 +385,12 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             switch_button.setTextOff("Without Support");
             switch_button.setTextOn("With Support");
             pickerContainer.setVisibility(View.GONE);
+            dynamicbalancetestinfo.setVisibility(View.VISIBLE);
+            proprionextcycle.setVisibility(View.GONE);
+            proprionextcyclebtn.setVisibility(View.GONE);
         }
         else if ("Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            number_picker_text.setText("time elapsed");
+            number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.VISIBLE);
             Left.setVisibility(View.VISIBLE);
             Right.setVisibility(View.VISIBLE);
@@ -374,9 +402,12 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             switch_button.setTextOn("Eyes Closed");
             switch_button.setVisibility(View.VISIBLE);
             pickerContainer.setVisibility(View.GONE);
+            dynamicbalancetestinfo.setVisibility(View.GONE);
+            proprionextcycle.setVisibility(View.GONE);
+            proprionextcyclebtn.setVisibility(View.GONE);
         }
         else if ("Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            number_picker_text.setText("time elapsed");
+            number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.VISIBLE);
             Left.setVisibility(View.INVISIBLE);
             Right.setVisibility(View.INVISIBLE);
@@ -386,25 +417,37 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             switch_button.setTextOn("With Support");
             switch_button.setVisibility(View.VISIBLE);
             pickerContainer.setVisibility(View.GONE);
+            dynamicbalancetestinfo.setVisibility(View.GONE);
+            proprionextcycle.setVisibility(View.GONE);
+            proprionextcyclebtn.setVisibility(View.GONE);
         }
         else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            number_picker_text.setText("remaining time");
+            number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.VISIBLE);
             Left.setVisibility(View.VISIBLE);
             Right.setVisibility(View.VISIBLE);
-            switch_button.setVisibility(View.INVISIBLE);
+            switch_button.setVisibility(View.VISIBLE);
+            switch_button.setTextOff("Passive");
+            switch_button.setTextOn("Active");
             assess_cycles_passive.setVisibility(View.GONE);
             assess_cycles_active.setVisibility(View.VISIBLE);
             speedometer1.setVisibility(View.VISIBLE);
+            dynamicbalancetestinfo.setVisibility(View.GONE);
+            pickerContainer.setVisibility(View.GONE);
+            proprionextcycle.setVisibility(View.VISIBLE);
+            proprionextcyclebtn.setVisibility(View.VISIBLE);
         }
         else if ("Walk and Gait analysis".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            number_picker_text.setText("time elapsed");
+            number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.INVISIBLE);
             Left.setVisibility(View.INVISIBLE);
             Right.setVisibility(View.INVISIBLE);
             assess_cycles_passive.setVisibility(View.GONE);
             assess_cycles_active.setVisibility(View.VISIBLE);
             pickerContainer.setVisibility(View.GONE);
+            dynamicbalancetestinfo.setVisibility(View.GONE);
+            proprionextcycle.setVisibility(View.GONE);
+            proprionextcyclebtn.setVisibility(View.GONE);
         }
 
         // Get the itemType and itemTitle passed from the Intent
@@ -412,9 +455,17 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
 
         assessment_text_view = findViewById(R.id.assessment_text_view);
         assessment_text_view.setText(itemTitle); // Set the text dynamically
+
         switch_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) && propriopassvalue == 0 ) {  // Replace isConditionMet() with your actual condition
+                    Toasty.warning(Assessment.this, "Perform Doctor Turn First to proceed", Toast.LENGTH_SHORT).show();
+                    switch_button.setOnCheckedChangeListener(null); // Remove listener temporarily to prevent infinite loop
+                    switch_button.setChecked(!isChecked); // Revert to previous state
+                    switch_button.setOnCheckedChangeListener(this); // Reattach listener
+                    return;
+                }
                 if (isChecked) {
 //                    assess_cycles_active.setVisibility(View.VISIBLE);
                     activepassive = "passive";
@@ -431,6 +482,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                     if (DetailFrag_5.playflag == 1) {
                         Toasty.warning(Assessment.this, "Please stop the timer to switch the mode", Toast.LENGTH_SHORT).show();
                     } else {
+
                         DetailFrag_5.currentMetricIndex = 0;
                         DetailFrag_5.lineData.clearValues();
                         isTimerRunning = true;
@@ -472,7 +524,8 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                         DetailFrag_5.staticbaleo = 0;
                         DetailFrag_5.staticbalec = 0;
                     }
-                } else {
+                }
+                else {
 //                    assess_cycles_active.setVisibility(View.VISIBLE);
                     activepassive = "active";
                     Log.e("INBASEKAR", activepassive);
@@ -487,7 +540,8 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
 
                     if (DetailFrag_5.playflag == 1) {
                         Toasty.warning(Assessment.this, "Please stop the timer to switch the mode", Toast.LENGTH_SHORT).show();
-                    } else {
+                    }
+                    else {
                         DetailFrag_5.currentMetricIndex = 0;
                         DetailFrag_5.lineData.clearValues();
                         isTimerRunning = true;
@@ -539,6 +593,8 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                 if (DetailFrag_5.playflag == 1) {
                     Toasty.warning(Assessment.this, "Please stop the timer to switch the leg", Toast.LENGTH_SHORT).show();
                 } else {
+                    DetailFrag_5.extensionlagCycleAssessments.clear();
+                    DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
                     left_underlined.setVisibility(View.VISIBLE);
                     right_underlined.setVisibility(View.INVISIBLE);
                     leg = "left";
@@ -630,6 +686,11 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                         DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
                         speedometer1.setVisibility(View.VISIBLE);
                         speedometer2.setVisibility(View.GONE);
+                        proprioactvalue =0;
+                        propriopassvalue =0;
+                        propriototalvalue =0;
+                        propriopassive = new JSONObject();
+                        proprioactive = new JSONObject();
 
                     }
 
@@ -642,6 +703,8 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                 if (DetailFrag_5.playflag == 1) {
                     Toasty.warning(Assessment.this, "Please stop the timer to switch the leg", Toast.LENGTH_SHORT).show();
                 } else {
+                    DetailFrag_5.extensionlagCycleAssessments.clear();
+                    DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
                     left_underlined.setVisibility(View.INVISIBLE);
                     right_underlined.setVisibility(View.VISIBLE);
                     leg = "right";
@@ -696,34 +759,39 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                         DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
                         speedometer2.setVisibility(View.VISIBLE);
                         speedometer1.setVisibility(View.GONE);
+                        proprioactvalue =0;
+                        propriopassvalue =0;
+                        propriototalvalue =0;
+                        propriopassive = new JSONObject();
+                        proprioactive = new JSONObject();
                     }
 
                 }
             }
         });
 
+
+
         DetailFrag_5.indiviCardAdapterpass = new AssessmentCycleAdapter(this, getExerciseCycleList(), this, activepassive);
         assess_cycles_passive.setAdapter(DetailFrag_5.indiviCardAdapterpass);
 
 
-        if (!"Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) && !"Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            minutesText.setVisibility(View.VISIBLE);
-            secondsText.setVisibility(View.VISIBLE);
-            textContainer.setVisibility(View.VISIBLE);
-        }
-
+        minutesText.setVisibility(View.VISIBLE);
+        secondsText.setVisibility(View.VISIBLE);
+        textContainer.setVisibility(View.VISIBLE);
         minutesPicker.setMinValue(0);
         minutesPicker.setMaxValue(59);
         secondsPicker.setMinValue(0);
         secondsPicker.setMaxValue(59);
+        minutesPicker.setVisibility(View.GONE);
+        secondsPicker.setVisibility(View.GONE);
 
-        if (!"Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) && !"Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            minutesPicker.setVisibility(View.GONE);
-            secondsPicker.setVisibility(View.GONE);
-        } else {
-            minutesPicker.setVisibility(View.VISIBLE);
-            secondsPicker.setVisibility(View.VISIBLE);
-        }
+//        if (!"Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) && !"Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+//
+//        } else {
+//            minutesPicker.setVisibility(View.VISIBLE);
+//            secondsPicker.setVisibility(View.VISIBLE);
+//        }
 
         // Set NumberPicker values (0-59 for minutes and seconds)
 
@@ -745,21 +813,22 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             public void onClick(View v) {
 
 
-                if (DetailFrag_5.playflag == 0) { // Timer is starting
-                    if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) || "Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-                        totaltime = minutesPicker.getValue() * 60 + secondsPicker.getValue(); // Calculate total time in seconds
-
-                        // Check if total time is 0
-                        if (totaltime == 0) {
-                            Toasty.warning(Assessment.this, "Please set the timer before starting", Toast.LENGTH_SHORT).show();
-                            return; // Exit if timer is 0
-                        }
-
-                        // Initialize timer variables
-                        m = minutesPicker.getValue(); // Get the value from NumberPicker
-                        s = secondsPicker.getValue(); // Get the value from NumberPicker
-                        i = 0;
-                    }
+                if (DetailFrag_5.playflag == 0) {
+                    // Timer is starting
+//                    if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) || "Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+//                        totaltime = minutesPicker.getValue() * 60 + secondsPicker.getValue(); // Calculate total time in seconds
+//
+//                        // Check if total time is 0
+//                        if (totaltime == 0) {
+//                            Toasty.warning(Assessment.this, "Please set the timer before starting", Toast.LENGTH_SHORT).show();
+//                            return; // Exit if timer is 0
+//                        }
+//
+//                        // Initialize timer variables
+//                        m = minutesPicker.getValue(); // Get the value from NumberPicker
+//                        s = secondsPicker.getValue(); // Get the value from NumberPicker
+//                        i = 0;
+//                    }
                     if ("Extension Lag Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                         if ("passive".equalsIgnoreCase(activepassive)) {
                             assess_cycles_passive.setVisibility(View.VISIBLE);
@@ -847,7 +916,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                 assess_cycles_active.addItemDecoration(itemDecoration);
             }
             else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-                DetailFrag_5.proprioceptionAdapter = new ProprioceptionAdapter(DetailFrag_5.exerciseListact, this);
+                DetailFrag_5.proprioceptionAdapter = new ProprioceptionAdapter(DetailFrag_5.extensionlagCycleAssessments, this);
                 assess_cycles_active.setAdapter(DetailFrag_5.proprioceptionAdapter);
                 HorizontalItemDecoration itemDecoration = new HorizontalItemDecoration(marginInPx);
                 assess_cycles_active.addItemDecoration(itemDecoration);
@@ -977,6 +1046,46 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
         } else {
             Toast.makeText(this, "No devices connected", Toast.LENGTH_SHORT).show();
         }
+
+        proprionextcycle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(proprioactvalue == 0 && propriopassvalue == 0){
+                    Toasty.warning(Assessment.this, "The Active and Passive Value is missing", Toast.LENGTH_SHORT, true).show();
+                }
+                else if(proprioactvalue == 0){
+                    Toasty.warning(Assessment.this, "The Active Value is missing", Toast.LENGTH_SHORT, true).show();
+                }
+                else if(propriopassvalue == 0){
+                    Toasty.warning(Assessment.this, "The Passive Value is missing", Toast.LENGTH_SHORT, true).show();
+                }
+                else{
+                    switch_button.setChecked(false);
+                    activepassive = "Active";
+                    DetailFrag_5.extensionlagCycleAssessments.add(new ExtensionlagCycleAssessment(proprioactvalue,propriopassvalue,proprioactvalue-propriopassvalue));
+                    DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
+                    if(proprioswitchflag == 0){
+                        proprioswitchflag =1;
+                    }
+                    else{
+                        proprioswitchflag =0;
+                    }
+                    proprioactvalue =0;
+                    propriopassvalue =0;
+                    try {
+                        DetailFrag_5.postexesubdata.put(leg + "-leg-" + DetailFrag_5.propriocyclecount, DetailFrag_5.postsubdata);
+                        DetailFrag_5.postsubdata = new JSONArray();
+                        DetailFrag_5.postexevalues = new JSONArray();
+                        DetailFrag_5.postexeparameters = new JSONArray();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+
+            }
+        });
 
         download.setOnClickListener(new View.OnClickListener() {
             Date startDateTime = new Date();
@@ -1653,16 +1762,16 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
 //        gaugeView1.clearAnimation();  // Replace with your gauge reset logic
 //        gaugeView2.clearAnimation();
 
-        if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) || "Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            int minutes = minutesPicker.getValue();
-            int seconds = secondsPicker.getValue();
-
-            // Set the total time in milliseconds
-            totalTimeInMillis = (minutes * 60L + seconds) * 1000;
-            pickerContainer.setVisibility(View.GONE);
-            minutesPicker.setVisibility(View.INVISIBLE);
-            secondsPicker.setVisibility(View.INVISIBLE);
-        }
+//        if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) || "Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+//            int minutes = minutesPicker.getValue();
+//            int seconds = secondsPicker.getValue();
+//
+//            // Set the total time in milliseconds
+//            totalTimeInMillis = (minutes * 60L + seconds) * 1000;
+//            pickerContainer.setVisibility(View.GONE);
+//            minutesPicker.setVisibility(View.INVISIBLE);
+//            secondsPicker.setVisibility(View.INVISIBLE);
+//        }
 
         textContainer.setVisibility(View.VISIBLE);
         minutesText.setVisibility(View.VISIBLE);
@@ -1842,48 +1951,49 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
 //            postNumbersWithDelay();
 //        }
 
-        if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) || "Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            //int totalMillis = (m * 60 + s) * 1000;
-            // Create and start the countdown timer
-            countDownTimer = new CountDownTimer(totalTimeInMillis, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    // Update the remaining time
-                    int minutes = (int) (millisUntilFinished / 1000) / 60;
-                    int seconds = (int) (millisUntilFinished / 1000) % 60;
-                    DetailFrag_5.sec = seconds;
-
-                    // Display the updated time in TextViews
-                    minutesText.setText(String.format("%02d", minutes));
-                    secondsText.setText(String.format("%02d", seconds));
-
-                    // Calculate the progress and update the ProgressBar
-                    int progress = (int) ((totalTimeInMillis - millisUntilFinished) * 100 / totalTimeInMillis);
-                    progressBar.setProgress(progress);
-
-                }
-
-                @Override
-                public void onFinish() {
-                    // When the timer finishes, reset TextViews and ProgressBar
-
-
-//                isTimerRunning = false;
-//                // Reset play/pause button icon to play
-//                ImageView centerButton = findViewById(R.id.center_button);
-//                centerButton.setImageResource(R.drawable.baseline_play_arrow_24);
-                    stopTimer();
-                }
-            }.start();
-            updateprogress(progressBar);
-        }
+//        if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) || "Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+//            //int totalMillis = (m * 60 + s) * 1000;
+//            // Create and start the countdown timer
+//            countDownTimer = new CountDownTimer(totalTimeInMillis, 1000) {
+//                @Override
+//                public void onTick(long millisUntilFinished) {
+//                    // Update the remaining time
+//                    int minutes = (int) (millisUntilFinished / 1000) / 60;
+//                    int seconds = (int) (millisUntilFinished / 1000) % 60;
+//                    DetailFrag_5.sec = seconds;
+//
+//                    // Display the updated time in TextViews
+//                    minutesText.setText(String.format("%02d", minutes));
+//                    secondsText.setText(String.format("%02d", seconds));
+//
+//                    // Calculate the progress and update the ProgressBar
+//                    int progress = (int) ((totalTimeInMillis - millisUntilFinished) * 100 / totalTimeInMillis);
+//                    progressBar.setProgress(progress);
+//
+//                }
+//
+//                @Override
+//                public void onFinish() {
+//                    // When the timer finishes, reset TextViews and ProgressBar
+//
+//
+////                isTimerRunning = false;
+////                // Reset play/pause button icon to play
+////                ImageView centerButton = findViewById(R.id.center_button);
+////                centerButton.setImageResource(R.drawable.baseline_play_arrow_24);
+//                    stopTimer();
+//                }
+//            }.start();
+//            updateprogress(progressBar);
+//        }
 
         DetailFrag_5.isTimerRunning = true;
         DetailFrag_5.startTimegait = System.currentTimeMillis(); // Record the start time
+        handler.post(runnable);
 
-        if (!"Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) && !"Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            handler.post(runnable);
-        }
+//        if (!"Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) && !"Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+//            handler.post(runnable);
+//        }
 
 
         // Optionally animate the progress bar
@@ -1948,18 +2058,22 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
-        if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) || "Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            minutesPicker.setVisibility(View.VISIBLE);
-            secondsPicker.setVisibility(View.VISIBLE);
-            pickerContainer.setVisibility(View.VISIBLE);
-            minutesText.setVisibility(View.INVISIBLE);
-            secondsText.setVisibility(View.INVISIBLE);
-            textContainer.setVisibility(View.GONE);
-        } else {
-            minutesText.setVisibility(View.VISIBLE);
-            secondsText.setVisibility(View.VISIBLE);
-            textContainer.setVisibility(View.VISIBLE);
-        }
+//        if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) || "Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+//            minutesPicker.setVisibility(View.VISIBLE);
+//            secondsPicker.setVisibility(View.VISIBLE);
+//            pickerContainer.setVisibility(View.VISIBLE);
+//            minutesText.setVisibility(View.INVISIBLE);
+//            secondsText.setVisibility(View.INVISIBLE);
+//            textContainer.setVisibility(View.GONE);
+//        } else {
+//            minutesText.setVisibility(View.VISIBLE);
+//            secondsText.setVisibility(View.VISIBLE);
+//            textContainer.setVisibility(View.VISIBLE);
+//        }
+
+        minutesText.setVisibility(View.VISIBLE);
+        secondsText.setVisibility(View.VISIBLE);
+        textContainer.setVisibility(View.VISIBLE);
         center_button.setImageResource(R.drawable.baseline_play_arrow_24); // Change icon to play
         minutesText.setText("00");
         secondsText.setText("00");
@@ -2804,21 +2918,21 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                     Log.e("Proprioception Test1", String.valueOf(DetailFrag_5.proprom));
                     Log.e("Proprioception Test1", String.valueOf(DetailFrag_5.indivimaxAngle));
                     int max = 0;
-                    if (DetailFrag_5.indivimaxAngle.size() > 0 && DetailFrag_5.proprom.size() > 0) {
-                        for (int k = 0; k < DetailFrag_5.proprom.size(); k++) {
-
-                            int val = Math.round((DetailFrag_5.indivimaxAngle.get(k)));
-                            Log.e("Cycle DAta", (String.valueOf(val)));
-//                            DetailFrag_5.exerciseListact.add(new ExerciseCycleAssessment(val));
-//                            DetailFrag_5.exepain.put(DetailFrag_5.indivipain.get(k));
-                            if (max < val) {
-                                max = val;
-                                maxrom = val;
-                                cycleno = k + 1;
-                            }
-                            Log.e("Proprioception Test", String.valueOf(DetailFrag_5.exerciseListact.get(i).getRangeOfMotion()));
-                        }
-                    }
+//                    if (DetailFrag_5.indivimaxAngle.size() > 0 && DetailFrag_5.proprom.size() > 0) {
+//                        for (int k = 0; k < DetailFrag_5.proprom.size(); k++) {
+//
+//                            int val = Math.round((DetailFrag_5.indivimaxAngle.get(k)));
+//                            Log.e("Cycle DAta", (String.valueOf(val)));
+////                            DetailFrag_5.exerciseListact.add(new ExerciseCycleAssessment(val));
+////                            DetailFrag_5.exepain.put(DetailFrag_5.indivipain.get(k));
+//                            if (max < val) {
+//                                max = val;
+//                                maxrom = val;
+//                                cycleno = k + 1;
+//                            }
+//                            Log.e("Proprioception Test", String.valueOf(DetailFrag_5.exerciseListact.get(i).getRangeOfMotion()));
+//                        }
+//                    }
 //                    assess_cycles_active.setVisibility(View.VISIBLE);
 //                    DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
                 }
@@ -3752,7 +3866,8 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             }
             Log.d("Report JSON", DetailFrag_5.reportarray.toString());
 
-        } else {
+        }
+        else {
             Toasty.error(Assessment.this, "No Values found", Toasty.LENGTH_SHORT).show();
         }
     }
@@ -6228,18 +6343,17 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
 //
 //        }
 
-        try {
-            DetailFrag_5.postexesubdata.put(leg + "-leg-" + DetailFrag_5.propriocyclecount, DetailFrag_5.postsubdata);
-            DetailFrag_5.postsubdata = new JSONArray();
-            DetailFrag_5.postexevalues = new JSONArray();
-            DetailFrag_5.postexeparameters = new JSONArray();
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
 
-        DetailFrag_5.exerciseListact.add(new ExerciseCycleAssessment(minAndMaxAngles.second));
+
+//        DetailFrag_5.exerciseListact.add(new ExerciseCycleAssessment(minAndMaxAngles.second));
 //                            DetailFrag_5.exepain.put(DetailFrag_5.indivipain.get(k));
 
+        if("Active".equalsIgnoreCase(activepassive)){
+            propriopassvalue = minAndMaxAngles.second;
+        }
+        else{
+            proprioactvalue = minAndMaxAngles.second;
+        }
 
         assess_cycles_active.setVisibility(View.VISIBLE);
         DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
