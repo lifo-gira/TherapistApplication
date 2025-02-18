@@ -47,11 +47,13 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import es.dmoral.toasty.Toasty;
 import me.ibrahimsn.lib.Speedometer;
@@ -226,9 +228,45 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
     public static List<Long> walkgaittime = new ArrayList<>();
     public static List<Integer> walkgaitswingtime = new ArrayList<>();
     public static long stepStartTime = 0, stepStartTime1 = 0;
-
+    private static Map<String, DetailItem> completedExercisesMap = new HashMap<>();
     public static int sec = 0;
+    private static final Map<String, List<DetailItem>> ALL_EXERCISES = new HashMap<>();
 
+    static {
+        ALL_EXERCISES.put("Sit Exercises", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test")
+        ));
+
+        ALL_EXERCISES.put("Prone Exercises", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test")
+        ));
+
+        ALL_EXERCISES.put("Stand Exercises", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test")
+        ));
+
+        ALL_EXERCISES.put("Walk Exercises", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis")
+        ));
+
+        ALL_EXERCISES.put("Others", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength")
+        ));
+
+        ALL_EXERCISES.put("All Exercises", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis"),
+                new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength")
+        ));
+    }
 
     public static int seconds = 0;
     public static int minutes = 0;
@@ -450,141 +488,43 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
         recyclerView.setLayoutManager(gridLayoutManager);
-
-        // Initialize the shared data list only if it's empty
-//        if (SharedData.detailItems.isEmpty()) {
-//            //SharedData.detailItems.add(new DetailItem(R.drawable.knee_pic, "Camera", "Pending", Color.RED, "Take a picture of Knee"));
-//            SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test"));
-//
-//            SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"));
-//            SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test"));
-//
-//            SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test"));
-//
-//            SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"));
-//            SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"));
-//            SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis"));
-//            SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength"));
-//            // Add other items as needed...
-//        }
-
-
-
         // Set the adapter to RecyclerView
         DetailCollectionAdapter adapter = new DetailCollectionAdapter(SharedData.detailItems, this);
         recyclerView.setAdapter(adapter);
-
 
         exercisespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem = parent.getItemAtPosition(position).toString();
+
+                // Get exercises for the selected category
+                List<DetailItem> newItems = ALL_EXERCISES.getOrDefault(selectedItem, new ArrayList<>());
+
+                // Preserve completed statuses
+                for (DetailItem item : SharedData.detailItems) {
+                    if ("Completed".equals(item.getStatus())) {
+                        completedExercisesMap.put(item.getTitle(), item); // Store completed exercises
+                    }
+                }
+
+                // Build a new list based on the selected category
+                List<DetailItem> updatedList = new ArrayList<>();
+                for (DetailItem newItem : newItems) {
+                    if (completedExercisesMap.containsKey(newItem.getTitle())) {
+                        // If exercise was completed earlier, retain the completion status
+                        updatedList.add(completedExercisesMap.get(newItem.getTitle()));
+                    } else {
+                        // If it's a new exercise, add it as fresh (Pending)
+                        updatedList.add(newItem);
+                    }
+                }
+
+                // Update SharedData with filtered exercises
                 SharedData.detailItems.clear();
-                if("Sit Exercises".equalsIgnoreCase(selectedItem)){
-                    if (SharedData.detailItems.isEmpty()) {
-                        //SharedData.detailItems.add(new DetailItem(R.drawable.knee_pic, "Camera", "Pending", Color.RED, "Take a picture of Knee"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test"));
+                SharedData.detailItems.addAll(updatedList);
 
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"));
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test"));
-
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test"));
-//
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength"));
-                        // Add other items as needed...
-                    }
-                }
-                else if("Prone Exercises".equalsIgnoreCase(selectedItem)){
-                    if (SharedData.detailItems.isEmpty()) {
-                        //SharedData.detailItems.add(new DetailItem(R.drawable.knee_pic, "Camera", "Pending", Color.RED, "Take a picture of Knee"));
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test"));
-
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test"));
-//
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test"));
-//
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength"));
-                        // Add other items as needed...
-                    }
-                }
-                else if("Stand Exercises".equalsIgnoreCase(selectedItem)){
-                    if (SharedData.detailItems.isEmpty()) {
-                        //SharedData.detailItems.add(new DetailItem(R.drawable.knee_pic, "Camera", "Pending", Color.RED, "Take a picture of Knee"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test"));
-//
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test"));
-
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test"));
-
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength"));
-                        // Add other items as needed...
-                    }
-                }
-                else if("Walk Exercises".equalsIgnoreCase(selectedItem)){
-                    if (SharedData.detailItems.isEmpty()) {
-                        //SharedData.detailItems.add(new DetailItem(R.drawable.knee_pic, "Camera", "Pending", Color.RED, "Take a picture of Knee"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test"));
-//
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test"));
-//
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test"));
-
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"));
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"));
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength"));
-                        // Add other items as needed...
-                    }
-                }
-                else if("Others".equalsIgnoreCase(selectedItem)){
-                    if (SharedData.detailItems.isEmpty()) {
-                        //SharedData.detailItems.add(new DetailItem(R.drawable.knee_pic, "Camera", "Pending", Color.RED, "Take a picture of Knee"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test"));
-//
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test"));
-//
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test"));
-
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"));
-//                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis"));
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength"));
-                        // Add other items as needed...
-                    }
-                }
-                else if("All Exercises".equalsIgnoreCase(selectedItem)){
-                    if (SharedData.detailItems.isEmpty()) {
-                        //SharedData.detailItems.add(new DetailItem(R.drawable.knee_pic, "Camera", "Pending", Color.RED, "Take a picture of Knee"));
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test"));
-
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"));
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test"));
-
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test"));
-
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"));
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"));
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis"));
-                        SharedData.detailItems.add(new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength"));
-                        // Add other items as needed...
-                    }
-                }
-
+                // Notify adapter about changes
                 adapter.notifyDataSetChanged();
-
             }
 
             @Override
@@ -969,6 +909,9 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
 
                                             MainActivity.patflag = 0;
                                             SharedData.detailItems.clear();
+                                            ALL_EXERCISES.clear();
+                                            completedExercisesMap.clear();
+
                                             postdata = new JSONArray();
                                             postexevalues = new JSONArray();
                                             postdataobj = new JSONObject();
