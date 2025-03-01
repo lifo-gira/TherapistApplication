@@ -226,8 +226,8 @@ public class Dashboard extends AppCompatActivity implements ViewAnimator.ViewAni
             @Override
             public void onFailure(WebSocket webSocket, Throwable t, okhttp3.Response response) {
                 super.onFailure(webSocket, t, response);
-                System.out.println("WebSocket Error: " + t.getMessage());
-                Log.e("WebSocket Error", t.getMessage());
+                //System.out.println("WebSocket Error: " + t.getMessage());
+                //Log.e("WebSocket Error", t.getMessage());
             }
         });
 

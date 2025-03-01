@@ -301,7 +301,6 @@ public class BluetoothConnection extends AppCompatActivity {
                 return false;
             }
 
-
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 selectedDevices.clear();
@@ -327,7 +326,7 @@ public class BluetoothConnection extends AppCompatActivity {
 
 
 
-
+    @SuppressLint("MissingPermission")
     private void listPairedDevices() {
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
         pairedDeviceAddresses.clear();  // Clear previous paired device addresses
@@ -364,7 +363,7 @@ public class BluetoothConnection extends AppCompatActivity {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device != null) {
-                    String deviceName = device.getName();
+                    @SuppressLint("MissingPermission") String deviceName = device.getName();
                     String deviceAddress = device.getAddress();
 
                     // Skip adding paired devices and devices with null or empty names
@@ -389,7 +388,7 @@ public class BluetoothConnection extends AppCompatActivity {
                 if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     if (device != null) {
-                        String deviceName = device.getName();
+                        @SuppressLint("MissingPermission") String deviceName = device.getName();
                         String deviceAddress = device.getAddress();
 
                         // Skip adding devices with null or empty names

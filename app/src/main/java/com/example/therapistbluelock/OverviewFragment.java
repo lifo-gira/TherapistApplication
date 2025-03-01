@@ -36,6 +36,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -472,8 +473,8 @@ public class OverviewFragment extends Fragment {
                         overallDataSet1.setColor(0xFF3D5AFE); // Line color
                         overallDataSet1.setValueTextColor(0xFF000000); // Value text color
                         overallDataSet1.setLineWidth(1f); // Line width
-                        overallDataSet1.setDrawCircles(true);
-                        overallDataSet1.setDrawValues(true);
+                        overallDataSet1.setDrawCircles(false);
+                        overallDataSet1.setDrawValues(false);
                         overallDataSet1.setHighlightEnabled(true);
                         overallDataSet1.setCircleColor(0xFFFFD383); // Circle color at data points
                         overallDataSet1.setCircleRadius(4f); // Circle radius
@@ -507,6 +508,10 @@ public class OverviewFragment extends Fragment {
                         overallLeftAxis.setDrawGridLines(false); // Remove Y grid lines (left)
                         YAxis overallRightAxis = left_knee_chart.getAxisRight();
                         overallRightAxis.setEnabled(false); // Disable right Y-axis
+
+                        MarkerView marker = new MyMarkerView(getContext(), R.layout.custom_marker_view);
+                        left_knee_chart.setMarker(marker);
+                        left_knee_chart.setHighlightPerTapEnabled(true);
 
                         // Configure the legend
 //                        Legend overallLegend = left_knee_chart.getLegend();
@@ -572,8 +577,8 @@ public class OverviewFragment extends Fragment {
                         overallDataSet1.setValueTextColor(0xFF000000); // Value text color
                         overallDataSet1.setLineWidth(1f); // Line width
                         overallDataSet1.setCircleColor(0xFFFFD383); // Circle color at data points
-                        overallDataSet1.setDrawValues(true);
-                        overallDataSet1.setDrawCircles(true);
+                        overallDataSet1.setDrawValues(false);
+                        overallDataSet1.setDrawCircles(false);
                         overallDataSet1.setHighlightEnabled(true);
                         overallDataSet1.setCircleRadius(4f); // Circle radius
                         overallDataSet1.setMode(LineDataSet.Mode.CUBIC_BEZIER); // Make the graph curved
@@ -607,6 +612,12 @@ public class OverviewFragment extends Fragment {
                         YAxis overallRightAxis = right_knee_chart.getAxisRight();
                         overallRightAxis.setEnabled(false); // Disable right Y-axis
                         right_knee_chart.getLegend().setEnabled(false);
+
+                        MarkerView marker = new MyMarkerView(getContext(), R.layout.custom_marker_view);
+                        right_knee_chart.setMarker(marker);
+                        right_knee_chart.setHighlightPerTapEnabled(true);
+
+
 
                         // Refresh the chart
                         right_knee_chart.invalidate(); // Redraw the chart with updated data

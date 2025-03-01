@@ -82,6 +82,7 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
     public static int playflag = 0;
     public static List<Entry> entries;
     public static List<Entry> entries1;
+    public static List<Entry> fullEntries;
     public static LineChart lineChart;
     public static float change, change1;
     public static List<Float> indiviminAngle = new ArrayList<>();
@@ -149,7 +150,7 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
     public static long standToShiftStartTime, standToShiftEndTime;
     public static long walkStartTime, walkEndTime;
     public static long sittostand, standtosit;
-    public static final int SIT_ANGLE = 80; // seated knee angle threshold
+    public static final int SIT_ANGLE = 75; // seated knee angle threshold
     public static final int STAND_ANGLE = 15; // standing knee angle threshold
     public static final int WALK_THRESHOLD = 40; // knee angle difference for walking
     public static List<Float> leftlegws = new ArrayList<>();
@@ -297,7 +298,7 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
     public static float localMinimum = Float.MAX_VALUE; // Initialize to a very high value
 
 
-    public static int cyclecount = 0, staticbaleo = 0, staticbalec = 0, mobilecyclecount = 0, propriocyclecount = 0;
+    public static int cyclecount = 0, staticbalelo = 0, staticbalero = 0, staticbalelc = 0, staticbalerc = 0, mobilecyclecount = 0, propriocyclecount = 0;
 
     LinearLayout to_complete_layout;
 
@@ -331,6 +332,12 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
     Spinner exercisespinner;
     ArrayAdapter<String> exerciseadapter;
     List<String> exerciselist = new ArrayList<>();
+
+    public static float extnactivemax=361;
+    public static float extnpassivemax=361;
+
+    public static float extnangle=0,extnangle1=0;
+    public static int extndens=0,extnflag=0;
 
 
     @Override
@@ -375,7 +382,6 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
         exerciseadapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, exerciselist);
         exerciseadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         exercisespinner.setAdapter(exerciseadapter);
-
 
 
         therapistname = findViewById(R.id.therapistname);
@@ -472,8 +478,10 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
         cyclecount = 0;
         mobilecyclecount = 0;
         propriocyclecount = 0;
-        staticbaleo = 0;
-        staticbalec = 0;
+        staticbalelo = 0;
+        staticbalelc = 0;
+        staticbalero = 0;
+        staticbalerc = 0;
 
         leftlegcyclewalkgait = new ArrayList<>();
         rightlegcyclewalkgait = new ArrayList<>();
@@ -483,6 +491,8 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
 
         leftaccl = new ArrayList<>();
         righttaccl = new ArrayList<>();
+
+        fullEntries = new ArrayList<>();
 
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
@@ -541,7 +551,7 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
         to_complete_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+//                Log.e("Final Posting Data", String.valueOf(postdata));
                 showsubmitpopup();
             }
         });
@@ -568,61 +578,62 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
             selectedExercise = item.getItemType();
 
             // Check if the item is "Walk and Gait Analysis"
-            if ("Walk and Gait Analysis".equalsIgnoreCase(selectedExercise)) {
-                // Check if the Camera exercise is completed
-                DetailItem cameraItem = null;
-                for (DetailItem detailItem : SharedData.detailItems) {
-                    if ("Camera".equalsIgnoreCase(detailItem.getTitle())) {
-                        cameraItem = detailItem;
-                        break;
-                    }
-                }
-
-                // If Camera is not completed, show a warning and reset Walk and Gait Analysis
-                if (cameraItem != null && !"Completed".equalsIgnoreCase(cameraItem.getStatus())) {
-                    // Show warning message
-                    Toasty.warning(DetailFrag_5.this, "Perform the Knee Image Capture to Continue", Toasty.LENGTH_SHORT).show();
-
-                    // Reset Walk and Gait Analysis item to "Pending" state
-                    for (int i = 0; i < SharedData.detailItems.size(); i++) {
-                        DetailItem detailItem = SharedData.detailItems.get(i);
-                        if ("Walk and Gait Analysis".equalsIgnoreCase(detailItem.getTitle())) {
-                            SharedData.detailItems.set(i, new DetailItem(
-                                    R.drawable.wheelchair_annan,
-                                    "Walk and Gait Analysis",
-                                    "Pending",
-                                    Color.RED,
-                                    "Walk and Gait Analysis"
-                            ));
-                            break;
-                        }
-                    }
-
-                    // Notify the adapter about the update
-                    RecyclerView recyclerView = findViewById(R.id.recycler_view);
-                    recyclerView.getAdapter().notifyDataSetChanged();
-
-                    return; // Exit the method without proceeding further
-                }
-
-                // Proceed to Assessment if conditions are met
-                if (leftleglength > 0 && rightleglength >= 0 && MainActivity.patientheight >= 0) {
-                    intent = new Intent(this, Assessment.class);
-                    intent.putExtra("itemTitle", item.getTitle());
-                    intent.putExtra("itemStatus", item.getStatus());
-                    intent.putExtra("itemColor", item.getBackgroundTint());
-                    startActivityForResult(intent, REQUEST_UPDATE_ITEM);
-                } else {
-                    Toasty.warning(DetailFrag_5.this, "Perform the Knee Image Capture to Continue", Toasty.LENGTH_SHORT).show();
-                }
-            } else {
-                // For other items, proceed to Assessment
-                intent = new Intent(this, Assessment.class);
-                intent.putExtra("itemTitle", item.getTitle());
-                intent.putExtra("itemStatus", item.getStatus());
-                intent.putExtra("itemColor", item.getBackgroundTint());
-                startActivityForResult(intent, REQUEST_UPDATE_ITEM);
-            }
+//            if ("Walk and Gait Analysis".equalsIgnoreCase(selectedExercise)) {
+//                // Check if the Camera exercise is completed
+//                DetailItem cameraItem = null;
+//                for (DetailItem detailItem : SharedData.detailItems) {
+//                    if ("Camera".equalsIgnoreCase(detailItem.getTitle())) {
+//                        cameraItem = detailItem;
+//                        break;
+//                    }
+//                }
+//
+//                // If Camera is not completed, show a warning and reset Walk and Gait Analysis
+//                if (cameraItem != null && !"Completed".equalsIgnoreCase(cameraItem.getStatus())) {
+//                    // Show warning message
+//                    Toasty.warning(DetailFrag_5.this, "Perform the Knee Image Capture to Continue", Toasty.LENGTH_SHORT).show();
+//
+//                    // Reset Walk and Gait Analysis item to "Pending" state
+//                    for (int i = 0; i < SharedData.detailItems.size(); i++) {
+//                        DetailItem detailItem = SharedData.detailItems.get(i);
+//                        if ("Walk and Gait Analysis".equalsIgnoreCase(detailItem.getTitle())) {
+//                            SharedData.detailItems.set(i, new DetailItem(
+//                                    R.drawable.wheelchair_annan,
+//                                    "Walk and Gait Analysis",
+//                                    "Pending",
+//                                    Color.RED,
+//                                    "Walk and Gait Analysis"
+//                            ));
+//                            break;
+//                        }
+//                    }
+//
+//                    // Notify the adapter about the update
+//                    RecyclerView recyclerView = findViewById(R.id.recycler_view);
+//                    recyclerView.getAdapter().notifyDataSetChanged();
+//
+//                    return; // Exit the method without proceeding further
+//                }
+//
+//                // Proceed to Assessment if conditions are met
+//                if (leftleglength > 0 && rightleglength >= 0 && MainActivity.patientheight >= 0) {
+//                    intent = new Intent(this, Assessment.class);
+//                    intent.putExtra("itemTitle", item.getTitle());
+//                    intent.putExtra("itemStatus", item.getStatus());
+//                    intent.putExtra("itemColor", item.getBackgroundTint());
+//                    startActivityForResult(intent, REQUEST_UPDATE_ITEM);
+//                } else {
+//                    Toasty.warning(DetailFrag_5.this, "Perform the Knee Image Capture to Continue", Toasty.LENGTH_SHORT).show();
+//                }
+//            }
+//            else {
+            // For other items, proceed to Assessment
+            intent = new Intent(this, Assessment.class);
+            intent.putExtra("itemTitle", item.getTitle());
+            intent.putExtra("itemStatus", item.getStatus());
+            intent.putExtra("itemColor", item.getBackgroundTint());
+            startActivityForResult(intent, REQUEST_UPDATE_ITEM);
+//            }
         }
     }
 
@@ -699,173 +710,129 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
 
     @SuppressLint("MissingInflatedId")
     private void showsubmitpopup() {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View customView = inflater.inflate(R.layout.assessment_end_popup, null);
+//        LayoutInflater inflater = LayoutInflater.from(this);
+//        View customView = inflater.inflate(R.layout.assessment_end_popup, null);
+//
+//        ImageView mobleftcheck, mobrightcheck, extnleftcheck, extnrightcheck, dynamicleftcheck, dynamicrightcheck, staticleftcheck, staticrightcheck, stairleftcheck, stairrightcheck, proprioleftcheck, propriorightcheck, walkgaitleftcheck, walkgaitrightcheck;
+//
+//        AppCompatButton button_no, button_yes;
+//
+//        mobleftcheck = customView.findViewById(R.id.mobleftcheck);
+//        mobrightcheck = customView.findViewById(R.id.mobrightcheck);
+//        extnleftcheck = customView.findViewById(R.id.extnleftcheck);
+//        extnrightcheck = customView.findViewById(R.id.extnrightcheck);
+//        dynamicleftcheck = customView.findViewById(R.id.dynamicleftcheck);
+//        dynamicrightcheck = customView.findViewById(R.id.dynamicrightcheck);
+//        staticleftcheck = customView.findViewById(R.id.staticleftcheck);
+//        staticrightcheck = customView.findViewById(R.id.staticrightcheck);
+//        stairleftcheck = customView.findViewById(R.id.stairleftcheck);
+//        stairrightcheck = customView.findViewById(R.id.stairrightcheck);
+//        proprioleftcheck = customView.findViewById(R.id.proprioleftcheck);
+//        propriorightcheck = customView.findViewById(R.id.propriorightcheck);
+//        walkgaitleftcheck = customView.findViewById(R.id.walkgaitleftcheck);
+//        walkgaitrightcheck = customView.findViewById(R.id.walkgaitrightcheck);
+//
+//        button_no = customView.findViewById(R.id.button_no);
+//        button_yes = customView.findViewById(R.id.button_yes);
+//
+//        AlertDialog dialog = new AlertDialog.Builder(this)
+//                .setView(customView)
+//                .create();
 
-        ImageView mobleftcheck, mobrightcheck, extnleftcheck, extnrightcheck, dynamicleftcheck, dynamicrightcheck, staticleftcheck, staticrightcheck, stairleftcheck, stairrightcheck, proprioleftcheck, propriorightcheck, walkgaitleftcheck, walkgaitrightcheck;
 
-        AppCompatButton button_no, button_yes;
+        boolean mobilityTestPresent = false;
+        boolean proprioceptionTestPresent = false;
+        JSONArray jsonArray = new JSONArray();
 
-        mobleftcheck = customView.findViewById(R.id.mobleftcheck);
-        mobrightcheck = customView.findViewById(R.id.mobrightcheck);
-        extnleftcheck = customView.findViewById(R.id.extnleftcheck);
-        extnrightcheck = customView.findViewById(R.id.extnrightcheck);
-        dynamicleftcheck = customView.findViewById(R.id.dynamicleftcheck);
-        dynamicrightcheck = customView.findViewById(R.id.dynamicrightcheck);
-        staticleftcheck = customView.findViewById(R.id.staticleftcheck);
-        staticrightcheck = customView.findViewById(R.id.staticrightcheck);
-        stairleftcheck = customView.findViewById(R.id.stairleftcheck);
-        stairrightcheck = customView.findViewById(R.id.stairrightcheck);
-        proprioleftcheck = customView.findViewById(R.id.proprioleftcheck);
-        propriorightcheck = customView.findViewById(R.id.propriorightcheck);
-        walkgaitleftcheck = customView.findViewById(R.id.walkgaitleftcheck);
-        walkgaitrightcheck = customView.findViewById(R.id.walkgaitrightcheck);
+        try {
+            // Parse the JSON data into a JSONArray
+            postexedata.put("exercises", postdataobj);
+            Iterator<String> keys = postdataobj.keys();
+            postdata.put(postexedata);
+            Log.e("Final Posting Data", String.valueOf(postdataobj));
 
-        button_no = customView.findViewById(R.id.button_no);
-        button_yes = customView.findViewById(R.id.button_yes);
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setView(customView)
-                .create();
+//            mobleftcheck.setImageResource(R.drawable.cross);
+//            mobrightcheck.setImageResource(R.drawable.cross);
+//            dynamicleftcheck.setImageResource(R.drawable.cross);
+//            dynamicrightcheck.setImageResource(R.drawable.cross);
+//            walkgaitleftcheck.setImageResource(R.drawable.cross);
+//            walkgaitrightcheck.setImageResource(R.drawable.cross);
+//            stairleftcheck.setImageResource(R.drawable.cross);
+//            stairrightcheck.setImageResource(R.drawable.cross);
+//            extnleftcheck.setImageResource(R.drawable.cross);
+//            extnrightcheck.setImageResource(R.drawable.cross);
+//            staticleftcheck.setImageResource(R.drawable.cross);
+//            staticrightcheck.setImageResource(R.drawable.cross);
+//            proprioleftcheck.setImageResource(R.drawable.cross);
+//            propriorightcheck.setImageResource(R.drawable.cross);
 
-        button_no.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
+
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if ("Mobility Test".equalsIgnoreCase(key)) {
+                    mobilityTestPresent = true;
+//                    mobleftcheck.setImageResource(R.drawable.tick);
+//                    mobrightcheck.setImageResource(R.drawable.tick);
+                } else if ("Proprioception Test".equalsIgnoreCase(key)) {
+                    proprioceptionTestPresent = true;
+//                    proprioleftcheck.setImageResource(R.drawable.tick);
+//                    propriorightcheck.setImageResource(R.drawable.tick);
+                }
+                // If both are found, no need to continue
+                if (mobilityTestPresent && proprioceptionTestPresent) {
+                    sumbitflag = 1;
+                    break;
+                } else {
+                    sumbitflag = 0;
+                }
             }
-        });
 
-        button_yes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean mobilityTestPresent = false;
-                boolean proprioceptionTestPresent = false;
-                JSONArray jsonArray = new JSONArray();
+
+            if (sumbitflag == 1) {
+                postdata.put(postexedata);
+                Log.e("Anirudh P Menon", String.valueOf(postdata));
                 try {
-                    // Parse the JSON data into a JSONArray
-                    postexedata.put("exercises", postdataobj);
-                    Iterator<String> keys = postdataobj.keys();
-                    postdata.put(postexedata);
-                    Log.e("Final Posting Data", String.valueOf(postdata));
+                    // Loop through each object in the postdata array
+                    for (int i = 0; i < postdata.length(); i++) {
+                        JSONObject jsonObject = postdata.getJSONObject(i);
 
-                    mobleftcheck.setImageResource(R.drawable.cross);
-                    mobrightcheck.setImageResource(R.drawable.cross);
-                    dynamicleftcheck.setImageResource(R.drawable.cross);
-                    dynamicrightcheck.setImageResource(R.drawable.cross);
-                    walkgaitleftcheck.setImageResource(R.drawable.cross);
-                    walkgaitrightcheck.setImageResource(R.drawable.cross);
-                    stairleftcheck.setImageResource(R.drawable.cross);
-                    stairrightcheck.setImageResource(R.drawable.cross);
-                    extnleftcheck.setImageResource(R.drawable.cross);
-                    extnrightcheck.setImageResource(R.drawable.cross);
-                    staticleftcheck.setImageResource(R.drawable.cross);
-                    staticrightcheck.setImageResource(R.drawable.cross);
-                    proprioleftcheck.setImageResource(R.drawable.cross);
-                    propriorightcheck.setImageResource(R.drawable.cross);
+                        // Check if the 'exercises' key exists and contains "Mobility Test"
+                        if (jsonObject.has("exercises")) {
+                            JSONObject exercises = jsonObject.getJSONObject("exercises");
 
-                    while (keys.hasNext()) {
-                        String key = keys.next();
-                        if ("Mobility Test".equalsIgnoreCase(key)) {
-                            mobilityTestPresent = true;
-                            mobleftcheck.setImageResource(R.drawable.tick);
-                            mobrightcheck.setImageResource(R.drawable.tick);
-                        } else if ("Proprioception Test".equalsIgnoreCase(key)) {
-                            proprioceptionTestPresent = true;
-                            proprioleftcheck.setImageResource(R.drawable.tick);
-                            propriorightcheck.setImageResource(R.drawable.tick);
-                        }
-                        // If both are found, no need to continue
-                        if (mobilityTestPresent && proprioceptionTestPresent) {
-                            sumbitflag = 1;
-                            break;
-                        } else {
-                            sumbitflag = 0;
-                        }
-                    }
+                            // Check if "Mobility Test" key exists and has values
+                            if (exercises.has("Mobility Test")) {
+                                // Get the "Mobility Test" data
+                                JSONObject mobilityTest = exercises.getJSONObject("Mobility Test");
 
-                    while (keys.hasNext()) {
-                        String key = keys.next();
-                        if ("Dynamic Balance Test".equalsIgnoreCase(key)) {
-                            dynamicleftcheck.setImageResource(R.drawable.tick);
-                            dynamicrightcheck.setImageResource(R.drawable.tick);
-                        } else if ("Walk and Gait Analysis".equalsIgnoreCase(key)) {
-                            walkgaitleftcheck.setImageResource(R.drawable.tick);
-                            walkgaitrightcheck.setImageResource(R.drawable.tick);
-                        } else if ("Staircase Climbing Test".equalsIgnoreCase(key)) {
-                            stairleftcheck.setImageResource(R.drawable.tick);
-                            stairrightcheck.setImageResource(R.drawable.tick);
-                        } else if ("Extension Lag Test".equalsIgnoreCase(key)) {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject = postdataobj.getJSONObject(key);
-                            Iterator<String> keys1 = jsonObject.keys();
-                            while (keys1.hasNext()) {
-                                String key1 = keys1.next();
-                                if (key1.contains("left")) {
-                                    extnleftcheck.setImageResource(R.drawable.tick);
-                                } else if (key1.contains("right")) {
-                                    extnrightcheck.setImageResource(R.drawable.tick);
-                                }
-                            }
-                        } else if ("Static Balance Test".equalsIgnoreCase(key)) {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject = postdataobj.getJSONObject(key);
-                            Iterator<String> keys1 = jsonObject.keys();
-                            while (keys1.hasNext()) {
-                                String key1 = keys1.next();
-                                if (key1.contains("left")) {
-                                    staticleftcheck.setImageResource(R.drawable.tick);
-                                } else if (key1.contains("right")) {
-                                    stairrightcheck.setImageResource(R.drawable.tick);
-                                }
-                            }
-                        }
-
-                    }
-
-                    if (sumbitflag == 1) {
-                        postdata.put(postexedata);
-                        Log.e("Anirudh P Menon", String.valueOf(postdata));
-                        try {
-                            // Loop through each object in the postdata array
-                            for (int i = 0; i < postdata.length(); i++) {
-                                JSONObject jsonObject = postdata.getJSONObject(i);
-
-                                // Check if the 'exercises' key exists and contains "Mobility Test"
-                                if (jsonObject.has("exercises")) {
-                                    JSONObject exercises = jsonObject.getJSONObject("exercises");
-
-                                    // Check if "Mobility Test" key exists and has values
-                                    if (exercises.has("Mobility Test")) {
-                                        // Get the "Mobility Test" data
-                                        JSONObject mobilityTest = exercises.getJSONObject("Mobility Test");
-
-                                        // Check if the "leftleg" array (or any other data within "Mobility Test") has values
-                                        if (mobilityTest.has("leftleg") && mobilityTest.has("rightleg")) {
-                                            JSONArray leftlegData = mobilityTest.getJSONArray("leftleg");
-                                            JSONArray rightleg = mobilityTest.getJSONArray("rightleg");
-                                            // Check if the "leftleg" array is not empty
-                                            if (leftlegData.length() == 0) {
-                                                mobleftcheck.setImageResource(R.drawable.cross);
-                                                Toasty.error(DetailFrag_5.this, "Perform Mobility Test to submit data", Toast.LENGTH_SHORT, true).show();
-                                                return;
-                                            }
-                                            if (rightleg.length() == 0) {
-                                                mobrightcheck.setImageResource(R.drawable.cross);
-                                                Toasty.error(DetailFrag_5.this, "Perform Mobility Test to submit data", Toast.LENGTH_SHORT, true).show();
-                                                return;
-                                            }
-                                        }
+                                // Check if the "leftleg" array (or any other data within "Mobility Test") has values
+                                if (mobilityTest.has("leftleg") && mobilityTest.has("rightleg")) {
+                                    JSONArray leftlegData = mobilityTest.getJSONArray("leftleg");
+                                    JSONArray rightleg = mobilityTest.getJSONArray("rightleg");
+                                    // Check if the "leftleg" array is not empty
+                                    if (leftlegData.length() == 0) {
+//                                        mobleftcheck.setImageResource(R.drawable.cross);
+                                        Toasty.error(DetailFrag_5.this, "Perform Mobility Test to submit data", Toast.LENGTH_SHORT, true).show();
+                                        return;
+                                    }
+                                    if (rightleg.length() == 0) {
+//                                        mobrightcheck.setImageResource(R.drawable.cross);
+                                        Toasty.error(DetailFrag_5.this, "Perform Mobility Test to submit data", Toast.LENGTH_SHORT, true).show();
+                                        return;
                                     }
                                 }
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
-                    //jsonArray = new JSONArray(jsonData);
-                    Log.e("Final Posting Data", String.valueOf(postdata));
-                    // Iterate through each object in the JSONArray
+            //jsonArray = new JSONArray(jsonData);
+            Log.e("Final Posting Data", String.valueOf(postdata));
+            // Iterate through each object in the JSONArray
 //                    for (int i = 0; i < jsonArray.length(); i++) {
 //                        JSONObject testObject = jsonArray.getJSONObject(i);
 //
@@ -879,86 +846,139 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
 //                            Log.d("Inba Test Details", testDetails.toString());
 //                        }
 //                    }
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-                if (sumbitflag == 1) {
-                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        if (sumbitflag == 1) {
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-                    JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                            Request.Method.PUT,
-                            "https://api-wo6.onrender.com/update-assessment-info/" + HomeFragment.userid + "/" + 0,
-                            postdata,
-                            new Response.Listener<JSONArray>() {
-                                @Override
-                                public void onResponse(JSONArray response) {
-                                    try {
-                                        // Convert the first item in the JSONArray to a JSONObject
-                                        JSONObject responseObj = response.getJSONObject(0);
-                                        Log.e("Posting Response", String.valueOf(response));
-
-                                        if ("Assessment information updated successfully".equals(responseObj.getString("message"))) {
-                                            cleanupBluetoothSockets();
-                                            SharedPreferences.Editor editor = getSharedPreferences("BluetoothPrefs", MODE_PRIVATE).edit();
-                                            editor.putBoolean("isConnected", false);
-                                            editor.apply();
-
-                                            dialog.dismiss();
-
-                                            MainActivity.patflag = 0;
-                                            SharedData.detailItems.clear();
-                                            ALL_EXERCISES.clear();
-                                            completedExercisesMap.clear();
-
-                                            postdata = new JSONArray();
-                                            postexevalues = new JSONArray();
-                                            postdataobj = new JSONObject();
-                                            postexedata = new JSONObject();
-                                            postexeparameters = new JSONArray();
-                                            postexesubdata = new JSONObject();
-                                            Intent intent = new Intent(DetailFrag_5.this, Dashboard.class);
-                                            startActivity(intent);
-                                        }
-                                        Log.d("Exercise Submit Response", responseObj.getString("message"));
-                                    } catch (JSONException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                            },
-                            new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Log.e("Exercise Submit Error", error.toString());
-                                }
-                            }) {
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                    Request.Method.PUT,
+                    "https://api-wo6.onrender.com/update-assessment-info/" + HomeFragment.userid + "/" + 0,
+                    postdata,
+                    new Response.Listener<JSONArray>() {
                         @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<>();
-                            params.put("Content-Type", "application/json");
-                            return params;
+                        public void onResponse(JSONArray response) {
+                            try {
+                                // Convert the first item in the JSONArray to a JSONObject
+                                JSONObject responseObj = response.getJSONObject(0);
+                                Log.e("Posting Response", String.valueOf(response));
+
+                                if ("Assessment information updated successfully".equals(responseObj.getString("message"))) {
+                                    cleanupBluetoothSockets();
+                                    SharedPreferences.Editor editor = getSharedPreferences("BluetoothPrefs", MODE_PRIVATE).edit();
+                                    editor.putBoolean("isConnected", false);
+                                    editor.apply();
+//                                            dialog.dismiss();
+                                    MainActivity.patflag = 0;
+                                    SharedData.detailItems.clear();
+                                    ALL_EXERCISES.clear();
+                                    completedExercisesMap.clear();
+                                    postdata = new JSONArray();
+                                    postexevalues = new JSONArray();
+                                    postdataobj = new JSONObject();
+                                    postexedata = new JSONObject();
+                                    postexeparameters = new JSONArray();
+                                    postexesubdata = new JSONObject();
+                                    Intent intent = new Intent(DetailFrag_5.this, Dashboard.class);
+                                    startActivity(intent);
+                                }
+                                Log.d("Exercise Submit Response", responseObj.getString("message"));
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
-                    };
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("Exercise Submit Error", error.toString());
+                        }
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("Content-Type", "application/json");
+                    return params;
+                }
+            };
 
 //                 Add the request to the RequestQueue
-                    requestQueue.add(jsonArrayRequest);
-                }
-                else {
-                    if (mobilityTestPresent) {
-                        Toasty.error(DetailFrag_5.this, "Proprioception Test Not Done", Toast.LENGTH_LONG).show();
-                    } else if (proprioceptionTestPresent) {
-                        Toasty.error(DetailFrag_5.this, "Mobility Test Not Done", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toasty.error(DetailFrag_5.this, "Mobility Test and Proprioception Test Not Done", Toast.LENGTH_LONG).show();
-                    }
-                }
-
+            requestQueue.add(jsonArrayRequest);
+        } else {
+            if (mobilityTestPresent) {
+                Toasty.error(DetailFrag_5.this, "Proprioception Test Not Done", Toast.LENGTH_LONG).show();
+            } else if (proprioceptionTestPresent) {
+                Toasty.error(DetailFrag_5.this, "Mobility Test Not Done", Toast.LENGTH_LONG).show();
+            } else {
+                Toasty.error(DetailFrag_5.this, "Mobility Test and Proprioception Test Not Done", Toast.LENGTH_LONG).show();
             }
-        });
-
+        }
 
 
     }
 
 }
+
+//        button_no.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//            }
+//        });
+
+//        button_yes.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//
+//
+//
+//
+//            }
+//        });
+//
+//
+//        dialog.show();
+
+//            while (keys.hasNext()) {
+//                String key = keys.next();
+//                if ("Dynamic Balance Test".equalsIgnoreCase(key)) {
+//                    dynamicleftcheck.setImageResource(R.drawable.tick);
+//                    dynamicrightcheck.setImageResource(R.drawable.tick);
+//                } else if ("Walk and Gait Analysis".equalsIgnoreCase(key)) {
+//                    walkgaitleftcheck.setImageResource(R.drawable.tick);
+//                    walkgaitrightcheck.setImageResource(R.drawable.tick);
+//                } else if ("Staircase Climbing Test".equalsIgnoreCase(key)) {
+//                    stairleftcheck.setImageResource(R.drawable.tick);
+//                    stairrightcheck.setImageResource(R.drawable.tick);
+//                } else if ("Extension Lag Test".equalsIgnoreCase(key)) {
+//                    JSONObject jsonObject = new JSONObject();
+//                    jsonObject = postdataobj.getJSONObject(key);
+//                    Iterator<String> keys1 = jsonObject.keys();
+//                    Log.e("Extension Lag Keys", String.valueOf(keys1));
+//                    while (keys1.hasNext()) {
+//                        String key1 = keys1.next();
+//                        if (key1.contains("left")) {
+//                            extnleftcheck.setImageResource(R.drawable.tick);
+//                        } else if (key1.contains("right")) {
+//                            extnrightcheck.setImageResource(R.drawable.tick);
+//                        }
+//                    }
+//                } else if ("Static Balance Test".equalsIgnoreCase(key)) {
+//                    JSONObject jsonObject = new JSONObject();
+//                    jsonObject = postdataobj.getJSONObject(key);
+//                    Iterator<String> keys1 = jsonObject.keys();
+//                    while (keys1.hasNext()) {
+//                        String key1 = keys1.next();
+//                        Log.e("Static Balance Keys", String.valueOf(keys1));
+//                        if (key1.contains("left")) {
+//                            staticleftcheck.setImageResource(R.drawable.tick);
+//                        } else if (key1.contains("right")) {
+//                            stairrightcheck.setImageResource(R.drawable.tick);
+//                        }
+//                    }
+//                }
+//
+//            }

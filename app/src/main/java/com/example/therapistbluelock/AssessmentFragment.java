@@ -32,6 +32,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -156,6 +157,7 @@ public class AssessmentFragment extends Fragment {
         setupPerformanceChart();
         flexion_chart = rootView.findViewById(R.id.flexion_chart);
         setupFlexionChart();
+
         exercisespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -350,6 +352,7 @@ public class AssessmentFragment extends Fragment {
                 cyclespinner.setSelection(0);
                 String selectedItem = parent.getItemAtPosition(position).toString();
                 JSONObject testDetails = new JSONObject();
+                overall_chart.clear();
 
                 Log.e("Mobility Exercise Cycle List 2", String.valueOf(exerciselist2));
 
@@ -551,6 +554,7 @@ public class AssessmentFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem = parent.getItemAtPosition(position).toString();
                 JSONObject testDetails = new JSONObject();
+                overall_chart.clear();
 
                 Log.e("Mobility Exercise Cycle List 3", String.valueOf(exerciselist2));
 
@@ -563,6 +567,7 @@ public class AssessmentFragment extends Fragment {
                     String cycleNumber = selectedItem.replaceAll("Cycle: ", "");
                     matchingJSONObject1 = new JSONObject();
                     Iterator<String> cycleKeys = matchingJSONObject.keys();
+                    matchingJSONObject1 = new JSONObject();
                     while (cycleKeys.hasNext()) {
                         String cycleKey = cycleKeys.next();
                         if (cycleKey.matches(".*-" + cycleNumber + "$")) { // Match keys ending with the selected cycle number
@@ -582,6 +587,7 @@ public class AssessmentFragment extends Fragment {
                     String cycleNumber = selectedItem.replaceAll("Cycle: ", "");
 
                     Iterator<String> cycleKeys = testDetails.keys();
+                    matchingJSONObject1 = new JSONObject();
                     while (cycleKeys.hasNext()) {
                         String cycleKey = cycleKeys.next();
                         if (cycleKey.matches(".*-" + cycleNumber + "$")) { // Match keys ending with the selected cycle number
@@ -655,14 +661,16 @@ public class AssessmentFragment extends Fragment {
                 }
                 else if("Proprioception Test".equalsIgnoreCase(exercisename)){
                     String cycleNumber = selectedItem.replaceAll("Cycle: ", "");
-
+                    matchingJSONObject1 = new JSONObject();
                     Iterator<String> cycleKeys = testDetails.keys();
+                    Log.e("Assessment Proprioception Fragment", String.valueOf(testDetails));
                     while (cycleKeys.hasNext()) {
                         String cycleKey = cycleKeys.next();
                         if (cycleKey.matches(".*-" + cycleNumber + "$")) { // Match keys ending with the selected cycle number
                             try {
                                 // Fetch the value and add it to the new JSONObject
                                 Object value = testDetails.get(cycleKey);
+                                Log.e("Assessment Proprioception Fragment", String.valueOf(value));
                                 matchingJSONObject1.put(cycleKey, value);
                             } catch (JSONException e) {
                                 e.printStackTrace(); // Handle JSON exceptions
@@ -679,6 +687,7 @@ public class AssessmentFragment extends Fragment {
                     String cycleNumber = selectedItem.replaceAll("Cycle: ", "");
 
                     Iterator<String> cycleKeys = testDetails.keys();
+                    matchingJSONObject1 = new JSONObject();
                     while (cycleKeys.hasNext()) {
                         String cycleKey = cycleKeys.next();
                         if (cycleKey.matches(".*-" + cycleNumber + "$")) { // Match keys ending with the selected cycle number
@@ -946,8 +955,8 @@ public class AssessmentFragment extends Fragment {
                                         row.put("Leg/Mode", paramName);                   // leg name (e.g., leftleg or rightleg)
                                         row.put("Minimum-Extension", String.valueOf(subArray.get(0))); // Min Angle
                                         row.put("Maximum-Flexion", String.valueOf(subArray.get(1))); // Max Angle
-                                        row.put("Velocity", String.valueOf(subArray.get(2))); // Velocity
-                                        row.put("Pain", String.valueOf(subArray.get(3)));     // Pain
+//                                        row.put("Velocity", String.valueOf(subArray.get(2))); // Velocity
+//                                        row.put("Pain", String.valueOf(subArray.get(3)));     // Pain
                                     }
                                     details.add(new TableDetail(i, row));
                                     Log.e("Cycle Row Data", String.valueOf(row));
@@ -1096,7 +1105,7 @@ public class AssessmentFragment extends Fragment {
                                         row.put("Cycle No", cycleNumber); // i+1 for cycle number
                                         row.put("Leg/Mode", paramName);                   // leg name (e.g., leftleg or rightleg)
                                         row.put("Sit-to-Stand", String.valueOf(subArray.get(0))); // Min Angle
-                                        row.put("Stand-to-Shift", String.valueOf(subArray.get(1))); // Max Angle
+                                        row.put("Stand-to-Sit", String.valueOf(subArray.get(1))); // Max Angle
                                         row.put("Walk-Time", String.valueOf(subArray.get(2))); // Velocity
                                     }
                                     details.add(new TableDetail(i, row));
@@ -1187,7 +1196,7 @@ public class AssessmentFragment extends Fragment {
                                     List<?> subArray = (List<?>) filteredList.get(i);
                                     Log.e("Table Walk Gait", String.valueOf(subArray));
                                     // Ensure subArray has the expected number of elements (at least 4)
-                                    if (subArray.size() == 9) {
+                                    if (subArray.size() == 11) {
                                         // Add the data for cycle number, leg, angles, velocity, and pain to the row
                                         String cycleNumber = "";
                                         if (paramName.matches(".*-\\d+$")) { // Check if paramName ends with digits preceded by "-"
@@ -1200,10 +1209,12 @@ public class AssessmentFragment extends Fragment {
                                         row.put("Average-Swing-Time", String.valueOf(subArray.get(2)));
                                         row.put("Stance-Phase", String.valueOf(subArray.get(3)));
                                         row.put("Average-Stride-Length", String.valueOf(subArray.get(4)));
-                                        row.put("Mean-Velocity", String.valueOf(subArray.get(5)));
-                                        row.put("Cadence", String.valueOf(subArray.get(6)));
-                                        row.put("Step-Count", String.valueOf(subArray.get(7)));
-                                        row.put("Active-Time", String.valueOf(subArray.get(8)));
+                                        row.put("Average-Stride-Length-%h", String.valueOf(subArray.get(5)));
+                                        row.put("Average-Step-Length", String.valueOf(subArray.get(6)));
+                                        row.put("Mean-Velocity", String.valueOf(subArray.get(7)));
+                                        row.put("Cadence", String.valueOf(subArray.get(8)));
+                                        row.put("Step-Count", String.valueOf(subArray.get(9)));
+                                        row.put("Active-Time", String.valueOf(subArray.get(10)));
                                     }
                                     details.add(new TableDetail(i, row));
                                     Log.e("Cycle Row Data", String.valueOf(row));
@@ -1276,8 +1287,8 @@ public class AssessmentFragment extends Fragment {
                     headers.add("Leg/Mode");
                     headers.add("Minimum-Extension");
                     headers.add("Maximum-Flexion");
-                    headers.add("Velocity");
-                    headers.add("Pain");
+//                    headers.add("Velocity");
+//                    headers.add("Pain");
                 }
                 else if("Proprioception Test".equalsIgnoreCase(exerciseName)){
                     headers.add("Cycle No");
@@ -1295,7 +1306,7 @@ public class AssessmentFragment extends Fragment {
                     headers.add("Cycle No");
                     headers.add("Leg/Mode");
                     headers.add("Sit-to-Stand");
-                    headers.add("Stand-to-Shift");
+                    headers.add("Stand-to-Sit");
                     headers.add("Walk-Time");
                 }
                 else if("Static Balance Test".equalsIgnoreCase(exerciseName)){
@@ -1311,6 +1322,8 @@ public class AssessmentFragment extends Fragment {
                     headers.add("Average-Swing-Time");
                     headers.add("Stance-Phase");
                     headers.add("Average-Stride-Length");
+                    headers.add("Average-Stride-Length-%h");
+                    headers.add("Average-Step-Length");
                     headers.add("Mean-Velocity");
                     headers.add("Cadence");
                     headers.add("Step-Count");
@@ -1346,8 +1359,8 @@ public class AssessmentFragment extends Fragment {
         JSONArray jsonArray = new JSONArray();
         JSONObject subobj = new JSONObject();
         try {
-            for (int i = 0; i < MainActivity.selectedpatientassesementdata.length(); i++) {
-                JSONObject jsonObject1 = MainActivity.selectedpatientassesementdata.getJSONObject(i);
+//            for (int i = 0; i < MainActivity.selectedpatientassesementdata.length(); i++) {
+                JSONObject jsonObject1 = MainActivity.selectedpatientassesementdata.getJSONObject(0);
                 JSONObject jsonObject2 = jsonObject1.getJSONObject("exercises");
                 Iterator<String> keys = jsonObject2.keys();
                 while (keys.hasNext()) {
@@ -1356,7 +1369,7 @@ public class AssessmentFragment extends Fragment {
                     subobj.put(exename, jsonObject2.getJSONObject(exename));
                     jsonArray.put(subobj);
                 }
-            }
+//            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -1768,7 +1781,8 @@ public class AssessmentFragment extends Fragment {
                         }
                     }
                     else if ("Proprioception Test".equalsIgnoreCase(testName)) {
-                        Iterator<String> cycleKeys = matchingJSONObject.keys();
+                        Iterator<String> cycleKeys = matchingJSONObject1.keys();
+                        Log.e("Assessment Proprioception Fragment", String.valueOf(matchingJSONObject1));
                         while (cycleKeys.hasNext()) {
                             String cycleKey = cycleKeys.next();
                             try {
@@ -1777,7 +1791,7 @@ public class AssessmentFragment extends Fragment {
                                     leftlegdata = testDetails.getJSONArray(cycleKey);
                                     if (leftlegdata.length() > 0) {
                                         int max = 0;
-                                        graphdata = leftlegdata.getJSONArray(0); // First set of data
+                                        graphdata = leftlegdata.getJSONArray(1); // First set of data
                                         for (int j = 0; j < graphdata.length(); j++) {
                                             overallEntries1.add(new Entry(j, graphdata.getInt(j)));
                                             if (max < graphdata.getInt(j)) {
@@ -1789,7 +1803,7 @@ public class AssessmentFragment extends Fragment {
                                     rightlegdata = testDetails.getJSONArray(cycleKey);
                                     if (rightlegdata.length() > 0) {
                                         int max = 0;
-                                        graphdata = rightlegdata.getJSONArray(0); // First set of data
+                                        graphdata = rightlegdata.getJSONArray(1); // First set of data
                                         for (int j = 0; j < graphdata.length(); j++) {
                                             overallEntries2.add(new Entry(j, graphdata.getInt(j)));
                                             if (max < graphdata.getInt(j)) {
@@ -1942,8 +1956,8 @@ public class AssessmentFragment extends Fragment {
                         overallDataSet1.setColor(0xFF3D5AFE); // Line color
                         overallDataSet1.setValueTextColor(0xFF000000); // Value text color
                         overallDataSet1.setLineWidth(1f); // Line width
-                        overallDataSet1.setDrawCircles(true);
-                        overallDataSet1.setDrawValues(true);
+                        overallDataSet1.setDrawCircles(false);
+                        overallDataSet1.setDrawValues(false);
                         overallDataSet1.setHighlightEnabled(true);
                         overallDataSet1.setCircleColor(0xFFFFD383); // Circle color at data points
                         overallDataSet1.setCircleRadius(4f); // Circle radius
@@ -1977,6 +1991,10 @@ public class AssessmentFragment extends Fragment {
                         overallLeftAxis.setDrawGridLines(false); // Remove Y grid lines (left)
                         YAxis overallRightAxis = left_knee_chart.getAxisRight();
                         overallRightAxis.setEnabled(false); // Disable right Y-axis
+
+                        MarkerView marker = new MyMarkerView(getContext(), R.layout.custom_marker_view);
+                        left_knee_chart.setMarker(marker);
+                        left_knee_chart.setHighlightPerTapEnabled(true);
 
                         // Configure the legend
 //                        Legend overallLegend = left_knee_chart.getLegend();
@@ -2041,8 +2059,8 @@ public class AssessmentFragment extends Fragment {
                         overallDataSet1.setValueTextColor(0xFF000000); // Value text color
                         overallDataSet1.setLineWidth(1f); // Line width
                         overallDataSet1.setCircleColor(0xFFFFD383); // Circle color at data points
-                        overallDataSet1.setDrawValues(true);
-                        overallDataSet1.setDrawCircles(true);
+                        overallDataSet1.setDrawValues(false);
+                        overallDataSet1.setDrawCircles(false);
                         overallDataSet1.setHighlightEnabled(true);
                         overallDataSet1.setCircleRadius(4f); // Circle radius
                         overallDataSet1.setMode(LineDataSet.Mode.CUBIC_BEZIER); // Make the graph curved
@@ -2076,6 +2094,10 @@ public class AssessmentFragment extends Fragment {
                         YAxis overallRightAxis = right_knee_chart.getAxisRight();
                         overallRightAxis.setEnabled(false); // Disable right Y-axis
                         right_knee_chart.getLegend().setEnabled(false);
+
+                        MarkerView marker = new MyMarkerView(getContext(), R.layout.custom_marker_view);
+                        right_knee_chart.setMarker(marker);
+                        right_knee_chart.setHighlightPerTapEnabled(true);
 
                         // Refresh the chart
                         right_knee_chart.invalidate(); // Redraw the chart with updated data
@@ -2200,13 +2222,22 @@ public class AssessmentFragment extends Fragment {
                         // Dynamically identify left or right leg arrays
                         if (key.contains("left-leg")) {
                             JSONArray graphData = legData.getJSONArray(1);
-                            for (int j = 0; j < graphData.length(); j++) {
-                                leftLegEntries.add(new Entry(j, graphData.getInt(j)));
+                            if(leftLegEntries.isEmpty()) {
+                                for (int j = 0; j < graphData.length(); j++) {
+                                    leftLegEntries.add(new Entry(j, graphData.getInt(j)));
+                                }
+                            }
+                            else{
+                                int k=leftLegEntries.size();
+                                for (int j = 0; j < graphData.length(); j++) {
+                                    leftLegEntries.add(new Entry(k++, graphData.getInt(j)));
+                                }
                             }
                         }
                     }
 
 
+                    Log.e("Assessment Fragment", String.valueOf(leftLegEntries));
                     // Create datasets for both legs
                     LineDataSet leftLegDataSet = new LineDataSet(leftLegEntries, "Left Leg");
                     leftLegDataSet.setColor(0xFF3D5AFE); // Blue color for left leg

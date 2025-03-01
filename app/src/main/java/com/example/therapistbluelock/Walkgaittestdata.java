@@ -5,74 +5,76 @@ import java.util.List;
 
 public class Walkgaittestdata {
 
-    double totalDistance,avgStandtime,meanVelocity;
-    int stepCountwalk,breakcount;
+    String totalDistance,avgStandtime,meanVelocity;
+    String stepCountwalk,breakcount;
 
-    List<String> swingtime = new ArrayList<>();
-    List<String> stance = new ArrayList<>();
-    List<String> stride = new ArrayList<>();
-    List<String> strideper = new ArrayList<>();
-    List<String> step = new ArrayList<>();
-    double cade;
+    String swingtime;
+    String stance;
+    String stride;
+    String strideper;
+    String step;
+    String cade;
 
-    public double getTotalDistance() {
+    String activeTime;
+
+    public String getTotalDistance() {
         return totalDistance;
     }
 
-    public void setTotalDistance(double totalDistance) {
+    public void setTotalDistance(String totalDistance) {
         this.totalDistance = totalDistance;
     }
 
-    public double getAvgStandtime() {
+    public String getAvgStandtime() {
         return avgStandtime;
     }
 
-    public void setAvgStandtime(double avgStandtime) {
+    public void setAvgStandtime(String avgStandtime) {
         this.avgStandtime = avgStandtime;
     }
 
-    public double getMeanVelocity() {
+    public String getMeanVelocity() {
         return meanVelocity;
     }
 
-    public void setMeanVelocity(double meanVelocity) {
+    public void setMeanVelocity(String meanVelocity) {
         this.meanVelocity = meanVelocity;
     }
 
-    public int getStepCountwalk() {
+    public String getStepCountwalk() {
         return stepCountwalk;
     }
 
-    public void setStepCountwalk(int stepCountwalk) {
+    public void setStepCountwalk(String stepCountwalk) {
         this.stepCountwalk = stepCountwalk;
     }
 
-    public long getActiveTime() {
+    public String getActiveTime() {
         return activeTime;
     }
 
-    public void setActiveTime(long activeTime) {
+    public void setActiveTime(String activeTime) {
         this.activeTime = activeTime;
     }
 
-    public int getBreakcount() {
+    public String getBreakcount() {
         return breakcount;
     }
 
-    public void setBreakcount(int breakcount) {
+    public void setBreakcount(String breakcount) {
         this.breakcount = breakcount;
     }
 
-    public Walkgaittestdata(double totalDistance, double avgStandtime, List swingtime, List stance, List stride, double meanVelocity, double cade, List step, List strideper ,int stepCountwalk, long activeTime, int breakcount) {
+    public Walkgaittestdata(String totalDistance, String avgStandtime, String swingtime, String stance, String stride, String meanVelocity, String cade, String step, String strideper ,String stepCountwalk, String activeTime, String breakcount) {
         this.totalDistance = totalDistance;
         this.avgStandtime = avgStandtime;
-        this.swingtime = new ArrayList<>(swingtime);
-        this.stance = new ArrayList<>(stance);
-        this.stride = new ArrayList<>(stride);
+        this.swingtime = swingtime;
+        this.stance = stance;
+        this.stride = stride;
         this.meanVelocity = meanVelocity;
         this.cade = cade;
-        this.step = new ArrayList<>(step);
-        this.strideper = new ArrayList<>(strideper);
+        this.step = step;
+        this.strideper = strideper;
         this.stepCountwalk = stepCountwalk;
         this.activeTime = activeTime;
         this.breakcount = breakcount;
@@ -80,55 +82,55 @@ public class Walkgaittestdata {
 
 
 
-    public List<String> getStance() {
+    public String getStance() {
         return stance;
     }
 
-    public void setStance(List<String> stance) {
+    public void setStance(String stance) {
         this.stance = stance;
     }
 
 
-    public List<String> getSwingtime() {
+    public String getSwingtime() {
         return swingtime;
     }
 
-    public void setSwingtime(List<String> swingtime) {
+    public void setSwingtime(String swingtime) {
         this.swingtime = swingtime;
     }
 
-    public List<String> getStride() {
+    public String getStride() {
         return stride;
     }
 
-    public void setStride(List<String> stride) {
+    public void setStride(String stride) {
         this.stride = stride;
     }
 
-    public List<String> getStrideper() {
+    public String getStrideper() {
         return strideper;
     }
 
-    public void setStrideper(List<String> strideper) {
+    public void setStrideper(String strideper) {
         this.strideper = strideper;
     }
 
-    public List<String> getStep() {
+    public String getStep() {
         return step;
     }
 
-    public void setStep(List<String> step) {
+    public void setStep(String step) {
         this.step = step;
     }
 
-    public double getCade() {
+    public String getCade() {
         return cade;
     }
 
-    public void setCade(double cade) {
+    public void setCade(String cade) {
         this.cade = cade;
     }
 
-    long activeTime;
+
 
 }
