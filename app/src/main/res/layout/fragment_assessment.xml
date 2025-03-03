@@ -31,23 +31,60 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="40dp"
-                        android:orientation="vertical"
-                        android:translationY="-5dp">
+                        android:orientation="horizontal">
 
-                        <TextView
-                            android:layout_width="match_parent"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Assessment"
-                            android:textColor="#000"
-                            android:textSize="20sp" />
+                            android:layout_marginStart="40dp"
+                            android:orientation="vertical"
+                            android:translationY="-5dp">
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="August 12, 2021"
-                            android:textColor="#666"
-                            android:textSize="16sp" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Assessment"
+                                android:textColor="#000"
+                                android:textSize="20sp" />
+
+                            <Spinner
+                                android:id="@+id/assessmentspinner"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginEnd="420dp"
+                                android:spinnerMode="dropdown" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="40dp"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:translationY="-5dp">
+
+                            <TextView
+                                android:id="@+id/performassessment"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Perform Assessment"
+                                android:textColor="#000"
+                                android:textSize="20sp" />
+
+
+                        </LinearLayout>
+
+
+<!--                        <TextView-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="August 12, 2021"-->
+<!--                            android:textColor="#666"-->
+<!--                            android:textSize="16sp" />-->
                     </LinearLayout>
 
                     <LinearLayout

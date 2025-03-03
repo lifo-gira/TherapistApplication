@@ -1,6 +1,7 @@
 package com.example.therapistbluelock;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -63,20 +64,29 @@ public class AssessmentFragment extends Fragment {
     private LineChart overall_chart, left_knee_chart, right_knee_chart, performance_chart, flexion_chart;
     TextView patientname, patientage1, patientgender, patientheight, patientweight, bmiStatus, health_check, patientid, leftrom, rightrom;
     JSONObject jsonObject = new JSONObject();
-    Spinner exercisespinner,modespinner,cyclespinner;
+    Spinner exercisespinner,modespinner,cyclespinner,assessmentspinner;
     List<String> exerciselist = new ArrayList<>();
     ArrayAdapter<String> exerciseadapter;
     List<String> exerciselist1 = new ArrayList<>();
     ArrayAdapter<String> exerciseadapter1;
     List<String> exerciselist2 = new ArrayList<>();
     ArrayAdapter<String> exerciseadapter2;
+    List<String> assessmentlist = new ArrayList<>();
+    ArrayAdapter<String> assessmentadapter;
     public static String exercisename;
+
+    JSONObject parentjsonobject = new JSONObject();
     JSONObject matchingJSONObject = new JSONObject();
     JSONObject matchingJSONObject1 = new JSONObject();
 
     ImageView dicomimage;
 
     TextView dicomdeform,lefthka,righthka,mptaleft,mptaright,ldfaleft,ldfaright;
+
+    TextView performassessment;
+
+    String selectedobject;
+
 
     public AssessmentFragment() {
         // Required empty public constructor
@@ -99,6 +109,9 @@ public class AssessmentFragment extends Fragment {
 
         // Attach the callback to the activity's OnBackPressedDispatcher
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+
+        MainActivity.detailfragflag =0;
+
         patientname = rootView.findViewById(R.id.patientname);
         patientage1 = rootView.findViewById(R.id.patientage1);
         patientgender = rootView.findViewById(R.id.patientgender);
@@ -112,16 +125,31 @@ public class AssessmentFragment extends Fragment {
         exercisespinner = rootView.findViewById(R.id.exercisespinner);
         modespinner = rootView.findViewById(R.id.modespinner);
         cyclespinner = rootView.findViewById(R.id.cyclespinner);
+        assessmentspinner = rootView.findViewById(R.id.assessmentspinner);
 
         Iterator<String> keys = MainActivity.assessmentexercise.keys();
+        assessmentlist.clear();
+        while(keys.hasNext()){
+            String na=keys.next();
+            assessmentlist.add(na);
+
+        }
+        Log.e("Sample Pat Assessment Keys", String.valueOf(assessmentlist));
+        assessmentadapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, assessmentlist);
+        assessmentadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        assessmentspinner.setAdapter(assessmentadapter);
+
         exerciselist.clear();
         exerciselist1.clear();
         exerciselist2.clear();
-        exerciselist.add(0,"Select an Exercise");
-        while (keys.hasNext()) {
-            String testName = keys.next();
-            exerciselist.add(testName);
-        }
+
+
+
+
+
+
+
+
 
         dicomimage = rootView.findViewById(R.id.dicomimage);
         dicomdeform = rootView.findViewById(R.id.dicomdeform);
@@ -148,15 +176,64 @@ public class AssessmentFragment extends Fragment {
         exerciseadapter2 = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, exerciselist2);
         exerciseadapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         cyclespinner.setAdapter(exerciseadapter2);
+
+
         overall_chart = rootView.findViewById(R.id.overall_chart);
         left_knee_chart = rootView.findViewById(R.id.left_knee_chart);
-        setupLeftKneeChart();
+
         right_knee_chart = rootView.findViewById(R.id.right_knee_chart);
-        setupRightKneeChart();
+
         performance_chart = rootView.findViewById(R.id.performance_chart);
-        setupPerformanceChart();
+
         flexion_chart = rootView.findViewById(R.id.flexion_chart);
-        setupFlexionChart();
+
+
+        assessmentspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = parent.getItemAtPosition(position).toString();
+                selectedobject = selectedItem;
+
+//                modespinner.setSelection(0);
+//                cyclespinner.setSelection(0);
+                overall_chart.clear();
+                left_knee_chart.clear();
+                right_knee_chart.clear();
+                performance_chart.clear();
+                flexion_chart.clear();
+
+                parentjsonobject = new JSONObject();
+                try {
+                    parentjsonobject = MainActivity.assessmentexercise.getJSONObject(selectedItem);
+
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                Log.e("Assessment Spinner selection", String.valueOf(parentjsonobject));
+                Iterator<String> keys1 = parentjsonobject.keys();
+                exerciselist.clear();
+                exerciselist.add(0,"Select an Exercise");
+                exercisespinner.setSelection(0);
+                while (keys1.hasNext()) {
+                    String testName = keys1.next();
+                    exerciselist.add(testName);
+                }
+                assessmentadapter.notifyDataSetChanged();
+                exerciseadapter.notifyDataSetChanged();
+                // Start the AsyncTask to fetch exercise data
+                new FetchExerciseDataTask().execute();
+
+                setupLeftKneeChart();
+                setupRightKneeChart();
+                setupPerformanceChart();
+                setupFlexionChart();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
 
         exercisespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -167,7 +244,7 @@ public class AssessmentFragment extends Fragment {
                 cyclespinner.setSelection(0);
                 overall_chart.clear();
 
-                Log.e("Mobility Exercise Cycle List 1", String.valueOf(exerciselist2));
+                Log.e("Mobility Exercise Cycle List 1", String.valueOf(selectedItem));
 
                 if("Select an Exercise".equalsIgnoreCase(selectedItem)){
                     cyclespinner.setVisibility(View.GONE);
@@ -190,7 +267,7 @@ public class AssessmentFragment extends Fragment {
                 else if("Walk and Gait Analysis".equalsIgnoreCase(selectedItem)){
                     cyclespinner.setVisibility(View.VISIBLE);
                     modespinner.setVisibility(View.GONE);
-                    Iterator<String> keys = MainActivity.assessmentexercise.keys();
+                    Iterator<String> keys = parentjsonobject.keys();
                     exerciselist2.clear();
                     exerciselist2.add(0,"Select a Cycle");
                     exerciseadapter2.notifyDataSetChanged();
@@ -205,7 +282,7 @@ public class AssessmentFragment extends Fragment {
                             ArrayList<Entry> overallEntries2 = new ArrayList<>();
 
                             try {
-                                testDetails = MainActivity.assessmentexercise.getJSONObject(testName);
+                                testDetails = parentjsonobject.getJSONObject(testName);
                                 HashSet<String> uniqueCycles = new HashSet<>();
 
                                 Iterator<String> cycleKeys = testDetails.keys();
@@ -232,7 +309,7 @@ public class AssessmentFragment extends Fragment {
                 else if("Extension Lag Test".equalsIgnoreCase(selectedItem)){
                     cyclespinner.setVisibility(View.VISIBLE);
                     modespinner.setVisibility(View.GONE);
-                    Iterator<String> keys = MainActivity.assessmentexercise.keys();
+                    Iterator<String> keys = parentjsonobject.keys();
                     exerciselist2.clear();
                     exerciselist2.add(0,"Select a Cycle");
                     exerciseadapter2.notifyDataSetChanged();
@@ -241,7 +318,7 @@ public class AssessmentFragment extends Fragment {
                     JSONObject testDetails = new JSONObject();
 
                     try {
-                        testDetails = MainActivity.assessmentexercise.getJSONObject(selectedItem);
+                        testDetails = parentjsonobject.getJSONObject(selectedItem);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
@@ -294,7 +371,7 @@ public class AssessmentFragment extends Fragment {
                     if("Proprioception Test".equalsIgnoreCase(selectedItem)){
                         cyclespinner.setVisibility(View.VISIBLE);
                         modespinner.setVisibility(View.GONE);
-                        Iterator<String> keys = MainActivity.assessmentexercise.keys();
+                        Iterator<String> keys = parentjsonobject.keys();
                         exerciselist2.clear();
                         exerciselist2.add(0,"Select a Cycle");
                         exerciseadapter2.notifyDataSetChanged();
@@ -309,7 +386,7 @@ public class AssessmentFragment extends Fragment {
                                 ArrayList<Entry> overallEntries2 = new ArrayList<>();
 
                                 try {
-                                    testDetails = MainActivity.assessmentexercise.getJSONObject(testName);
+                                    testDetails = parentjsonobject.getJSONObject(testName);
                                     HashSet<String> uniqueCycles = new HashSet<>();
 
                                     Iterator<String> cycleKeys = testDetails.keys();
@@ -338,6 +415,8 @@ public class AssessmentFragment extends Fragment {
                     }
                 }
 
+                exerciseadapter2.notifyDataSetChanged();
+
                 Log.e("Mobility Exercise Cycle List 1", String.valueOf(exerciselist2));
 
             }
@@ -357,7 +436,7 @@ public class AssessmentFragment extends Fragment {
                 Log.e("Mobility Exercise Cycle List 2", String.valueOf(exerciselist2));
 
                 try {
-                    testDetails = MainActivity.assessmentexercise.getJSONObject(exercisename);
+                    testDetails = parentjsonobject.getJSONObject(exercisename);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -470,30 +549,31 @@ public class AssessmentFragment extends Fragment {
                     // Log.d("Extension Lag Data", String.valueOf(testDetails));
 
                     HashSet<String> uniqueCycles = new HashSet<>(); // Move outside the loop
+                    if(!"Select a Mode".equalsIgnoreCase(selectedItem)) {
+                        while (cycleKeys.hasNext()) {
+                            String cycleKey = cycleKeys.next();
+                            String modename = "eyes-open";
+                            if ("eyes open".equalsIgnoreCase(selectedItem)) {
+                                modename = "eyes-open";
+                            } else {
+                                modename = "eyes-closed";
+                            }
 
-                    while (cycleKeys.hasNext()) {
-                        String cycleKey = cycleKeys.next();
-                        String modename = "eyes-open";
-                        if ("eyes open".equalsIgnoreCase(selectedItem)) {
-                            modename = "eyes-open";
-                        } else {
-                            modename = "eyes-closed";
-                        }
-
-                        if (cycleKey.toLowerCase().contains(modename.toLowerCase())) { // Match keys ending with the selected cycle number
-                            try {
-                                Object value = testDetails.get(cycleKey);
-                                String cycleNumber = "";
-                                if (cycleKey.matches(".*-\\d+$")) { // Check if the key ends with digits preceded by "-"
-                                    cycleNumber = cycleKey.replaceAll(".*-(\\d+)$", "$1"); // Extract digits after the last "-"
-                                    // Only add unique cycle numbers
-                                    if (uniqueCycles.add(cycleNumber)) { // add() returns false if the number is already in the set
-                                        exerciselist2.add("Cycle: " + cycleNumber);
+                            if (cycleKey.toLowerCase().contains(modename.toLowerCase())) { // Match keys ending with the selected cycle number
+                                try {
+                                    Object value = testDetails.get(cycleKey);
+                                    String cycleNumber = "";
+                                    if (cycleKey.matches(".*-\\d+$")) { // Check if the key ends with digits preceded by "-"
+                                        cycleNumber = cycleKey.replaceAll(".*-(\\d+)$", "$1"); // Extract digits after the last "-"
+                                        // Only add unique cycle numbers
+                                        if (uniqueCycles.add(cycleNumber)) { // add() returns false if the number is already in the set
+                                            exerciselist2.add("Cycle: " + cycleNumber);
+                                        }
                                     }
+                                    matchingJSONObject.put(cycleKey, value);
+                                } catch (JSONException e) {
+                                    e.printStackTrace(); // Handle JSON exceptions
                                 }
-                                matchingJSONObject.put(cycleKey, value);
-                            } catch (JSONException e) {
-                                e.printStackTrace(); // Handle JSON exceptions
                             }
                         }
                     }
@@ -559,7 +639,7 @@ public class AssessmentFragment extends Fragment {
                 Log.e("Mobility Exercise Cycle List 3", String.valueOf(exerciselist2));
 
                 try {
-                    testDetails = MainActivity.assessmentexercise.getJSONObject(exercisename);
+                    testDetails = parentjsonobject.getJSONObject(exercisename);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -787,9 +867,16 @@ public class AssessmentFragment extends Fragment {
         exerciseRecyclerView = rootView.findViewById(R.id.exercise_recycler_view);
         exerciseRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Start the AsyncTask to fetch exercise data
-        new FetchExerciseDataTask().execute();
 
+
+        performassessment = rootView.findViewById(R.id.performassessment);
+        performassessment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), BluetoothConnection.class);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
@@ -872,7 +959,7 @@ public class AssessmentFragment extends Fragment {
                                 }
                             }
                         }
-                        else if("Mobility Test".equalsIgnoreCase(exerciseName) || "Dynamic Balance Test".equalsIgnoreCase(exerciseName) || "Static Balance Test".equalsIgnoreCase(exerciseName) || "Walk and Gait Analysis".equalsIgnoreCase(exerciseName) || "Staircase Climbing Test".equalsIgnoreCase(exerciseName) || "Proprioception Test".equalsIgnoreCase(exerciseName)){
+                        else if("Mobility Test".equalsIgnoreCase(exerciseName) || "Dynamic Balance Test".equalsIgnoreCase(exerciseName) || "Static Balance Test".equalsIgnoreCase(exerciseName) || "Walk and Gait Analysis".equalsIgnoreCase(exerciseName) || "Staircase Climbing Test".equalsIgnoreCase(exerciseName)){
                             for (int index = 0; index < valueList.size(); index++) {
                                 if (index % 2 != 0) { // Odd index condition
                                     Object subArray = valueList.get(index);
@@ -881,7 +968,16 @@ public class AssessmentFragment extends Fragment {
                                     }
                                 }
                             }
-
+                        }
+                        else if("Proprioception Test".equalsIgnoreCase(exerciseName)){
+                            for (int index = 0; index < valueList.size(); index++) {
+                                if (index == 2) { // Odd index condition
+                                    Object subArray = valueList.get(index);
+                                    if (subArray instanceof List && !((List<?>) subArray).isEmpty()) {
+                                        filteredList.add(subArray);
+                                    }
+                                }
+                            }
                         }
                         else {
                             for (int index = 0; index < valueList.size(); index++) {
@@ -1041,15 +1137,16 @@ public class AssessmentFragment extends Fragment {
                                     filteredList.add(subArray);
                                 }
                             }
+                            Log.e("Table Extension Proprio", String.valueOf(filteredList));
                             for (int i = 0; i < filteredList.size(); i++) {
                                 Map<String, String> row = new HashMap<>();
                                 // If the filtered list has enough subarrays for the current index `i`
                                 if (filteredList.size() != 0) {
                                     List<?> subArray = (List<?>) filteredList.get(i);
-                                    Log.e("Table Extension", subArray.toString());
+//                                    Log.e("Table Extension Proprio", subArray.toString());
 //                                    Log.e("Params Anirudh", String.valueOf(filteredList));
                                     // Ensure subArray has the expected number of elements (at least 4)
-                                    if (subArray.size() == 4) {
+                                    if (subArray.size() == 3) {
                                         // Add the data for cycle number, leg, angles, velocity, and pain to the row
                                          // i+1 for cycle number
                                         int lastHyphenIndex = paramName.lastIndexOf('-');
@@ -1057,7 +1154,8 @@ public class AssessmentFragment extends Fragment {
                                         String result = paramName.substring(0, lastHyphenIndex);
                                         row.put("Cycle No", paramName.substring(lastHyphenIndex + 1));
                                         row.put("Leg", result);                   // leg name (e.g., leftleg or rightleg)
-                                        row.put("Maximum Extension", String.valueOf(subArray.get(0)));
+                                        row.put("Proprioception Angle", String.valueOf(subArray.get(1)));
+                                        row.put("Error Angle", String.valueOf(subArray.get(2)));
                                     }
                                     details.add(new TableDetail(i, row));
                                     Log.e("Cycle Row Data", String.valueOf(row));
@@ -1293,7 +1391,8 @@ public class AssessmentFragment extends Fragment {
                 else if("Proprioception Test".equalsIgnoreCase(exerciseName)){
                     headers.add("Cycle No");
                     headers.add("Leg");
-                    headers.add("Maximum Extension");
+                    headers.add("Proprioception Angle");
+                    headers.add("Error Angle");
                 }
                 else if("Extension Lag Test".equalsIgnoreCase(exerciseName)){
                     headers.add("Cycle No");
@@ -1358,15 +1457,21 @@ public class AssessmentFragment extends Fragment {
 
         JSONArray jsonArray = new JSONArray();
         JSONObject subobj = new JSONObject();
+        Log.e("Tabular Value", String.valueOf(MainActivity.assessmentexercise));
+        Iterator<String> keys1 = MainActivity.assessmentexercise.keys();
+        while(keys1.hasNext()){
+            Log.e("Tabular Value", String.valueOf(keys1.next()));
+        }
+        Log.e("Tabular Value", selectedobject);
         try {
 //            for (int i = 0; i < MainActivity.selectedpatientassesementdata.length(); i++) {
-                JSONObject jsonObject1 = MainActivity.selectedpatientassesementdata.getJSONObject(0);
-                JSONObject jsonObject2 = jsonObject1.getJSONObject("exercises");
-                Iterator<String> keys = jsonObject2.keys();
+                JSONObject jsonObject1 = MainActivity.assessmentexercise.getJSONObject(selectedobject);
+                //JSONObject jsonObject2 = jsonObject1.getJSONObject("exercises");
+                Iterator<String> keys = jsonObject1.keys();
                 while (keys.hasNext()) {
                     String exename = keys.next();
                     subobj = new JSONObject();
-                    subobj.put(exename, jsonObject2.getJSONObject(exename));
+                    subobj.put(exename, jsonObject1.getJSONObject(exename));
                     jsonArray.put(subobj);
                 }
 //            }
@@ -1411,7 +1516,7 @@ public class AssessmentFragment extends Fragment {
 
     private void setupOverallChart(String exercisename) {
 
-        Iterator<String> keys = MainActivity.assessmentexercise.keys();
+        Iterator<String> keys = parentjsonobject.keys();
         while (keys.hasNext()) {
             String testName = keys.next();
             try {
@@ -1423,7 +1528,7 @@ public class AssessmentFragment extends Fragment {
                     ArrayList<Entry> overallEntries1 = new ArrayList<>();
                     ArrayList<Entry> overallEntries2 = new ArrayList<>();
 
-                    testDetails = MainActivity.assessmentexercise.getJSONObject(testName);
+                    testDetails = parentjsonobject.getJSONObject(testName);
 //                    if ("Mobility Test".equalsIgnoreCase(testName) || "Proprioception Test".equalsIgnoreCase(testName)) {
 //                        leftlegdata = testDetails.getJSONArray("leftleg");
 //                        if (leftlegdata.length() > 0) {
@@ -1919,7 +2024,7 @@ public class AssessmentFragment extends Fragment {
     }
 
     private void setupLeftKneeChart() {
-        Iterator<String> keys = MainActivity.assessmentexercise.keys();
+        Iterator<String> keys = parentjsonobject.keys();
         while (keys.hasNext()) {
             String testName = keys.next();
 
@@ -1928,7 +2033,7 @@ public class AssessmentFragment extends Fragment {
                     JSONObject testDetails = new JSONObject();
                     JSONArray leftlegdata = new JSONArray();
                     JSONArray graphdata = new JSONArray();
-                    testDetails = MainActivity.assessmentexercise.getJSONObject(testName);
+                    testDetails = parentjsonobject.getJSONObject(testName);
                     Iterator<String> keys1 = testDetails.keys();
                     while(keys1.hasNext()){
                         String type = keys1.next();
@@ -2020,7 +2125,7 @@ public class AssessmentFragment extends Fragment {
     }
 
     private void setupRightKneeChart() {
-        Iterator<String> keys = MainActivity.assessmentexercise.keys();
+        Iterator<String> keys = parentjsonobject.keys();
         while (keys.hasNext()) {
             String testName = keys.next();
             try {
@@ -2029,7 +2134,7 @@ public class AssessmentFragment extends Fragment {
                     JSONArray leftlegdata = new JSONArray();
                     JSONArray graphdata = new JSONArray();
 
-                    testDetails = MainActivity.assessmentexercise.getJSONObject(testName);
+                    testDetails = parentjsonobject.getJSONObject(testName);
 
                     Iterator<String> keys1 = testDetails.keys();
                     while(keys1.hasNext()){
@@ -2111,7 +2216,7 @@ public class AssessmentFragment extends Fragment {
     }
 
     private void setupPerformanceChart() {
-        Iterator<String> keys = MainActivity.assessmentexercise.keys();
+        Iterator<String> keys = parentjsonobject.keys();
         while (keys.hasNext()) {
             String testName = keys.next();
             try {
@@ -2122,7 +2227,7 @@ public class AssessmentFragment extends Fragment {
                     ArrayList<Entry> rightLegEntries = new ArrayList<>();
                     int leftMax = 0, rightMax = 0;
 
-                    testDetails = MainActivity.assessmentexercise.getJSONObject(testName);
+                    testDetails = parentjsonobject.getJSONObject(testName);
 
                     Iterator<String> keys1 = testDetails.keys();
 
@@ -2201,7 +2306,7 @@ public class AssessmentFragment extends Fragment {
 
     private void setupFlexionChart() {
 
-        Iterator<String> keys = MainActivity.assessmentexercise.keys();
+        Iterator<String> keys = parentjsonobject.keys();
         while (keys.hasNext()) {
             String testName = keys.next();
             try {
@@ -2211,7 +2316,7 @@ public class AssessmentFragment extends Fragment {
                     ArrayList<Entry> leftLegEntries = new ArrayList<>();
                     int leftMax = 0, rightMax = 0;
 
-                    testDetails = MainActivity.assessmentexercise.getJSONObject(testName);
+                    testDetails = parentjsonobject.getJSONObject(testName);
 
                     Iterator<String> keys1 = testDetails.keys();
 

@@ -60,6 +60,8 @@ import okhttp3.RequestBody;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+
+    public static int detailfragflag =0;
     TextInputEditText emailInputText, passwordEditText;
 
     public static String therapistusername, therapistuserid, therapistname;

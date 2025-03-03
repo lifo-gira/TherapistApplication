@@ -233,41 +233,41 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
     public static int sec = 0;
     private static final Map<String, List<DetailItem>> ALL_EXERCISES = new HashMap<>();
 
-    static {
-        ALL_EXERCISES.put("Sit Exercises", Arrays.asList(
-                new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"),
-                new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test")
-        ));
-
-        ALL_EXERCISES.put("Prone Exercises", Arrays.asList(
-                new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test")
-        ));
-
-        ALL_EXERCISES.put("Stand Exercises", Arrays.asList(
-                new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test")
-        ));
-
-        ALL_EXERCISES.put("Walk Exercises", Arrays.asList(
-                new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"),
-                new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"),
-                new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis")
-        ));
-
-        ALL_EXERCISES.put("Others", Arrays.asList(
-                new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength")
-        ));
-
-        ALL_EXERCISES.put("All Exercises", Arrays.asList(
-                new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test"),
-                new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"),
-                new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test"),
-                new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test"),
-                new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"),
-                new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"),
-                new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis"),
-                new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength")
-        ));
-    }
+//    static {
+//        ALL_EXERCISES.put("Sit Exercises", Arrays.asList(
+//                new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"),
+//                new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test")
+//        ));
+//
+//        ALL_EXERCISES.put("Prone Exercises", Arrays.asList(
+//                new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test")
+//        ));
+//
+//        ALL_EXERCISES.put("Stand Exercises", Arrays.asList(
+//                new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test")
+//        ));
+//
+//        ALL_EXERCISES.put("Walk Exercises", Arrays.asList(
+//                new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"),
+//                new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"),
+//                new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis")
+//        ));
+//
+//        ALL_EXERCISES.put("Others", Arrays.asList(
+//                new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength")
+//        ));
+//
+//        ALL_EXERCISES.put("All Exercises", Arrays.asList(
+//                new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test"),
+//                new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"),
+//                new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test"),
+//                new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test"),
+//                new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"),
+//                new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"),
+//                new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis"),
+//                new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength")
+//        ));
+//    }
 
     public static int seconds = 0;
     public static int minutes = 0;
@@ -352,6 +352,14 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
             }
         };
         this.getOnBackPressedDispatcher().addCallback(this, callback);
+
+        if(MainActivity.detailfragflag == 0){
+            MainActivity.detailfragflag =1;
+            initializeAllExercises();
+        }
+
+        Log.e("Navigated from assessment fragment",HomeFragment.userid);
+
         try {
             finalexedata.put("exercises", exedata);
             finaldataarray.put(finalexedata);
@@ -740,6 +748,7 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
 //                .create();
 
 
+
         boolean mobilityTestPresent = false;
         boolean proprioceptionTestPresent = false;
         JSONArray jsonArray = new JSONArray();
@@ -789,46 +798,46 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
             }
 
 
-            if (sumbitflag == 1) {
-                postdata.put(postexedata);
-                Log.e("Anirudh P Menon", String.valueOf(postdata));
-                try {
-                    // Loop through each object in the postdata array
-                    for (int i = 0; i < postdata.length(); i++) {
-                        JSONObject jsonObject = postdata.getJSONObject(i);
-
-                        // Check if the 'exercises' key exists and contains "Mobility Test"
-                        if (jsonObject.has("exercises")) {
-                            JSONObject exercises = jsonObject.getJSONObject("exercises");
-
-                            // Check if "Mobility Test" key exists and has values
-                            if (exercises.has("Mobility Test")) {
-                                // Get the "Mobility Test" data
-                                JSONObject mobilityTest = exercises.getJSONObject("Mobility Test");
-
-                                // Check if the "leftleg" array (or any other data within "Mobility Test") has values
-                                if (mobilityTest.has("leftleg") && mobilityTest.has("rightleg")) {
-                                    JSONArray leftlegData = mobilityTest.getJSONArray("leftleg");
-                                    JSONArray rightleg = mobilityTest.getJSONArray("rightleg");
-                                    // Check if the "leftleg" array is not empty
-                                    if (leftlegData.length() == 0) {
-//                                        mobleftcheck.setImageResource(R.drawable.cross);
-                                        Toasty.error(DetailFrag_5.this, "Perform Mobility Test to submit data", Toast.LENGTH_SHORT, true).show();
-                                        return;
-                                    }
-                                    if (rightleg.length() == 0) {
-//                                        mobrightcheck.setImageResource(R.drawable.cross);
-                                        Toasty.error(DetailFrag_5.this, "Perform Mobility Test to submit data", Toast.LENGTH_SHORT, true).show();
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+//            if (sumbitflag == 1) {
+////                postdata.put(postexedata);
+//                Log.e("Anirudh P Menon", String.valueOf(postdata));
+//                try {
+//                    // Loop through each object in the postdata array
+//                    for (int i = 0; i < postdata.length(); i++) {
+//                        JSONObject jsonObject = postdata.getJSONObject(i);
+//
+//                        // Check if the 'exercises' key exists and contains "Mobility Test"
+//                        if (jsonObject.has("exercises")) {
+//                            JSONObject exercises = jsonObject.getJSONObject("exercises");
+//
+//                            // Check if "Mobility Test" key exists and has values
+//                            if (exercises.has("Mobility Test")) {
+//                                // Get the "Mobility Test" data
+//                                JSONObject mobilityTest = exercises.getJSONObject("Mobility Test");
+//
+//                                // Check if the "leftleg" array (or any other data within "Mobility Test") has values
+//                                if (mobilityTest.has("leftleg") && mobilityTest.has("rightleg")) {
+//                                    JSONArray leftlegData = mobilityTest.getJSONArray("leftleg");
+//                                    JSONArray rightleg = mobilityTest.getJSONArray("rightleg");
+//                                    // Check if the "leftleg" array is not empty
+//                                    if (leftlegData.length() == 0) {
+////                                        mobleftcheck.setImageResource(R.drawable.cross);
+//                                        Toasty.error(DetailFrag_5.this, "Perform Mobility Test to submit data", Toast.LENGTH_SHORT, true).show();
+//                                        return;
+//                                    }
+//                                    if (rightleg.length() == 0) {
+////                                        mobrightcheck.setImageResource(R.drawable.cross);
+//                                        Toasty.error(DetailFrag_5.this, "Perform Mobility Test to submit data", Toast.LENGTH_SHORT, true).show();
+//                                        return;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
 
             //jsonArray = new JSONArray(jsonData);
             Log.e("Final Posting Data", String.valueOf(postdata));
@@ -850,74 +859,105 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
             e.printStackTrace();
         }
 
-        if (sumbitflag == 1) {
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                    Request.Method.PUT,
-                    "https://api-wo6.onrender.com/update-assessment-info/" + HomeFragment.userid + "/" + 0,
-                    postdata,
-                    new Response.Listener<JSONArray>() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            try {
-                                // Convert the first item in the JSONArray to a JSONObject
-                                JSONObject responseObj = response.getJSONObject(0);
-                                Log.e("Posting Response", String.valueOf(response));
 
-                                if ("Assessment information updated successfully".equals(responseObj.getString("message"))) {
-                                    cleanupBluetoothSockets();
-                                    SharedPreferences.Editor editor = getSharedPreferences("BluetoothPrefs", MODE_PRIVATE).edit();
-                                    editor.putBoolean("isConnected", false);
-                                    editor.apply();
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.PUT,
+                "https://api-wo6.onrender.com/update-assessment-info/" + HomeFragment.userid + "/" + 0,
+                postdata,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            // Convert the first item in the JSONArray to a JSONObject
+                            JSONObject responseObj = response.getJSONObject(0);
+                            Log.e("Posting Response", String.valueOf(response));
+
+                            if ("Assessment information updated successfully".equals(responseObj.getString("message"))) {
+                                cleanupBluetoothSockets();
+                                SharedPreferences.Editor editor = getSharedPreferences("BluetoothPrefs", MODE_PRIVATE).edit();
+                                editor.putBoolean("isConnected", false);
+                                editor.apply();
 //                                            dialog.dismiss();
-                                    MainActivity.patflag = 0;
-                                    SharedData.detailItems.clear();
-                                    ALL_EXERCISES.clear();
-                                    completedExercisesMap.clear();
-                                    postdata = new JSONArray();
-                                    postexevalues = new JSONArray();
-                                    postdataobj = new JSONObject();
-                                    postexedata = new JSONObject();
-                                    postexeparameters = new JSONArray();
-                                    postexesubdata = new JSONObject();
-                                    Intent intent = new Intent(DetailFrag_5.this, Dashboard.class);
-                                    startActivity(intent);
-                                }
-                                Log.d("Exercise Submit Response", responseObj.getString("message"));
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
+                                MainActivity.patflag = 0;
+                                SharedData.detailItems.clear();
+                                ALL_EXERCISES.clear();
+                                completedExercisesMap.clear();
+                                postdata = new JSONArray();
+                                postexevalues = new JSONArray();
+                                postdataobj = new JSONObject();
+                                postexedata = new JSONObject();
+                                postexeparameters = new JSONArray();
+                                postexesubdata = new JSONObject();
+                                Intent intent = new Intent(DetailFrag_5.this, Dashboard.class);
+                                startActivity(intent);
                             }
+                            Log.d("Exercise Submit Response", responseObj.getString("message"));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
                         }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.e("Exercise Submit Error", error.toString());
-                        }
-                    }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("Content-Type", "application/json");
-                    return params;
-                }
-            };
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Exercise Submit Error", error.toString());
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/json");
+                return params;
+            }
+        };
 
 //                 Add the request to the RequestQueue
-            requestQueue.add(jsonArrayRequest);
-        } else {
-            if (mobilityTestPresent) {
-                Toasty.error(DetailFrag_5.this, "Proprioception Test Not Done", Toast.LENGTH_LONG).show();
-            } else if (proprioceptionTestPresent) {
-                Toasty.error(DetailFrag_5.this, "Mobility Test Not Done", Toast.LENGTH_LONG).show();
-            } else {
-                Toasty.error(DetailFrag_5.this, "Mobility Test and Proprioception Test Not Done", Toast.LENGTH_LONG).show();
-            }
-        }
+        requestQueue.add(jsonArrayRequest);
 
 
     }
+
+    private void initializeAllExercises() {
+        ALL_EXERCISES.clear(); // Clear previous data to avoid duplication
+
+        ALL_EXERCISES.put("Sit Exercises", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test")
+        ));
+
+        ALL_EXERCISES.put("Prone Exercises", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test")
+        ));
+
+        ALL_EXERCISES.put("Stand Exercises", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test")
+        ));
+
+        ALL_EXERCISES.put("Walk Exercises", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis")
+        ));
+
+        ALL_EXERCISES.put("Others", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength")
+        ));
+
+        ALL_EXERCISES.put("All Exercises", Arrays.asList(
+                new DetailItem(R.drawable.wheelchair_annan, "Mobility Test", "Pending", Color.RED, "Mobility Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Extension Lag Test", "Pending", Color.RED, "Extension Lag Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Proprioception Test", "Pending", Color.RED, "Proprioception Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Static Balance Test", "Pending", Color.RED, "Static Balance Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Dynamic Balance Test", "Pending", Color.RED, "Dynamic Balance Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Staircase Climbing Test", "Pending", Color.RED, "Staircase Climbing Test"),
+                new DetailItem(R.drawable.wheelchair_annan, "Walk and Gait Analysis", "Pending", Color.RED, "Walk and Gait Analysis"),
+                new DetailItem(R.drawable.wheelchair_annan, "Muscle Strength", "Pending", Color.RED, "Muscle Strength")
+        ));
+    }
+
 
 }
 

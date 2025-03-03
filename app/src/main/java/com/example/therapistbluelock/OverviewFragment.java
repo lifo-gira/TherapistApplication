@@ -79,6 +79,8 @@ public class OverviewFragment extends Fragment {
 
     TextView dicomdeform,lefthka,righthka,mptaleft,mptaright,ldfaleft,ldfaright;
 
+    JSONObject parentjsonObject = new JSONObject();
+
 
     public OverviewFragment() {
         // Default constructor
@@ -142,11 +144,12 @@ public class OverviewFragment extends Fragment {
             }
             for (int i = 0; i < MainActivity.selectedpatientassesementdata.length(); i++) {
                 MainActivity.assessmentmain = MainActivity.selectedpatientassesementdata.getJSONObject(i);
-                MainActivity.assessmentexercise = MainActivity.assessmentmain.getJSONObject("exercises");
+                MainActivity.assessmentexercise.put( "Assessment "+String.valueOf(i+1),MainActivity.assessmentmain.getJSONObject("exercises"));
                 Log.e("Patient Assessment Object", String.valueOf(MainActivity.assessmentexercise));
             }
 
 
+            HomeFragment.userid = MainActivity.selectedpatientdata.getString("patient_id");
             patientname.setText(MainActivity.selectedpatientdata.getString("patient_name"));
             jsonObject = MainActivity.selectedpatientdata.getJSONObject("PersonalDetails");
             patientage1.setText(String.valueOf(jsonObject.getInt("Age")));
@@ -165,6 +168,7 @@ public class OverviewFragment extends Fragment {
             } else if (jsonObject.getDouble("BMI") >= 30) {
                 health_check.setText("Obesity");
             }
+            parentjsonObject = MainActivity.assessmentexercise.getJSONObject("Assessment 1");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -309,7 +313,7 @@ public class OverviewFragment extends Fragment {
 
     private void setupOverallChart() {
 
-        Iterator<String> keys = MainActivity.assessmentexercise.keys();
+        Iterator<String> keys = parentjsonObject.keys();
         while (keys.hasNext()) {
             String testName = keys.next();
             try {
@@ -321,7 +325,7 @@ public class OverviewFragment extends Fragment {
                     ArrayList<Entry> overallEntries1 = new ArrayList<>();
                     ArrayList<Entry> overallEntries2 = new ArrayList<>();
 
-                    testDetails = MainActivity.assessmentexercise.getJSONObject(testName);
+                    testDetails = parentjsonObject.getJSONObject(testName);
                     Iterator<String> keys1 = testDetails.keys();
                     while(keys1.hasNext()){
                         String type = keys1.next();
@@ -434,7 +438,7 @@ public class OverviewFragment extends Fragment {
 
     private void setupLeftKneeChart() {
 
-        Iterator<String> keys = MainActivity.assessmentexercise.keys();
+        Iterator<String> keys = parentjsonObject.keys();
         while (keys.hasNext()) {
             String testName = keys.next();
 
@@ -443,7 +447,7 @@ public class OverviewFragment extends Fragment {
                     JSONObject testDetails = new JSONObject();
                     JSONArray leftlegdata = new JSONArray();
                     JSONArray graphdata = new JSONArray();
-                    testDetails = MainActivity.assessmentexercise.getJSONObject(testName);
+                    testDetails = parentjsonObject.getJSONObject(testName);
 
                     Iterator<String> keys1 = testDetails.keys();
                     while(keys1.hasNext()){
@@ -538,7 +542,7 @@ public class OverviewFragment extends Fragment {
 
     private void setupRightKneeChart() {
 
-        Iterator<String> keys = MainActivity.assessmentexercise.keys();
+        Iterator<String> keys = parentjsonObject.keys();
         while (keys.hasNext()) {
             String testName = keys.next();
             try {
@@ -547,7 +551,7 @@ public class OverviewFragment extends Fragment {
                     JSONArray leftlegdata = new JSONArray();
                     JSONArray graphdata = new JSONArray();
 
-                    testDetails = MainActivity.assessmentexercise.getJSONObject(testName);
+                    testDetails = parentjsonObject.getJSONObject(testName);
 
                     Iterator<String> keys1 = testDetails.keys();
                     while(keys1.hasNext()){
@@ -635,7 +639,7 @@ public class OverviewFragment extends Fragment {
 
     private void setupPerformanceChart() {
 
-        Iterator<String> keys = MainActivity.assessmentexercise.keys();
+        Iterator<String> keys = parentjsonObject.keys();
         while (keys.hasNext()) {
             String testName = keys.next();
             try {
@@ -646,7 +650,7 @@ public class OverviewFragment extends Fragment {
                     ArrayList<Entry> rightLegEntries = new ArrayList<>();
                     int leftMax = 0, rightMax = 0;
 
-                    testDetails = MainActivity.assessmentexercise.getJSONObject(testName);
+                    testDetails = parentjsonObject.getJSONObject(testName);
 
                     Iterator<String> keys1 = testDetails.keys();
 

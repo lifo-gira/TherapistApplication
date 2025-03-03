@@ -80,6 +80,9 @@ public class HomeFragment extends Fragment implements ScreenShotable, PatientsAs
 
         // Attach the callback to the activity's OnBackPressedDispatcher
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+
+        MainActivity.detailfragflag=0;
+
         // Initialize the vertical RecyclerView
         verticalRecyclerView = view.findViewById(R.id.patients_assigned);
         verticalRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

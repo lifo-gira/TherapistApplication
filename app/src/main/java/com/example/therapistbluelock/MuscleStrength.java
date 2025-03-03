@@ -40,6 +40,7 @@ public class MuscleStrength extends AppCompatActivity {
 //
 //    private ImageView bodyOutline;
 
+    Button complete_button;
     LineChart lineChart;
 
     @Override
@@ -134,6 +135,24 @@ public class MuscleStrength extends AppCompatActivity {
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 //            startActivity(intent);
 //        });
+
+        complete_button = findViewById(R.id.complete_button);
+        complete_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MuscleStrength.this, DetailFrag_5.class);
+                intent.putExtra("fragment_milestone", 5);
+                // Pass the updated values back
+                intent.putExtra("itemTitle", "Muscle Strength");
+                intent.putExtra("itemStatus", "Completed");
+                intent.putExtra("itemColor", Color.GREEN);
+
+                // Start the AssessmentList activity with the updated data
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+
     }
 
 

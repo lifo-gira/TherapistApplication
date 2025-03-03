@@ -444,7 +444,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             switch_button.setTextOn("Active");
             assess_cycles_passive.setVisibility(View.GONE);
             assess_cycles_active.setVisibility(View.VISIBLE);
-            speedometer1.setVisibility(View.VISIBLE);
+            speedometer1.setVisibility(View.GONE);
             dynamicbalancetestinfo.setVisibility(View.GONE);
             pickerContainer.setVisibility(View.GONE);
             proprionextcycle.setVisibility(View.VISIBLE);
@@ -5522,14 +5522,14 @@ currentMetricIndex =0;
                 }
 
                 // Provide feedback if any key is missing
-                if (!leftPresent) {
-                    Toasty.error(Assessment.this, "Missing data for left leg", Toast.LENGTH_LONG).show();
-                    return false;
-                }
-                if (!rightPresent) {
-                    Toasty.error(Assessment.this, "Missing data for right leg", Toast.LENGTH_LONG).show();
-                    return false;
-                }
+//                if (!leftPresent) {
+//                    Toasty.error(Assessment.this, "Missing data for left leg", Toast.LENGTH_LONG).show();
+//                    return false;
+//                }
+//                if (!rightPresent) {
+//                    Toasty.error(Assessment.this, "Missing data for right leg", Toast.LENGTH_LONG).show();
+//                    return false;
+//                }
             }
 
             while (keys.hasNext()) {

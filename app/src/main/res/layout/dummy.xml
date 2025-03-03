@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <FrameLayout
+        android:id="@+id/back_model"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top">
+
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="350dp"
+            android:src="@drawable/front_model"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <ImageView
+            android:id="@+id/left_hip"
+            android:layout_width="110dp"
+            android:layout_height="135dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="64dp"
+            android:visibility="gone"
+            android:src="@drawable/left_hip" />
+
+        <ImageView
+            android:id="@+id/right_hip"
+            android:layout_width="110dp"
+            android:layout_height="135dp"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"
+            android:layout_marginStart="126.5dp"
+            android:src="@drawable/right_hip" />
+
+        <ImageView
+            android:id="@+id/left_quad"
+            android:layout_width="120dp"
+            android:layout_height="170dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="60dp"
+            android:src="@drawable/right_thigh" />
+
+        <ImageView
+            android:id="@+id/right_quad"
+            android:layout_width="120dp"
+            android:layout_height="170dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="122.5dp"
+            android:src="@drawable/left_thigh" />
+
+        <!-- Arms and legs can be similarly anchored to head and torso -->
+
+    </FrameLayout>
+
+</LinearLayout>
