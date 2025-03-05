@@ -1200,29 +1200,6 @@ currentMetricIndex =0;
     }
 
     private void connectToDevice(BluetoothDevice device, int deviceIndex) {
-//        bluetoothDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
-//
-//        try {
-//            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BLUETOOTH_CONNECT}, 1);
-//                return;
-//            }
-//
-//            // Create a BluetoothSocket to connect with the given BluetoothDevice
-//            bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
-//            bluetoothSocket.connect(); // Connect to the device
-//
-//            // If connection is successful, start a thread to listen for incoming data
-//            new Thread(new DataReceiver(bluetoothSocket)).start();
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            try {
-//                bluetoothSocket.close(); // Close the socket if there was an error
-//            } catch (IOException closeException) {
-//                closeException.printStackTrace();
-//            }
-//        }
 
         // Avoid duplicate connections
         if (connectionManager.isDeviceConnected(device)) {
@@ -2243,7 +2220,8 @@ currentMetricIndex =0;
                         throw new RuntimeException(e);
                     }
                     DetailFrag_5.postsubdata = new JSONArray();
-                } else {
+                }
+                else {
                     for (int i = 0; i < DetailFrag_5.leftlegws.size(); i++) {
                         DetailFrag_5.postexevalues.put(DetailFrag_5.leftlegws.get(i));
                     }
@@ -2267,9 +2245,9 @@ currentMetricIndex =0;
                     for (int i = 0; i < DetailFrag_5.rightws.size(); i++) {
                         DetailFrag_5.postexevalues.put(DetailFrag_5.rightws.get(i));
                     }
-                    DetailFrag_5.postexeparameters.put((DetailFrag_5.sittostand));
-                    DetailFrag_5.postexeparameters.put((DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime));
-                    DetailFrag_5.postexeparameters.put((DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime));
+                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
+                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime));
+                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime));
 
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexevalues);
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexeparameters);
@@ -2613,8 +2591,8 @@ currentMetricIndex =0;
                         }
                         avgswingtime = (((rightswingtimetotal / rightswingtime.size()) + (leftswingtimetotal / rightswingtime.size()))) / 2;
                         swing = String.format("L: %.2f Sec R: %.2f Sec",
-                                (leftswingtimetotal / (double) rightswingtime.size()) / 1000.0,
-                                (rightswingtimetotal / (double) rightswingtime.size()) / 1000.0
+                                Math.abs((leftswingtimetotal / (double) rightswingtime.size()) / 1000.0),
+                                Math.abs((rightswingtimetotal / (double) rightswingtime.size()) / 1000.0)
                         );
                     }
                     else {
@@ -2625,8 +2603,8 @@ currentMetricIndex =0;
                         }
                         avgswingtime = ((rightswingtimetotal / leftswingtime.size()) + (leftswingtimetotal / leftswingtime.size())) / 2;
                         swing = String.format("L: %.2f Sec R: %.2f Sec",
-                                (leftswingtimetotal / leftswingtime.size()) / 1000.0,
-                                (rightswingtimetotal / leftswingtime.size()) / 1000.0
+                                Math.abs((leftswingtimetotal / leftswingtime.size()) / 1000.0),
+                                Math.abs((rightswingtimetotal / leftswingtime.size()) / 1000.0)
                         );
                     }
 
@@ -2855,7 +2833,7 @@ currentMetricIndex =0;
                         DetailFrag_5.postexeparameters.put(Math.round(DetailFrag_5.totalstancepahse / 1000));
                     }
 
-                    DetailFrag_5.meanVelocity = avgstridelength / activetime;
+                    DetailFrag_5.meanVelocity = (Math.round((steplengthtotal / 100.0) * 100.0) / 100.0) / activetime;
 
                     try {
                         DetailFrag_5.postexeparameters.put(Math.round((avgstridelength / 100.0) * 100.0) / 100.0);
