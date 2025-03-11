@@ -152,6 +152,7 @@ public class OverviewFragment extends Fragment {
             HomeFragment.userid = MainActivity.selectedpatientdata.getString("patient_id");
             patientname.setText(MainActivity.selectedpatientdata.getString("patient_name"));
             jsonObject = MainActivity.selectedpatientdata.getJSONObject("PersonalDetails");
+            MainActivity.patientheight=jsonObject.getInt("Height");
             patientage1.setText(String.valueOf(jsonObject.getInt("Age")));
             patientgender.setText(jsonObject.getString("Gender"));
             patientheight.setText(jsonObject.getInt("Height") + " cm");

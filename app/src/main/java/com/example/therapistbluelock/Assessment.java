@@ -19,6 +19,7 @@ import static com.example.therapistbluelock.DetailFrag_5.speedometer2;
 import static com.example.therapistbluelock.DetailFrag_5.staircaseclimbingtestdata;
 import static com.example.therapistbluelock.DetailFrag_5.staticbalancetestdata;
 import static com.example.therapistbluelock.DetailFrag_5.stepCountgait;
+import static com.example.therapistbluelock.DetailFrag_5.timestamps;
 import static com.example.therapistbluelock.DetailFrag_5.totalCycles1;
 import static com.example.therapistbluelock.DetailFrag_5.angles;
 import static com.example.therapistbluelock.DetailFrag_5.turnend;
@@ -238,8 +239,6 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
     private volatile boolean isRunning = true;
 
 
-
-
     JSONArray accldata = new JSONArray();
     JSONArray accldatax = new JSONArray();
     JSONArray accldatay = new JSONArray();
@@ -254,28 +253,30 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
     JSONArray yawdata = new JSONArray();
     JSONArray pitchdata = new JSONArray();
 
-    double leftacclx=0, leftaccly=0, leftacclz=0,rightacclx=0,rightaccly=0,rightacclz=0,yaw=0,pitch=0,roll=0,magx=0,magy=0,magz=0,gyrox=0,gyroy=0,gyroz=0;
-    double lefttotalAcceleration=0,righttotalAcceleration=0;
+    double leftacclx = 0, leftaccly = 0, leftacclz = 0, rightacclx = 0, rightaccly = 0, rightacclz = 0, yaw = 0, pitch = 0, roll = 0, magx = 0, magy = 0, magz = 0, gyrox = 0, gyroy = 0, gyroz = 0;
+    double lefttotalAcceleration = 0, righttotalAcceleration = 0;
 
-    int leftstepflag =0,rightstepflag=0;
+    int leftstepflag = 0, rightstepflag = 0;
 
     TextView dynamicbalancetestinfo;
 
-    int proprioflag=0;
+    int proprioflag = 0;
 
     CardView proprionextcycle;
     TextView proprionextcyclebtn;
 
-    int proprioswitchflag =0;
-    float propriopassvalue=0, proprioactvalue =0, propriototalvalue=0;
+    int proprioswitchflag = 0;
+    float propriopassvalue = 0, proprioactvalue = 0, propriototalvalue = 0;
 
 
     JSONObject propriopassive = new JSONObject();
     JSONObject proprioactive = new JSONObject();
 
-    int stepcountwalk=0;
+    int stepcountwalk = 0;
 
-    double lascent=0,lturn=0,ldescent=0,rascent=0,rturn=0,rdescent=0;
+    double lascent = 0, lturn = 0, ldescent = 0, rascent = 0, rturn = 0, rdescent = 0;
+
+    List<Float> sensordata = new ArrayList<>();
 
 
     @SuppressLint("MissingInflatedId")
@@ -371,8 +372,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             proprionextcycle.setVisibility(View.GONE);
             proprionextcyclebtn.setVisibility(View.GONE);
 
-        }
-        else if ("Extension Lag Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+        } else if ("Extension Lag Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
             number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.VISIBLE);
             Left.setVisibility(View.VISIBLE);
@@ -386,8 +386,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             dynamicbalancetestinfo.setVisibility(View.GONE);
             proprionextcycle.setVisibility(View.GONE);
             proprionextcyclebtn.setVisibility(View.GONE);
-        }
-        else if ("Dynamic Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+        } else if ("Dynamic Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
             number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.VISIBLE);
             Left.setVisibility(View.INVISIBLE);
@@ -401,8 +400,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             dynamicbalancetestinfo.setVisibility(View.VISIBLE);
             proprionextcycle.setVisibility(View.GONE);
             proprionextcyclebtn.setVisibility(View.GONE);
-        }
-        else if ("Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+        } else if ("Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
             number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.VISIBLE);
             Left.setVisibility(View.VISIBLE);
@@ -418,8 +416,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             dynamicbalancetestinfo.setVisibility(View.GONE);
             proprionextcycle.setVisibility(View.GONE);
             proprionextcyclebtn.setVisibility(View.GONE);
-        }
-        else if ("Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+        } else if ("Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
             number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.VISIBLE);
             Left.setVisibility(View.INVISIBLE);
@@ -433,8 +430,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             dynamicbalancetestinfo.setVisibility(View.GONE);
             proprionextcycle.setVisibility(View.GONE);
             proprionextcyclebtn.setVisibility(View.GONE);
-        }
-        else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+        } else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
             number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.VISIBLE);
             Left.setVisibility(View.VISIBLE);
@@ -449,8 +445,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
             pickerContainer.setVisibility(View.GONE);
             proprionextcycle.setVisibility(View.VISIBLE);
             proprionextcyclebtn.setVisibility(View.VISIBLE);
-        }
-        else if ("Walk and Gait analysis".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+        } else if ("Walk and Gait analysis".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
             number_picker_text.setText("Time Elapsed");
             activepassiveswitch.setVisibility(View.INVISIBLE);
             Left.setVisibility(View.INVISIBLE);
@@ -472,7 +467,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
         switch_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) && propriopassvalue == 0 ) {  // Replace isConditionMet() with your actual condition
+                if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) && propriopassvalue == 0) {  // Replace isConditionMet() with your actual condition
                     Toasty.warning(Assessment.this, "Perform Doctor Turn First to proceed", Toast.LENGTH_SHORT).show();
                     switch_button.setOnCheckedChangeListener(null); // Remove listener temporarily to prevent infinite loop
                     switch_button.setChecked(!isChecked); // Revert to previous state
@@ -534,12 +529,11 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                         DetailFrag_5.strideLength = 0;
                         DetailFrag_5.meanVelocity = 0;
                         DetailFrag_5.cadence = 0;
-                        currentMetricIndex=0;
+                        currentMetricIndex = 0;
 //                        DetailFrag_5.staticbaleo = 0;
 //                        DetailFrag_5.staticbalec = 0;
                     }
-                }
-                else {
+                } else {
 //                    assess_cycles_active.setVisibility(View.VISIBLE);
                     activepassive = "active";
                     Log.e("INBASEKAR", activepassive);
@@ -554,8 +548,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
 
                     if (DetailFrag_5.playflag == 1) {
                         Toasty.warning(Assessment.this, "Please stop the timer to switch the mode", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
+                    } else {
                         currentMetricIndex = 0;
                         DetailFrag_5.lineData.clearValues();
                         isTimerRunning = true;
@@ -661,10 +654,10 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                         DetailFrag_5.datareportarray = new JSONArray();
                         DetailFrag_5.reportarray = new JSONArray();
                         DetailFrag_5.mobilecyclecount = 0;
-                        DetailFrag_5.extnpassivemax=361;
-                        DetailFrag_5.extnactivemax=361;
-                        DetailFrag_5.extndens=0;
-                        DetailFrag_5.extnflag =0;
+                        DetailFrag_5.extnpassivemax = 361;
+                        DetailFrag_5.extnactivemax = 361;
+                        DetailFrag_5.extndens = 0;
+                        DetailFrag_5.extnflag = 0;
                         DetailFrag_5.extensionlagCycleAssessments.clear();
                         DetailFrag_5.leftlegwos.clear();
                         DetailFrag_5.activeeds.clear();
@@ -701,9 +694,9 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                         DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
                         speedometer1.setVisibility(View.VISIBLE);
                         speedometer2.setVisibility(View.GONE);
-                        proprioactvalue =0;
-                        propriopassvalue =0;
-                        propriototalvalue =0;
+                        proprioactvalue = 0;
+                        propriopassvalue = 0;
+                        propriototalvalue = 0;
                         propriopassive = new JSONObject();
                         proprioactive = new JSONObject();
 
@@ -719,7 +712,7 @@ public class Assessment extends AppCompatActivity implements AssessmentCycleAdap
                     Toasty.warning(Assessment.this, "Please stop the timer to switch the leg", Toast.LENGTH_SHORT).show();
                 } else {
                     DetailFrag_5.extensionlagCycleAssessments.clear();
-currentMetricIndex =0;
+                    currentMetricIndex = 0;
                     left_underlined.setVisibility(View.INVISIBLE);
                     right_underlined.setVisibility(View.VISIBLE);
                     leg = "right";
@@ -731,10 +724,10 @@ currentMetricIndex =0;
                         DetailFrag_5.datareportarray = new JSONArray();
                         DetailFrag_5.reportarray = new JSONArray();
                         DetailFrag_5.mobilecyclecount = 0;
-                        DetailFrag_5.extnpassivemax=361;
-                        DetailFrag_5.extnactivemax=361;
-                        DetailFrag_5.extndens=0;
-                        DetailFrag_5.extnflag =0;
+                        DetailFrag_5.extnpassivemax = 361;
+                        DetailFrag_5.extnactivemax = 361;
+                        DetailFrag_5.extndens = 0;
+                        DetailFrag_5.extnflag = 0;
                         DetailFrag_5.leftlegwos.clear();
                         DetailFrag_5.activeeds.clear();
                         DetailFrag_5.passiveeds.clear();
@@ -758,28 +751,25 @@ currentMetricIndex =0;
 //                        DetailFrag_5.staticbalec = 0;
 
                         Log.e("Inside Right Leg:", String.valueOf(DetailFrag_5.exerciseListact));
-                    }
-                    else if ("Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                    } else if ("Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                         staticbalancetestdata.clear();
                         DetailFrag_5.staticbalancetestadapter.notifyDataSetChanged();
-                    }
-                    else if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                    } else if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                         DetailFrag_5.datareportarray = new JSONArray();
                         DetailFrag_5.reportarray = new JSONArray();
                         DetailFrag_5.mobilecyclecount = 0;
                         DetailFrag_5.mobilityCycleAssessments.clear();
                         DetailFrag_5.mobilityCycleAdapter.notifyDataSetChanged();
-                    }
-                    else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                    } else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                         DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
                         DetailFrag_5.propriocyclecount = 0;
                         DetailFrag_5.exerciseListact.clear();
                         DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
                         speedometer2.setVisibility(View.VISIBLE);
                         speedometer1.setVisibility(View.GONE);
-                        proprioactvalue =0;
-                        propriopassvalue =0;
-                        propriototalvalue =0;
+                        proprioactvalue = 0;
+                        propriopassvalue = 0;
+                        propriototalvalue = 0;
                         propriopassive = new JSONObject();
                         proprioactive = new JSONObject();
                     }
@@ -787,7 +777,6 @@ currentMetricIndex =0;
                 }
             }
         });
-
 
 
         DetailFrag_5.indiviCardAdapterpass = new AssessmentCycleAdapter(this, getExerciseCycleList(), this, activepassive);
@@ -868,8 +857,7 @@ currentMetricIndex =0;
 
                     // Disable the exercise spinner
                     //exerciseSpinner.setEnabled(false);
-                }
-                else { // Timer is stopping
+                } else { // Timer is stopping
                     center_button.setImageResource(R.drawable.baseline_play_arrow_24); // Change icon to play
                     Log.e("Clicked Status", "Stop Timer");
                     stopTimer(); // Stop the timer
@@ -891,7 +879,7 @@ currentMetricIndex =0;
 
         if ("Extension Lag Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
 
-            DetailFrag_5.extensionlagAdapter = new ExtensionlagAdapter(DetailFrag_5.extensionlagCycleAssessments,this);
+            DetailFrag_5.extensionlagAdapter = new ExtensionlagAdapter(DetailFrag_5.extensionlagCycleAssessments, this);
             assess_cycles_passive.setAdapter(DetailFrag_5.extensionlagAdapter);
             HorizontalItemDecoration itemDecoration = new HorizontalItemDecoration(marginInPx);
             assess_cycles_passive.addItemDecoration(itemDecoration);
@@ -900,46 +888,39 @@ currentMetricIndex =0;
 //            assess_cycles_active.setAdapter(DetailFrag_5.indiviCardAdapteract);
 //            assess_cycles_active.addItemDecoration(itemDecoration);
 
-        }
-        else if ("Dynamic Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+        } else if ("Dynamic Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
             DetailFrag_5.dynamicbalanceadapter = new Dynamicbalanceadapter(this, DetailFrag_5.dynamicbalancetestdata);
             assess_cycles_active.setAdapter(DetailFrag_5.dynamicbalanceadapter);
             HorizontalItemDecoration itemDecoration = new HorizontalItemDecoration(marginInPx);
             assess_cycles_active.addItemDecoration(itemDecoration);
-        }
-        else if ("Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+        } else if ("Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
             Log.e("Static Balance Test", "Inside call");
             DetailFrag_5.staticbalancetestadapter = new Staticbalancetestadapter(this, staticbalancetestdata);
             assess_cycles_active.setAdapter(DetailFrag_5.staticbalancetestadapter);
             HorizontalItemDecoration itemDecoration = new HorizontalItemDecoration(marginInPx);
             assess_cycles_active.addItemDecoration(itemDecoration);
-        }
-        else if ("Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+        } else if ("Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
             DetailFrag_5.staircaseclimbingadapter = new Staircaseclimbingadapter(staircaseclimbingtestdata, this);
             assess_cycles_active.setAdapter(DetailFrag_5.staircaseclimbingadapter);
             HorizontalItemDecoration itemDecoration = new HorizontalItemDecoration(marginInPx);
             assess_cycles_active.addItemDecoration(itemDecoration);
-        }
-        else if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+        } else if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
             DetailFrag_5.mobilityCycleAdapter = new MobilityCycleAdapter(DetailFrag_5.mobilityCycleAssessments, this);
             assess_cycles_active.setAdapter(DetailFrag_5.mobilityCycleAdapter);
             HorizontalItemDecoration itemDecoration = new HorizontalItemDecoration(marginInPx);
             assess_cycles_active.addItemDecoration(itemDecoration);
-        }
-        else {
+        } else {
             if ("Walk and Gait Analysis".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                 DetailFrag_5.walkgaittestadapter = new Walkgaittestadapter(DetailFrag_5.walkgaittestdata, this);
                 assess_cycles_active.setAdapter(DetailFrag_5.walkgaittestadapter);
                 HorizontalItemDecoration itemDecoration = new HorizontalItemDecoration(marginInPx);
                 assess_cycles_active.addItemDecoration(itemDecoration);
-            }
-            else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+            } else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                 DetailFrag_5.proprioceptionAdapter = new ProprioceptionAdapter(DetailFrag_5.extensionlagCycleAssessments, this);
                 assess_cycles_active.setAdapter(DetailFrag_5.proprioceptionAdapter);
                 HorizontalItemDecoration itemDecoration = new HorizontalItemDecoration(marginInPx);
                 assess_cycles_active.addItemDecoration(itemDecoration);
-            }
-            else {
+            } else {
                 DetailFrag_5.indiviCardAdapteract = new ActiveAssessmentCycleAdapter(this, getExerciseCycleList(), this, null);
                 assess_cycles_active.setAdapter(DetailFrag_5.indiviCardAdapteract);
                 HorizontalItemDecoration itemDecoration = new HorizontalItemDecoration(marginInPx);
@@ -1069,39 +1050,34 @@ currentMetricIndex =0;
             @Override
             public void onClick(View v) {
 
-                if(isPlaying){
+                if (isPlaying) {
                     Toasty.warning(Assessment.this, "The graph is playing", Toast.LENGTH_SHORT, true).show();
-                }
-                else if(proprioactvalue == 0 && propriopassvalue == 0){
+                } else if (proprioactvalue == 0 && propriopassvalue == 0) {
                     Toasty.warning(Assessment.this, "The Active and Passive Value is missing", Toast.LENGTH_SHORT, true).show();
-                }
-                else if(proprioactvalue == 0){
+                } else if (proprioactvalue == 0) {
                     Toasty.warning(Assessment.this, "The Active Value is missing", Toast.LENGTH_SHORT, true).show();
-                }
-                else if(propriopassvalue == 0){
+                } else if (propriopassvalue == 0) {
                     Toasty.warning(Assessment.this, "The Passive Value is missing", Toast.LENGTH_SHORT, true).show();
-                }
-                else{
+                } else {
                     switch_button.setChecked(false);
                     activepassive = "Active";
-                    DetailFrag_5.extensionlagCycleAssessments.add(new ExtensionlagCycleAssessment(proprioactvalue,propriopassvalue,proprioactvalue-propriopassvalue));
+                    DetailFrag_5.extensionlagCycleAssessments.add(new ExtensionlagCycleAssessment(proprioactvalue, propriopassvalue, proprioactvalue - propriopassvalue));
                     DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
-                    if(proprioswitchflag == 0){
-                        proprioswitchflag =1;
+                    if (proprioswitchflag == 0) {
+                        proprioswitchflag = 1;
+                    } else {
+                        proprioswitchflag = 0;
                     }
-                    else{
-                        proprioswitchflag =0;
-                    }
-                    proprioactvalue =0;
-                    propriopassvalue =0;
+                    proprioactvalue = 0;
+                    propriopassvalue = 0;
 //                    DetailFrag_5.postexeparameters = new JSONArray();
                     try {
 //                        DetailFrag_5.postexeparameters.put(propriopassvalue);
 //                        DetailFrag_5.postexeparameters.put(proprioactvalue);
 //                        DetailFrag_5.postexeparameters.put(propriopassvalue-proprioactvalue);
-                        DetailFrag_5.postexeparameters.put(DetailFrag_5.postexeparameters.getDouble(0)-DetailFrag_5.postexeparameters.getDouble(1));
+                        DetailFrag_5.postexeparameters.put(DetailFrag_5.postexeparameters.getDouble(0) - DetailFrag_5.postexeparameters.getDouble(1));
                         DetailFrag_5.postsubdata.put(DetailFrag_5.postexeparameters);
-                        DetailFrag_5.postexesubdata.put(leg + "-leg-" + DetailFrag_5.propriocyclecount/2, DetailFrag_5.postsubdata);
+                        DetailFrag_5.postexesubdata.put(leg + "-leg-" + DetailFrag_5.propriocyclecount / 2, DetailFrag_5.postsubdata);
                         DetailFrag_5.postsubdata = new JSONArray();
                         DetailFrag_5.postexevalues = new JSONArray();
                         DetailFrag_5.postexeparameters = new JSONArray();
@@ -1131,7 +1107,7 @@ currentMetricIndex =0;
                 } else {
                     Log.e("Inbasekar 1", String.valueOf(DetailFrag_5.mainreportobject));
 //                    PdfGenerator.generateAndDownloadPdf(getApplicationContext(), DetailFrag_5.lineChart, minangle1, maxangle1, flexion1, extension1, rom1, HomeFragment.patientnam, startDate, startTime, HomeFragment.uname, DetailFrag_5.mainreportobject, DetailFrag_5.selectedExercise);
-                    SimpleJSONToCSV.exportGraphDataToCSV(Assessment.this,DetailFrag_5.entries,rolldata,yawdata,pitchdata,accldatax,accldatay,accldataz,magdatax,magdatay,magdataz,gyrodatax,gyrodatay,gyrodataz, "Test Data");
+                    SimpleJSONToCSV.exportGraphDataToCSV(Assessment.this, DetailFrag_5.entries, rolldata, yawdata, pitchdata, accldatax, accldatay, accldataz, magdatax, magdatay, magdataz, gyrodatax, gyrodatay, gyrodataz, "Test Data");
                     Log.e("Inbasekar 3", String.valueOf(DetailFrag_5.mainreportobject));
 //                    Log.e("INBASEKAR Left", String.valueOf(DetailFrag_5.leftlegwos));
 //                    Log.e("INBASEKAR Right", String.valueOf(DetailFrag_5.rightwos));
@@ -1230,16 +1206,17 @@ currentMetricIndex =0;
         synchronized (this) {
 //
             if (deviceIndex == 0) {
+                try {
                 String[] numbers = value.split(" ");
                 Log.e("Parsed numbers", Arrays.toString(numbers));
-                try {
+
                     float angle = Float.parseFloat(numbers[0]);
                     leftacclx = Double.parseDouble(numbers[1]);
-                    if(angle>180){
-                        angle= angle-361;
+                    if (angle > 180) {
+                        angle = angle - 361;
                     }
                     device1queue.add(angle);
-                } catch (Exception e){
+                } catch (Exception e) {
                     Log.e("Parse Error", "Invalid leftacclx value: " + Arrays.toString(numbers));
                 }
 //                leftaccly=Double.parseDouble(numbers[2]);
@@ -1273,19 +1250,18 @@ currentMetricIndex =0;
                 }
 
                 lefttotalAcceleration = Math.sqrt((leftacclx * leftacclx) + (leftaccly * leftaccly) + (leftacclz * leftacclz));
-            }
-            else if (deviceIndex == 1) {
+            } else if (deviceIndex == 1) {
+                try {
                 String[] numbers = value.split(" ");
                 Log.e("Parsed numbers", Arrays.toString(numbers));
                 float angle1 = Float.parseFloat(numbers[0]);
-                if(angle1>180){
-                    angle1= angle1-361;
+                if (angle1 > 180) {
+                    angle1 = angle1 - 361;
                 }
                 device2queue.add(angle1);
-                try {
+
                     rightacclx = Double.parseDouble(numbers[1]);
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     Log.e("Parse Error", "Invalid rightacclx value: " + Arrays.toString(numbers));
                 }
 //                rightaccly=Double.parseDouble(numbers[2]);
@@ -1304,18 +1280,21 @@ currentMetricIndex =0;
             }
 
 
-
 //            Log.e("Acceleration data", "X-axis: " +String.valueOf((int)acclx)+" / Y-axis: " +String.valueOf((int)accly)+" / Z-axis: " +String.format("%.2f", acclz));
             Log.e("Acceleration data: ", String.format("%.2f", lefttotalAcceleration));
+
             if (!device1queue.isEmpty()) {
                 float dval = device1queue.poll();
+                sensordata.add(dval);
                 handleDeviceData(deviceIndex, Math.round(dval));
             }
 
             if (!device2queue.isEmpty()) {
                 float dval = device2queue.poll();
+                sensordata.add(dval);
                 handleDeviceData(deviceIndex, Math.round(dval));
             }
+
         }
     }
 
@@ -1326,15 +1305,10 @@ currentMetricIndex =0;
             if (DetailFrag_5.selecteddeviceindex == 0 && DetailFrag_5.selecteddeviceindex == deviceIndex) {
                 DetailFrag_5.latestValueDevice1 = value;
                 if (DetailFrag_5.playflag == 1) {
-                    if(!"Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-                        if (value > 270) {
-                            value = value - 361;
-                        }
-                    }
-                    else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-                        value = 90-value;
+                    if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                        value = 90 - value;
                         float finalValue = value;
-                        if("left".equalsIgnoreCase(leg)) {
+                        if ("left".equalsIgnoreCase(leg)) {
                             Thread speedUpdateThread = new Thread(() -> {
                                 try {
 
@@ -1362,8 +1336,7 @@ currentMetricIndex =0;
                     chartupdatedata(slice);
                     if ("Static balance test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                         staticbalancetest(slice);
-                    }
-                    else if("Extension Lag Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)){
+                    } else if ("Extension Lag Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                         extensionlagtest(slice);
                     }
 
@@ -1373,43 +1346,38 @@ currentMetricIndex =0;
             } else if (DetailFrag_5.selecteddeviceindex == 1 && DetailFrag_5.selecteddeviceindex == deviceIndex) {
                 DetailFrag_5.latestValueDevice2 = value;
                 if (DetailFrag_5.playflag == 1) {
-                    if(!"Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-                        if (value > 270) {
-                            value = value - 361;
-                        }
-                    }
-                    else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-                        value = 90-value;
+                    if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                        value = 90 - value;
                         float finalValue = value;
 
-                            Thread speedUpdateThread = new Thread(() -> {
-                                try {
+                        Thread speedUpdateThread = new Thread(() -> {
+                            try {
 
-                                    int finalSpeed = (int) finalValue;
-                                    Log.e("Speedometer", String.valueOf(finalSpeed));
-                                    // Update the speed on the main thread
-                                    runOnUiThread(() -> speedometer2.setSpeed(finalSpeed, 100L, () -> {
-                                        // Callback (can be left empty or perform some action)
-                                        return null;
-                                    }));
+                                int finalSpeed = (int) finalValue;
+                                Log.e("Speedometer", String.valueOf(finalSpeed));
+                                // Update the speed on the main thread
+                                runOnUiThread(() -> speedometer2.setSpeed(finalSpeed, 100L, () -> {
+                                    // Callback (can be left empty or perform some action)
+                                    return null;
+                                }));
 
-                                    // Sleep for a while before updating to the next speed
-                                    Thread.sleep(50); // Adjust delay as needed
+                                // Sleep for a while before updating to the next speed
+                                Thread.sleep(50); // Adjust delay as needed
 
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                            speedUpdateThread.start();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        speedUpdateThread.start();
                     }
                     slice.add(value);
                     Log.e("Leg Device", "Chart Data " + slice);
                     //setupArcGauge2(slice.get(0));
                     chartupdatedata(slice);
                     if ("Static balance test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-                        staticbalancetest(slice);
-                    }
-                    else if("Extension Lag Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)){
+                        DetailFrag_5.leftleg.add(slice.get(0));
+//                        staticbalancetest(slice);
+                    } else if ("Extension Lag Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                         extensionlagtest(slice);
                     }
 
@@ -1430,12 +1398,6 @@ currentMetricIndex =0;
                     DetailFrag_5.latestValueDevice2 = value;
                 }
                 slice.clear();
-                if (DetailFrag_5.latestValueDevice1 > 270) {
-                    DetailFrag_5.latestValueDevice1 = DetailFrag_5.latestValueDevice1 - 361;
-                }
-                if (DetailFrag_5.latestValueDevice2 > 270) {
-                    DetailFrag_5.latestValueDevice2 = DetailFrag_5.latestValueDevice2 - 361;
-                }
                 slice.add(DetailFrag_5.latestValueDevice1);
                 slice.add(DetailFrag_5.latestValueDevice2);
                 //setupArcGauge1(slice.get(0));
@@ -1444,16 +1406,20 @@ currentMetricIndex =0;
                     Log.e("Leg Device", "Chart Data " + slice);
                     chartupdatedata(slice);
                     if ("Dynamic balance test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-                        dynamicbalancetest(slice);
-                    } else if ("Static balance test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                        DetailFrag_5.leftleg.add(slice.get(0));
+                        DetailFrag_5.rightleg.add(slice.get(1));
+//                        dynamicbalancetest(slice);
+                    }
+                    else if ("Static balance test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                         staticbalancetest(slice);
-                    } else if ("Walk and Gait Analysis".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                    }
+                    else if ("Walk and Gait Analysis".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
 //                        walkgaittest(slice);
                         float angle = slice.get(0);
                         float angle1 = slice.get(1);
                         DetailFrag_5.leftlegwalk.add(angle);
                         DetailFrag_5.rightlegwalk.add(angle1);
-                        if(DetailFrag_5.startTime == 0){
+                        if (DetailFrag_5.startTime == 0) {
                             DetailFrag_5.startTime = System.currentTimeMillis();
                         }
                         BigDecimal leftbd = new BigDecimal(leftacclx).setScale(2, RoundingMode.HALF_UP); // Round to 2 decimal places
@@ -1465,7 +1431,8 @@ currentMetricIndex =0;
                         float currentTimeInSeconds1 = (System.currentTimeMillis() - DetailFrag_5.startTime) / 1000.0f;
                         long currentTimeInSeconds = (long) (currentTimeInSeconds1 * 1000);
                         DetailFrag_5.walkgaittime.add(currentTimeInSeconds);
-                    } else if ("Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                    }
+                    else if ("Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                         float angle = slice.get(0);
                         float angle1 = slice.get(1);
 
@@ -1757,10 +1724,10 @@ currentMetricIndex =0;
     // Start the countdown timer
     private void startTimer() {
 
-        DetailFrag_5.chartstarttime =0;
+        DetailFrag_5.chartstarttime = 0;
         DetailFrag_5.timestamps.clear();
-        leftstepflag =0;
-        rightstepflag=0;
+        leftstepflag = 0;
+        rightstepflag = 0;
 
         accldatax = new JSONArray();
         accldatay = new JSONArray();
@@ -1792,7 +1759,7 @@ currentMetricIndex =0;
         secondsText.setVisibility(View.VISIBLE);
 
         DetailFrag_5.postexevalues = new JSONArray();
-        if(!"Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+        if (!"Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
             DetailFrag_5.postexeparameters = new JSONArray();
         }
 
@@ -1896,10 +1863,10 @@ currentMetricIndex =0;
         step.clear();
 
 
-        DetailFrag_5.extnpassivemax=361;
-        DetailFrag_5.extnactivemax=361;
-        DetailFrag_5.extndens=0;
-        DetailFrag_5.extnflag =0;
+        DetailFrag_5.extnpassivemax = 361;
+        DetailFrag_5.extnactivemax = 361;
+        DetailFrag_5.extndens = 0;
+        DetailFrag_5.extnflag = 0;
 
 
         if (!"Walk and Gait Analysis".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
@@ -2120,10 +2087,11 @@ currentMetricIndex =0;
                 proprioceptiontest(DetailFrag_5.objectElements);
 
             }
-            else if ("Dynamic Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) || "Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) || "Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+            else if ("Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise) || "Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                staticbalancetest(DetailFrag_5.leftleg);
                 handleTimerStop();
             }
-            else if("Extension Lag Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)){
+            else if ("Extension Lag Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                 handleTimerStop();
             }
             else if ("Walk and Gait analysis".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
@@ -2143,12 +2111,12 @@ currentMetricIndex =0;
                 assess_cycles_passive.setVisibility(View.VISIBLE);
 
 
-                Log.e("Inbasekar Extension Lag tes",DetailFrag_5.extnactivemax+" / "+DetailFrag_5.extnpassivemax+" / "+DetailFrag_5.extnactivemax+DetailFrag_5.extnpassivemax);
+                Log.e("Inbasekar Extension Lag tes", DetailFrag_5.extnactivemax + " / " + DetailFrag_5.extnpassivemax + " / " + DetailFrag_5.extnactivemax + DetailFrag_5.extnpassivemax);
 
-                DetailFrag_5.extensionlagCycleAssessments.add(new ExtensionlagCycleAssessment(DetailFrag_5.extnactivemax,DetailFrag_5.extnpassivemax,DetailFrag_5.extnactivemax+DetailFrag_5.extnpassivemax));
+                DetailFrag_5.extensionlagCycleAssessments.add(new ExtensionlagCycleAssessment(DetailFrag_5.extnactivemax, DetailFrag_5.extnpassivemax, DetailFrag_5.extnactivemax + DetailFrag_5.extnpassivemax));
                 DetailFrag_5.extensionlagAdapter.notifyDataSetChanged();
-                DetailFrag_5.extnangle=0;
-                DetailFrag_5.extnangle1=0;
+                DetailFrag_5.extnangle = 0;
+                DetailFrag_5.extnangle1 = 0;
 //                DetailFrag_5.indiviCardAdapterpass.notifyDataSetChanged();
 //                DetailFrag_5.extensionlagAdapter = new ExtensionlagAdapter(DetailFrag_5.extensionlagCycleAssessments,this);
 //                assess_cycles_passive.setAdapter(DetailFrag_5.extensionlagAdapter);
@@ -2179,15 +2147,28 @@ currentMetricIndex =0;
 //                }
             }
             else if ("Dynamic Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+
+                dynamicbalancetest(DetailFrag_5.leftleg,DetailFrag_5.rightleg);
+
                 assess_cycles_active.setVisibility(View.VISIBLE);
 
                 if ("active".equalsIgnoreCase(activepassive)) {
-                    for (int i = 0; i < DetailFrag_5.leftlegwos.size(); i++) {
-                        DetailFrag_5.postexevalues.put(DetailFrag_5.leftlegwos.get(i));
+                    for (int i = 0; i < DetailFrag_5.leftleg.size(); i++) {
+                        DetailFrag_5.postexevalues.put(DetailFrag_5.leftleg.get(i));
                     }
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime));
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime));
+
+                    try {
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.standtosit));
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walktime));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
+
 
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexevalues);
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexeparameters);
@@ -2199,15 +2180,25 @@ currentMetricIndex =0;
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+//                    Log.e("The posting dynamic balance data left", String.valueOf(DetailFrag_5.postexesubdata));
                     DetailFrag_5.postsubdata = new JSONArray();
 
 
-                    for (int i = 0; i < DetailFrag_5.rightwos.size(); i++) {
-                        DetailFrag_5.postexevalues.put(DetailFrag_5.rightwos.get(i));
+                    for (int i = 0; i < DetailFrag_5.rightleg.size(); i++) {
+                        DetailFrag_5.postexevalues.put(DetailFrag_5.rightleg.get(i));
                     }
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime));
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime));
+
+                    try {
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.standtosit));
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walktime));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
 
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexevalues);
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexeparameters);
@@ -2219,15 +2210,25 @@ currentMetricIndex =0;
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+//                    Log.e("The posting dynamic balance data right", String.valueOf(DetailFrag_5.postexesubdata));
                     DetailFrag_5.postsubdata = new JSONArray();
                 }
                 else {
-                    for (int i = 0; i < DetailFrag_5.leftlegws.size(); i++) {
-                        DetailFrag_5.postexevalues.put(DetailFrag_5.leftlegws.get(i));
+                    for (int i = 0; i < DetailFrag_5.leftleg.size(); i++) {
+                        DetailFrag_5.postexevalues.put(DetailFrag_5.leftleg.get(i));
                     }
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime));
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime));
+
+                    try {
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.standtosit));
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walktime));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
 
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexevalues);
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexeparameters);
@@ -2242,12 +2243,21 @@ currentMetricIndex =0;
                     DetailFrag_5.postsubdata = new JSONArray();
 
 
-                    for (int i = 0; i < DetailFrag_5.rightws.size(); i++) {
-                        DetailFrag_5.postexevalues.put(DetailFrag_5.rightws.get(i));
+                    for (int i = 0; i < DetailFrag_5.rightleg.size(); i++) {
+                        DetailFrag_5.postexevalues.put(DetailFrag_5.rightleg.get(i));
                     }
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime));
-                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime));
+//                    DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime));
+
+                    try {
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.sittostand));
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.standtosit));
+                        DetailFrag_5.postexeparameters.put(Math.abs(DetailFrag_5.walktime));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
 
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexevalues);
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexeparameters);
@@ -2262,23 +2272,17 @@ currentMetricIndex =0;
                     DetailFrag_5.postsubdata = new JSONArray();
                 }
 
-
-            Log.e("Dynamic balance Test sit to stand", (DetailFrag_5.sitToStandEndTime - DetailFrag_5.sitToStandStartTime)+" / "+ DetailFrag_5.sitToStandEndTime+" / "+DetailFrag_5.sitToStandStartTime + " seconds");
-            Log.e("Dynamic balance Test stand to shift", (DetailFrag_5.standToShiftEndTime - DetailFrag_5.standToShiftStartTime)+" / "+ DetailFrag_5.standToShiftEndTime+" / "+DetailFrag_5.standToShiftStartTime + " seconds");
-            Log.e("Dynamic balance Test walk", (DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime)+" / "+ DetailFrag_5.walkEndTime+" / "+DetailFrag_5.walkStartTime + " seconds");
                 assess_cycles_active.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
-                DetailFrag_5.dynamicbalancetestdata.add(new Dynamicbalancetestdata(Math.abs(DetailFrag_5.sitToStandEndTime-DetailFrag_5.sitToStandStartTime),Math.abs(DetailFrag_5.standToShiftEndTime-DetailFrag_5.standToShiftStartTime),Math.abs(DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime), activepassive));
-                long avgtime = ((DetailFrag_5.sittostand) + (DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime) + (DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime)) / 3;
-                if (maxtime < avgtime) {
-                    maxtime = avgtime;
-                    sitstandtime = DetailFrag_5.sitToStandEndTime-DetailFrag_5.sitToStandStartTime;
-                    standshifttime = (DetailFrag_5.standToShiftEndTime - DetailFrag_5.standToShiftStartTime);
-                    walkt = (DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime);
-                    cycleno = DetailFrag_5.dynamicbalancetestdata.size();
-                }
-//            Log.e("Dynamic balance Test sit to stand", DetailFrag_5.dynamicbalancetestdata.get(0).getSittostand() + " seconds");
-//            Log.e("Dynamic balance Test stand to shift", DetailFrag_5.dynamicbalancetestdata.get(0).getStandtoshift() + " seconds");
-//            Log.e("Dynamic balance Test walk", DetailFrag_5.dynamicbalancetestdata.get(0).getWalktime() + " seconds");
+                DetailFrag_5.dynamicbalancetestdata.add(new Dynamicbalancetestdata((float) Math.abs(DetailFrag_5.sittostand), (float) Math.abs(DetailFrag_5.standtosit), (float) Math.abs(DetailFrag_5.walktime), activepassive));
+//                long avgtime = (Math.abs(DetailFrag_5.sittostand) + (Math.abs(DetailFrag_5.standtosit)) + Math.abs(DetailFrag_5.walktime)) / 3;
+//                if (maxtime < avgtime) {
+//                    maxtime = avgtime;
+//                    sitstandtime = Math.abs(DetailFrag_5.sittostand);
+//                    standshifttime = Math.abs(DetailFrag_5.standtosit);
+//                    walkt = Math.abs(DetailFrag_5.walktime);
+//                    cycleno = DetailFrag_5.dynamicbalancetestdata.size();
+//                }
+
                 walkstarted = 0;
                 standtoshift = 0;
 
@@ -2287,6 +2291,7 @@ currentMetricIndex =0;
 
             }
             else if ("Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+
                 assess_cycles_active.setVisibility(View.VISIBLE);
 
 
@@ -2295,7 +2300,7 @@ currentMetricIndex =0;
                         DetailFrag_5.postexevalues.put(DetailFrag_5.staticbalanceangles.get(i));
                     }
                     DetailFrag_5.postexeparameters = new JSONArray();
-                    DetailFrag_5.postexeparameters.put((DetailFrag_5.endTime - DetailFrag_5.startTime));
+                    DetailFrag_5.postexeparameters.put((DetailFrag_5.endTime/1000));
 
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexevalues);
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexeparameters);
@@ -2304,7 +2309,7 @@ currentMetricIndex =0;
                     if ("left".equalsIgnoreCase(leg)) {
                         try {
                             DetailFrag_5.staticbalelo++;
-                            DetailFrag_5.postexesubdata.put("left-leg-eyes-open-" +DetailFrag_5.staticbalelo , DetailFrag_5.postsubdata);
+                            DetailFrag_5.postexesubdata.put("left-leg-eyes-open-" + DetailFrag_5.staticbalelo, DetailFrag_5.postsubdata);
                             DetailFrag_5.postsubdata = new JSONArray();
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
@@ -2325,7 +2330,7 @@ currentMetricIndex =0;
                         DetailFrag_5.postexevalues.put(DetailFrag_5.staticbalanceangles.get(i));
                     }
                     DetailFrag_5.postexeparameters = new JSONArray();
-                    DetailFrag_5.postexeparameters.put((DetailFrag_5.endTime - DetailFrag_5.startTime));
+                    DetailFrag_5.postexeparameters.put((DetailFrag_5.endTime/1000));
 
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexevalues);
                     DetailFrag_5.postsubdata.put(DetailFrag_5.postexeparameters);
@@ -2354,12 +2359,12 @@ currentMetricIndex =0;
 
                 Log.e("Static balance Test Time 1", (DetailFrag_5.startTime - DetailFrag_5.endTime) + " seconds");
                 //assess_cycles_active.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
-                staticbalancetestdata.add(new Staticbalancetestdata((DetailFrag_5.endTime - DetailFrag_5.startTime), activepassive));
-                if (staticbaltime < (DetailFrag_5.startTime - DetailFrag_5.endTime)) {
-                    staticbaltime = (DetailFrag_5.startTime - DetailFrag_5.endTime);
-                    cycleno = staticbalancetestdata.size();
-                }
-                Log.e("Static balance Test Time 1", (DetailFrag_5.startTime - DetailFrag_5.endTime) + " seconds");
+                staticbalancetestdata.add(new Staticbalancetestdata((DetailFrag_5.endTime/1000), activepassive));
+//                if (staticbaltime < (DetailFrag_5.startTime - DetailFrag_5.endTime)) {
+//                    staticbaltime = (DetailFrag_5.startTime - DetailFrag_5.endTime);
+//                    cycleno = staticbalancetestdata.size();
+//                }
+                //Log.e("Static balance Test Time 1", (DetailFrag_5.startTime - DetailFrag_5.endTime) + " seconds");
                 DetailFrag_5.staticbalancetestadapter.notifyDataSetChanged();
             }
             else if ("Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
@@ -2371,28 +2376,25 @@ currentMetricIndex =0;
                 double c;
 
 
-                if(lascent>=rascent){
-                    a=lascent;
+                if (lascent >= rascent) {
+                    a = lascent;
+                } else {
+                    a = rascent;
                 }
-                else{
-                    a=rascent;
+                if (lturn >= rturn) {
+                    b = lturn;
+                } else {
+                    b = rturn;
                 }
-                if(lturn>=rturn){
-                    b=lturn;
-                }
-                else{
-                    b=rturn;
-                }
-                if(ldescent>=rdescent){
-                    c=ldescent;
-                }
-                else{
-                    c=rdescent;
+                if (ldescent >= rdescent) {
+                    c = ldescent;
+                } else {
+                    c = rdescent;
                 }
 
-                Log.e("Inba Staircase YoYo",(lascent)+" / "+rascent);
-                Log.e("Inba Staircase YoYo",lturn+" / "+rturn);
-                Log.e("Inba Staircase YoYo",ldescent+" / "+rdescent);
+                Log.e("Inba Staircase YoYo", (lascent) + " / " + rascent);
+                Log.e("Inba Staircase YoYo", lturn + " / " + rturn);
+                Log.e("Inba Staircase YoYo", ldescent + " / " + rdescent);
 
                 for (int i = 0; i < DetailFrag_5.leftleg.size(); i++) {
                     DetailFrag_5.postexevalues.put(DetailFrag_5.leftleg.get(i));
@@ -2524,54 +2526,48 @@ currentMetricIndex =0;
                     assess_cycles_active.setVisibility(View.VISIBLE);
                     walkgaittest(DetailFrag_5.leftlegwalk, DetailFrag_5.rightlegwalk);
 
-                    float angleaverage = 0, totalangle=0;
-                    if(DetailFrag_5.walkgaitleftlegangles.size()>=DetailFrag_5.walkgaitrightlegangles.size()){
-                        for(int i=0; i<DetailFrag_5.walkgaitrightlegangles.size(); i++){
-                            if(i == 0) {
+                    float angleaverage = 0, totalangle = 0;
+                    if (DetailFrag_5.walkgaitleftlegangles.size() >= DetailFrag_5.walkgaitrightlegangles.size()) {
+                        for (int i = 0; i < DetailFrag_5.walkgaitrightlegangles.size(); i++) {
+                            if (i == 0) {
                                 if (DetailFrag_5.walkgaitrightlegangles.get(i) >= DetailFrag_5.walkgaitleftlegangles.get(i)) {
-                                    totalangle+=DetailFrag_5.walkgaitrightlegangles.get(i);
+                                    totalangle += DetailFrag_5.walkgaitrightlegangles.get(i);
                                 } else {
-                                    totalangle+=DetailFrag_5.walkgaitleftlegangles.get(i);
+                                    totalangle += DetailFrag_5.walkgaitleftlegangles.get(i);
                                 }
-                            }
-                            else{
-                                totalangle+=DetailFrag_5.walkgaitrightlegangles.get(i);
-                                totalangle+=DetailFrag_5.walkgaitleftlegangles.get(i);
+                            } else {
+                                totalangle += DetailFrag_5.walkgaitrightlegangles.get(i);
+                                totalangle += DetailFrag_5.walkgaitleftlegangles.get(i);
                             }
                         }
-                        angleaverage = totalangle/((DetailFrag_5.walkgaitrightlegangles.size()*2)-1);
-                    }
-                    else{
-                        for(int i=0; i<DetailFrag_5.walkgaitleftlegangles.size(); i++){
-                            if(i == 0) {
+                        angleaverage = totalangle / ((DetailFrag_5.walkgaitrightlegangles.size() * 2) - 1);
+                    } else {
+                        for (int i = 0; i < DetailFrag_5.walkgaitleftlegangles.size(); i++) {
+                            if (i == 0) {
                                 if (DetailFrag_5.walkgaitrightlegangles.get(i) >= DetailFrag_5.walkgaitleftlegangles.get(i)) {
-                                    totalangle+=DetailFrag_5.walkgaitrightlegangles.get(i);
+                                    totalangle += DetailFrag_5.walkgaitrightlegangles.get(i);
                                 } else {
-                                    totalangle+=DetailFrag_5.walkgaitleftlegangles.get(i);
+                                    totalangle += DetailFrag_5.walkgaitleftlegangles.get(i);
                                 }
-                            }
-                            else{
-                                totalangle+=DetailFrag_5.walkgaitrightlegangles.get(i);
-                                totalangle+=DetailFrag_5.walkgaitleftlegangles.get(i);
+                            } else {
+                                totalangle += DetailFrag_5.walkgaitrightlegangles.get(i);
+                                totalangle += DetailFrag_5.walkgaitleftlegangles.get(i);
                             }
                         }
-                        angleaverage = totalangle/((DetailFrag_5.walkgaitleftlegangles.size()*2)-1);
+                        angleaverage = totalangle / ((DetailFrag_5.walkgaitleftlegangles.size() * 2) - 1);
                     }
 
-                    double threshold = -488.6874+(9.9834*DetailFrag_5.rightleglength)+(1.1801*angleaverage);
+                    double threshold = -488.6874 + (9.9834 * DetailFrag_5.rightleglength) + (1.1801 * angleaverage);
 
-                    double threshper=0;
-                    if(DetailFrag_5.rightleglength<=50){
-                        threshper=16;
-                    }
-                    else if(DetailFrag_5.rightleglength == 51){
-                        threshper=24;
-                    }
-                    else if(DetailFrag_5.rightleglength == 52){
-                        threshper=32;
-                    }
-                    else if(DetailFrag_5.rightleglength >= 53){
-                        threshper=40;
+                    double threshper = 0;
+                    if (DetailFrag_5.rightleglength <= 50) {
+                        threshper = 16;
+                    } else if (DetailFrag_5.rightleglength == 51) {
+                        threshper = 24;
+                    } else if (DetailFrag_5.rightleglength == 52) {
+                        threshper = 32;
+                    } else if (DetailFrag_5.rightleglength >= 53) {
+                        threshper = 40;
                     }
 
                     double avgswingtime = 0, avgstridelength = 0, avgstridelengthperh = 0, avgsteplength = 0;
@@ -2580,7 +2576,7 @@ currentMetricIndex =0;
                     String stride;
                     String steplenghtavgboth;
                     String strideper;
-                    int stepcount =0;
+                    int stepcount = 0;
 
 
                     if (leftswingtime.size() >= rightswingtime.size()) {
@@ -2608,77 +2604,71 @@ currentMetricIndex =0;
                         );
                     }
 
-                    int flag=0;
-                    double steplength =0;
+                    int flag = 0;
+                    double steplength = 0;
 
                     if (leftstride.size() >= rightstride.size()) {
-                        int dr=rightstride.size();
-                        double r=60/(dr-1);
+                        int dr = rightstride.size();
+                        double r = 60 / (dr - 1);
                         for (int i = 0; i < rightstride.size(); i++) {
                             leftstridelengthtotal += leftstride.get(i);
                             rightstridelengthtotal += rightstride.get(i);
 
-                            if(i==0){
-                                if((((leftstride.get(i)))<(rightstride.get(i)))) {
-                                    double t = rightstride.get(i)-leftstride.get(i);
-                                    if(t<20){
-                                        double f=leftstride.get(i)+Math.round(t/2)+Math.round(t/3);
-                                        leftstride.set(i,f);
-                                    }else{
-                                        double f=leftstride.get(i)+Math.round(t/2)+Math.round(t/3)+Math.round(t/3);
-                                        leftstride.set(i,f);
+                            if (i == 0) {
+                                if ((((leftstride.get(i))) < (rightstride.get(i)))) {
+                                    double t = rightstride.get(i) - leftstride.get(i);
+                                    if (t < 20) {
+                                        double f = leftstride.get(i) + Math.round(t / 2) + Math.round(t / 3);
+                                        leftstride.set(i, f);
+                                    } else {
+                                        double f = leftstride.get(i) + Math.round(t / 2) + Math.round(t / 3) + Math.round(t / 3);
+                                        leftstride.set(i, f);
                                     }
                                     flag = 1;
                                     steplengthtotal += rightstride.get(i);
-                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((rightstride.get(i)/2))))));
-                                    steplength = (rightstride.get(i)/2);
-                                }
-                                else if(leftstride.get(i) == rightstride.get(i)){
-                                    if(leftstepflag == 1){
-                                            double f=leftstride.get(i)-16;
-                                        leftstride.set(i,f);
-                                    }
-                                    else{
-                                        double f=rightstride.get(i)-16;
-                                        rightstride.set(i,f);
+                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((rightstride.get(i) / 2))))));
+                                    steplength = (rightstride.get(i) / 2);
+                                } else if (leftstride.get(i) == rightstride.get(i)) {
+                                    if (leftstepflag == 1) {
+                                        double f = leftstride.get(i) - 16;
+                                        leftstride.set(i, f);
+                                    } else {
+                                        double f = rightstride.get(i) - 16;
+                                        rightstride.set(i, f);
                                     }
 
                                     steplengthtotal += rightstride.get(i);
-                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((rightstride.get(i)/2))))));
-                                    steplength = (rightstride.get(i)/2);
+                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((rightstride.get(i) / 2))))));
+                                    steplength = (rightstride.get(i) / 2);
 
-                                }
-                                else{
-                                    double t = leftstride.get(i)-rightstride.get(i);
-                                    if(t<20){
-                                        double f=rightstride.get(i)+Math.round(t/2)+Math.round(t/3);
-                                        rightstride.set(i,f);
-                                    }else{
-                                        double f=rightstride.get(i)+Math.round(t/2)+Math.round(t/3)+Math.round(t/3);
-                                        rightstride.set(i,f);
+                                } else {
+                                    double t = leftstride.get(i) - rightstride.get(i);
+                                    if (t < 20) {
+                                        double f = rightstride.get(i) + Math.round(t / 2) + Math.round(t / 3);
+                                        rightstride.set(i, f);
+                                    } else {
+                                        double f = rightstride.get(i) + Math.round(t / 2) + Math.round(t / 3) + Math.round(t / 3);
+                                        rightstride.set(i, f);
                                     }
                                     flag = 0;
                                     steplengthtotal += leftstride.get(i);
-                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((leftstride.get(i)/2))))));
-                                    steplength = (leftstride.get(i)/2);
+                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((leftstride.get(i) / 2))))));
+                                    steplength = (leftstride.get(i) / 2);
                                 }
-                            }
-                            else{
-                                leftstride.set(i,leftstride.get(i)+r);
-                                rightstride.set(i,rightstride.get(i)+r);
+                            } else {
+                                leftstride.set(i, leftstride.get(i) + r);
+                                rightstride.set(i, rightstride.get(i) + r);
                                 //step.add(i + 1 + " " + String.valueOf(Math.abs(Math.ceil(leftstride.get(i) - rightstride.get(i)))));
-                                if(flag == 0) {
-                                    steplengthtotal +=leftstride.get(i);
-                                }
-                                else{
-                                    steplengthtotal +=rightstride.get(i);
+                                if (flag == 0) {
+                                    steplengthtotal += leftstride.get(i);
+                                } else {
+                                    steplengthtotal += rightstride.get(i);
                                 }
 
-                                if(rightstride.get(i)>=leftstride.get(i)){
-                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((rightstride.get(i)/2))))));
-                                }
-                                else{
-                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil( (leftstride.get(i)/2))))));
+                                if (rightstride.get(i) >= leftstride.get(i)) {
+                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((rightstride.get(i) / 2))))));
+                                } else {
+                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((leftstride.get(i) / 2))))));
                                 }
 
 
@@ -2687,12 +2677,12 @@ currentMetricIndex =0;
 
 //                            steplengthtotal += (leftstride.get(i) - rightstride.get(i));
 
-                            double leftthreshadd =Math.round(((Math.round(leftstride.get(i))+threshold)*threshper)/100);
-                            double rightthreshadd =Math.round(((Math.round(rightstride.get(i))+threshold)*threshper)/100);
+                            double leftthreshadd = Math.round(((Math.round(leftstride.get(i)) + threshold) * threshper) / 100);
+                            double rightthreshadd = Math.round(((Math.round(rightstride.get(i)) + threshold) * threshper) / 100);
 
 
-                            leftstridelengthperhtotal += ((leftstride.get(i))* MainActivity.patientheight) / 100;
-                            rightstridelengthperhtotal += ((rightstride.get(i))* MainActivity.patientheight) / 100;
+                            leftstridelengthperhtotal += ((leftstride.get(i)) * MainActivity.patientheight) / 100;
+                            rightstridelengthperhtotal += ((rightstride.get(i)) * MainActivity.patientheight) / 100;
 
                         }
                         avgstridelengthperh = ((leftstridelengthperhtotal / rightstride.size()) + (rightstridelengthperhtotal / rightstride.size())) / 2;
@@ -2702,81 +2692,116 @@ currentMetricIndex =0;
                         );
                         avgstridelength = ((leftstridelengthtotal / rightstride.size()) + (rightstridelengthtotal / rightstride.size())) / 2;
                         avgsteplength = steplengthtotal / rightstride.size();
-                        stride = String.format("L: %.2f m R: %.2f m",
-                                ((leftstridelengthtotal / rightstride.size())/100.0),
-                                ((rightstridelengthtotal / rightstride.size())/100.0)
-                        );
+                        double lst=0;
+                        double rst=0;
 
-                        stepcount = leftstride.size()*2;
-                        steplenghtavgboth = String.format("L: %.2f m R: %.2f m",
-                                (((leftstridelengthtotal / (double) rightstride.size()) / 2.0)/100.0),
-                                (((rightstridelengthtotal / (double) rightstride.size()) / 2.0)/100.0)
-                        );
+                        if((leftstridelengthtotal / rightstride.size())>=(rightstridelengthtotal / rightstride.size())){
+                            lst=((leftstridelengthtotal / rightstride.size())+(rightstridelengthtotal / rightstride.size()))/2.0;
+                            stride = String.format("L: %.2f m R: %.2f m",
+                                    (lst / 100.0),
+                                    ((rightstridelengthtotal / rightstride.size()) / 100.0)
+                            );
+                            steplenghtavgboth = String.format("L: %.2f m R: %.2f m",
+                                    ((lst / 2.0) / 100.0),
+                                    (((rightstridelengthtotal / (double) rightstride.size()) / 2.0) / 100.0)
+                            );
+                        }
+                        else{
+                            rst=((leftstridelengthtotal / rightstride.size())+(rightstridelengthtotal / rightstride.size()))/2.0;
+                            stride = String.format("L: %.2f m R: %.2f m",
+                                    ((leftstridelengthtotal / rightstride.size()) / 100.0),
+                                    (rst / 100.0)
+                            );
+                            steplenghtavgboth = String.format("L: %.2f m R: %.2f m",
+                                    (((leftstridelengthtotal / (double) rightstride.size()) / 2.0) / 100.0),
+                                    ((rst / 2.0) / 100.0)
+                            );
+
+                        }
+
+
+                        stepcount = leftstride.size() * 2;
+
                     }
                     else {
-                        int dr=rightstride.size();
-                        double r=60/(dr-1);
+                        int dr = rightstride.size();
+                        double r = 60 / (dr - 1);
                         for (int i = 0; i < leftstride.size(); i++) {
                             leftstridelengthtotal += leftstride.get(i);
                             rightstridelengthtotal += rightstride.get(i);
 
-                            if(i==0){
-                                if((((leftstride.get(i)))<(rightstride.get(i)))) {
+                            if (i == 0) {
+                                if ((((leftstride.get(i))) < (rightstride.get(i)))) {
                                     flag = 1;
                                     steplengthtotal += rightstride.get(i);
-                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((rightstride.get(i)/2))))));
-                                    steplength = (rightstride.get(i)/2);
-                                }
-                                else{
+                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((rightstride.get(i) / 2))))));
+                                    steplength = (rightstride.get(i) / 2);
+                                } else {
                                     flag = 0;
                                     steplengthtotal += leftstride.get(i);
-                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((leftstride.get(i)/2))))));
-                                    steplength = (leftstride.get(i)/2);
+                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((leftstride.get(i) / 2))))));
+                                    steplength = (leftstride.get(i) / 2);
                                 }
-                            }
-                            else{
-                                leftstride.set(i,leftstride.get(i)+r);
-                                rightstride.set(i,rightstride.get(i)+r);
-                                if(flag == 0) {
-                                    steplengthtotal +=leftstride.get(i) ;
+                            } else {
+                                leftstride.set(i, leftstride.get(i) + r);
+                                rightstride.set(i, rightstride.get(i) + r);
+                                if (flag == 0) {
+                                    steplengthtotal += leftstride.get(i);
+                                } else {
+                                    steplengthtotal += rightstride.get(i);
                                 }
-                                else{
-                                    steplengthtotal +=rightstride.get(i) ;
-                                }
-                                if(rightstride.get(i)>=leftstride.get(i)){
-                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((rightstride.get(i)/2))))));
-                                }
-                                else{
-                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil( (leftstride.get(i)/2))))));
+                                if (rightstride.get(i) >= leftstride.get(i)) {
+                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((rightstride.get(i) / 2))))));
+                                } else {
+                                    step.add(i + 1 + " " + String.valueOf(Math.round(Math.abs(Math.ceil((leftstride.get(i) / 2))))));
                                 }
                             }
 
 //                            steplengthtotal += (leftstride.get(i) - rightstride.get(i));
 //                            step.add(i + 1 + " " + String.valueOf(Math.abs(Math.ceil(leftstride.get(i) - rightstride.get(i)))));
-                            double leftthreshadd =Math.round(((Math.round(leftstride.get(i))+threshold)*threshper)/100);
-                            double rightthreshadd =Math.round(((Math.round(rightstride.get(i))+threshold)*threshper)/100);
+                            double leftthreshadd = Math.round(((Math.round(leftstride.get(i)) + threshold) * threshper) / 100);
+                            double rightthreshadd = Math.round(((Math.round(rightstride.get(i)) + threshold) * threshper) / 100);
 
 
-                            leftstridelengthperhtotal += ((leftstride.get(i))* MainActivity.patientheight) / 100;
-                            rightstridelengthperhtotal += ((rightstride.get(i))* MainActivity.patientheight) / 100;
+                            leftstridelengthperhtotal += ((leftstride.get(i)) * MainActivity.patientheight) / 100;
+                            rightstridelengthperhtotal += ((rightstride.get(i)) * MainActivity.patientheight) / 100;
 
                         }
                         avgstridelengthperh = ((leftstridelengthperhtotal / leftstride.size()) + (rightstridelengthperhtotal / leftstride.size())) / 2;
+                        double lst=0;
+                        double rst=0;
+
+                        if((leftstridelengthtotal / leftstride.size())>=(rightstridelengthtotal / leftstride.size())){
+                            lst=((leftstridelengthtotal / leftstride.size())+(rightstridelengthtotal / leftstride.size()))/2.0;
+                            stride = String.format("L: %.2f m R: %.2f m",
+                                    (lst / 100.0),
+                                    ((rightstridelengthtotal / leftstride.size()) / 100.0)
+                            );
+                            steplenghtavgboth = String.format("L: %.2f m R: %.2f m",
+                                    ((lst / 2.0) / 100.0),
+                                    (((rightstridelengthtotal / (double) leftstride.size()) / 2.0) / 100.0)
+                            );
+                        }
+                        else{
+                            rst=((leftstridelengthtotal / leftstride.size())+(rightstridelengthtotal / leftstride.size()))/2.0;
+                            stride = String.format("L: %.2f m R: %.2f m",
+                                    ((leftstridelengthtotal / leftstride.size()) / 100.0),
+                                    (rst / 100.0)
+                            );
+                            steplenghtavgboth = String.format("L: %.2f m R: %.2f m",
+                                    (((leftstridelengthtotal / (double) leftstride.size()) / 2.0) / 100.0),
+                                    ((rst / 2.0) / 100.0)
+                            );
+
+                        }
+
                         strideper = String.format("L: %.2f R: %.2f",
                                 (((leftstridelengthperhtotal / (double) leftstride.size()) * (MainActivity.patientheight / 100.0)) / 100.0),
                                 (((leftstridelengthperhtotal / (double) leftstride.size()) * (MainActivity.patientheight / 100.0)) / 100.0)
                         );
                         avgstridelength = ((leftstridelengthtotal / leftstride.size()) + (rightstridelengthtotal / leftstride.size())) / 2;
                         avgsteplength = steplengthtotal / leftstride.size();
-                        stride = String.format("L: %.2f m R: %.2f m",
-                                ((leftstridelengthtotal / (double) leftstride.size())/100.0),
-                                ((rightstridelengthtotal / (double) leftstride.size())/100.0)
-                        );
-                        stepcount = leftstride.size()*2;
-                        steplenghtavgboth = String.format("L: %.2f m R: %.2f m",
-                                (((leftstridelengthtotal / (double) leftstride.size()) / 2.0)/100.0),
-                                (((rightstridelengthtotal / (double) leftstride.size()) / 2.0)/100.0)
-                        );
+                        stepcount = leftstride.size() * 2;
                     }
 
 //                    if (leftstrideper.size() >= rightstrideper.size()) {
@@ -2799,8 +2824,7 @@ currentMetricIndex =0;
                     long activetime = (DetailFrag_5.activeendtime / 1000) - (DetailFrag_5.activestarttime / 1000);
                     if ((activetime / 60) >= 1) {
                         DetailFrag_5.cadence = (stepcount / (activetime / 60));
-                    }
-                    else {
+                    } else {
                         DetailFrag_5.cadence = DetailFrag_5.stepCountwalk;
                     }
 
@@ -2809,8 +2833,7 @@ currentMetricIndex =0;
                     }
                     try {
                         DetailFrag_5.postexeparameters.put(Math.round((steplengthtotal / 100.0) * 100.0) / 100.0);
-                    }
-                    catch (JSONException e) {
+                    } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
 
@@ -2828,12 +2851,11 @@ currentMetricIndex =0;
                     }
                     if (DetailFrag_5.totalstancepahse == 0) {
                         DetailFrag_5.postexeparameters.put(0);
-                    }
-                    else {
+                    } else {
                         DetailFrag_5.postexeparameters.put(Math.round(DetailFrag_5.totalstancepahse / 1000));
                     }
 
-                    DetailFrag_5.meanVelocity = (Math.round((steplengthtotal / 100.0) * 100.0) / 100.0) / activetime;
+                    DetailFrag_5.meanVelocity = Math.abs((steplengthtotal / (double) activetime)) / 100.0;
 
                     try {
                         DetailFrag_5.postexeparameters.put(Math.round((avgstridelength / 100.0) * 100.0) / 100.0);
@@ -2871,11 +2893,6 @@ currentMetricIndex =0;
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-
-
-
-
-
 
 
                     DetailFrag_5.postexevalues = new JSONArray();
@@ -3031,29 +3048,28 @@ currentMetricIndex =0;
 //
 //                    }
 
-                    double stancetotal=0;
-                    for(int i=0; i<stance.size(); i++){
-                        stancetotal+=Double.parseDouble(String.valueOf(stance.get(i)));
+                    double stancetotal = 0;
+                    for (int i = 0; i < stance.size(); i++) {
+                        stancetotal += Double.parseDouble(String.valueOf(stance.get(i)));
                     }
-                    double stanceavg = stancetotal/stance.size();
-                    String stanceAvgStr = String.format("%.2f", stanceavg)+" Sec";
-
+                    double stanceavg = stancetotal / stance.size();
+                    String stanceAvgStr = String.format("%.2f", stanceavg) + " Sec";
 
 
                     Log.e("Inbasekar Walk and Gait Analysis Swing Time", String.valueOf(leftstride));
                     Log.e("Inbasekar Walk and Gait Analysis Swing Time", String.valueOf(rightstride));
                     DetailFrag_5.walkgaittestdata.add(new Walkgaittestdata(
                             String.valueOf(String.format("%.2f m", steplengthtotal / 100.0)),
-                            String.valueOf(Math.round(DetailFrag_5.totalBreakTime / 1000))+" Sec",
+                            String.valueOf(Math.round(DetailFrag_5.totalBreakTime / 1000)) + " Sec",
                             swing,
                             stanceAvgStr,
                             stride,
-                            Math.round(DetailFrag_5.meanVelocity)+" m/s",
-                            Math.round(DetailFrag_5.cadence)+" steps/min",
+                            (String.format("%.2f m/s", DetailFrag_5.meanVelocity)),
+                            Math.round(DetailFrag_5.cadence) + " steps/min",
                             steplenghtavgboth,
                             strideper,
                             String.valueOf(stepcount),
-                            String.valueOf(Math.round(c))+" Sec",
+                            String.valueOf(Math.round(c)) + " Sec",
                             String.valueOf(DetailFrag_5.breakCount)
                     ));
 
@@ -3069,8 +3085,7 @@ currentMetricIndex =0;
 
 
                     Log.e("Walkgaitdata", String.valueOf(DetailFrag_5.walkgaittestdata.get(0).getStepCountwalk()));
-                }
-                else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                } else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                     Log.e("Proprioception Test1", String.valueOf(DetailFrag_5.proprom));
                     Log.e("Proprioception Test1", String.valueOf(DetailFrag_5.indivimaxAngle));
                     int max = 0;
@@ -3091,8 +3106,7 @@ currentMetricIndex =0;
 //                    }
 //                    assess_cycles_active.setVisibility(View.VISIBLE);
 //                    DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
-                }
-                else {
+                } else {
                     assess_cycles_active.setVisibility(View.VISIBLE);
                     DetailFrag_5.indiviCardAdapterpass = new AssessmentCycleAdapter(this, getExerciseCycleList(), this, null);
                     assess_cycles_active.setAdapter(DetailFrag_5.indiviCardAdapterpass);
@@ -3110,8 +3124,8 @@ currentMetricIndex =0;
         isPlaying = false;
         DetailFrag_5.playflag = 0;
 
-        if(DetailFrag_5.extnpassivemax == 361){
-            DetailFrag_5.extnpassivemax =0;
+        if (DetailFrag_5.extnpassivemax == 361) {
+            DetailFrag_5.extnpassivemax = 0;
         }
 
 //        clearInterval();
@@ -3158,7 +3172,7 @@ currentMetricIndex =0;
 //            }
             if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                 try {
-                    DetailFrag_5.mainreportobject.put(leg + "-" +DetailFrag_5.mobilecyclecount +"-"+activepassive, DetailFrag_5.reportarray);
+                    DetailFrag_5.mainreportobject.put(leg + "-" + DetailFrag_5.mobilecyclecount + "-" + activepassive, DetailFrag_5.reportarray);
 
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
@@ -3170,7 +3184,7 @@ currentMetricIndex =0;
                 List<Entry> objectElements = new ArrayList<>();
 
 
-                for(int i=0; i< DetailFrag_5.leftlegwos.size(); i++) {
+                for (int i = 0; i < DetailFrag_5.leftlegwos.size(); i++) {
                     DetailFrag_5.objectElements.add(new Entry(i, DetailFrag_5.leftlegwos.get(i)));
                 }
 
@@ -3188,7 +3202,6 @@ currentMetricIndex =0;
                 for (Float angle : values) {
                     DetailFrag_5.datareportarray.put(angle);
                 }
-
 
 
 //                float velocityForPain = Math.abs((minAndMaxAngles.second - minAndMaxAngles.first) / (indices.get(indices.size() - 1) - indices.get(0))) +
@@ -3244,8 +3257,8 @@ currentMetricIndex =0;
                     DetailFrag_5.postexeparameters.put(DetailFrag_5.extnactivemax);
                     DetailFrag_5.analysereportarray.put(DetailFrag_5.extnpassivemax);
                     DetailFrag_5.postexeparameters.put(DetailFrag_5.extnpassivemax);
-                    DetailFrag_5.analysereportarray.put(DetailFrag_5.extnactivemax+DetailFrag_5.extnpassivemax);
-                    DetailFrag_5.postexeparameters.put(DetailFrag_5.extnactivemax+DetailFrag_5.extnpassivemax);
+                    DetailFrag_5.analysereportarray.put(DetailFrag_5.extnactivemax + DetailFrag_5.extnpassivemax);
+                    DetailFrag_5.postexeparameters.put(DetailFrag_5.extnactivemax + DetailFrag_5.extnpassivemax);
                     DetailFrag_5.reportobject.put("data", DetailFrag_5.datareportarray);
                     Log.e("Test Data Report Array", String.valueOf(DetailFrag_5.datareportarray));
                     DetailFrag_5.reportobject.put("analyse", DetailFrag_5.analysereportarray);
@@ -3265,14 +3278,14 @@ currentMetricIndex =0;
                 Log.e("Inside Function Size", String.valueOf(objectElements.size()));
                 if ("left".equalsIgnoreCase(leg)) {
                     try {
-                        DetailFrag_5.postexesubdata.put("left-leg-"+DetailFrag_5.mobilecyclecount, DetailFrag_5.postsubdata);
+                        DetailFrag_5.postexesubdata.put("left-leg-" + DetailFrag_5.mobilecyclecount, DetailFrag_5.postsubdata);
                         DetailFrag_5.postsubdata = new JSONArray();
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 } else {
                     try {
-                        DetailFrag_5.postexesubdata.put("right-leg-"+DetailFrag_5.mobilecyclecount, DetailFrag_5.postsubdata);
+                        DetailFrag_5.postexesubdata.put("right-leg-" + DetailFrag_5.mobilecyclecount, DetailFrag_5.postsubdata);
                         DetailFrag_5.postsubdata = new JSONArray();
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
@@ -3281,7 +3294,7 @@ currentMetricIndex =0;
 
 
                 try {
-                    DetailFrag_5.mainreportobject.put(leg+"-leg-" + DetailFrag_5.mobilecyclecount, DetailFrag_5.reportarray);
+                    DetailFrag_5.mainreportobject.put(leg + "-leg-" + DetailFrag_5.mobilecyclecount, DetailFrag_5.reportarray);
 
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
@@ -4020,10 +4033,9 @@ currentMetricIndex =0;
                     }
                 }
             }
-            Log.d("Report JSON", DetailFrag_5.reportarray.toString());
+            //Log.d("Report JSON", DetailFrag_5.reportarray.toString());
 
-        }
-        else {
+        } else {
             Toasty.error(Assessment.this, "No Values found", Toasty.LENGTH_SHORT).show();
         }
     }
@@ -4164,17 +4176,17 @@ currentMetricIndex =0;
 
 
             DecimalFormat df = new DecimalFormat("#.##");
-            double formattedValue = Double.parseDouble(df.format(lefttotalAcceleration-4));
+            double formattedValue = Double.parseDouble(df.format(lefttotalAcceleration - 4));
             try {
                 accldata.put(formattedValue);
-                Log.e("Graph acceleration", String.valueOf(lefttotalAcceleration-4));
+                Log.e("Graph acceleration", String.valueOf(lefttotalAcceleration - 4));
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
 
         }
         else {
-            Log.e("Inside Update Chart", DetailFrag_5.selectedExercise);
+            //Log.e("Inside Update Chart", DetailFrag_5.selectedExercise);
             if (isPlaying && DetailFrag_5.currentMetricIndex < DetailFrag_5.metricArray.size() && DetailFrag_5.currentMetricIndex < DetailFrag_5.metricArray1.size()) {
                 // Get the current metric to be added
                 DetailFrag_5.Metric metric = DetailFrag_5.metricArray.get(DetailFrag_5.currentMetricIndex);
@@ -4370,8 +4382,7 @@ currentMetricIndex =0;
 //
 //            prevSignChange = (int) change;
             }
-        }
-        else {
+        } else {
             if (flag == 0) {
                 for (int i = 0; i < array.size(); i++) {
                     //float change = array.get(i) - array.get(i + 1);
@@ -4605,8 +4616,7 @@ currentMetricIndex =0;
 
                     DetailFrag_5.stepCount += 1;
                     Log.e("YOYO Inba Ascent", minAndMaxAngles.second + " / " + DetailFrag_5.staircasetime.get(DetailFrag_5.ascentend) + " / " + subarray);
-                }
-                else if (minAndMaxAngles.second <= 50 && ascentflag == 1 && descentflag == 0) {
+                } else if (minAndMaxAngles.second <= 50 && ascentflag == 1 && descentflag == 0) {
                     if (DetailFrag_5.turnflag == 0) {
                         DetailFrag_5.turnstart = DetailFrag_5.startind;
 
@@ -4615,8 +4625,7 @@ currentMetricIndex =0;
                     Log.e("YOYO Inba Turn", minAndMaxAngles.second + " / " + " / " + DetailFrag_5.staircasetime.get(DetailFrag_5.turnstart) + " / " + DetailFrag_5.staircasetime.get(DetailFrag_5.turnend) + " / " + subarray);
                     DetailFrag_5.turnend = DetailFrag_5.endind;
                     ascentflag = 0;
-                }
-                else if (minAndMaxAngles.second >50  && ascentflag == 1 && DetailFrag_5.turnflag == 1) {
+                } else if (minAndMaxAngles.second > 50 && ascentflag == 1 && DetailFrag_5.turnflag == 1) {
                     if (DetailFrag_5.descentflag == 0) {
                         DetailFrag_5.descentstart = DetailFrag_5.startind;
 
@@ -4687,7 +4696,7 @@ currentMetricIndex =0;
             }
         }
         else if ("Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
-            if (minAndMaxAngles.second < 100 && minAndMaxAngles.second > 50 && descentflag == 0 && turnflag == 0 && ascentflag !=0) {
+            if (minAndMaxAngles.second < 100 && minAndMaxAngles.second > 50 && descentflag == 0 && turnflag == 0 && ascentflag != 0) {
 
                 if (DetailFrag_5.ascentstart == 0) {
                     DetailFrag_5.ascentstart = DetailFrag_5.startind;
@@ -4697,8 +4706,7 @@ currentMetricIndex =0;
 
                 DetailFrag_5.stepCount += 1;
                 Log.e("YOYO Inba Ascent", minAndMaxAngles.second + " / " + DetailFrag_5.timestamps.get(DetailFrag_5.ascentend) + " / " + subarray);
-            }
-            else if (minAndMaxAngles.second <= 50 && ascentflag == 1 && descentflag == 0) {
+            } else if (minAndMaxAngles.second <= 50 && ascentflag == 1 && descentflag == 0) {
                 if (DetailFrag_5.turnflag == 0) {
                     DetailFrag_5.turnstart = DetailFrag_5.startind;
 
@@ -4707,8 +4715,7 @@ currentMetricIndex =0;
                 Log.e("YOYO Inba Turn", minAndMaxAngles.second + " / " + " / " + DetailFrag_5.timestamps.get(DetailFrag_5.turnstart) + " / " + DetailFrag_5.timestamps.get(DetailFrag_5.turnend) + " / " + subarray);
                 DetailFrag_5.turnend = DetailFrag_5.endind;
                 ascentflag = 0;
-            }
-            else if (minAndMaxAngles.second < 100 && minAndMaxAngles.second > 50 && ascentflag == 0 && turnflag == 1) {
+            } else if (minAndMaxAngles.second < 100 && minAndMaxAngles.second > 50 && ascentflag == 0 && turnflag == 1) {
                 if (DetailFrag_5.descentflag == 0) {
                     DetailFrag_5.descentstart = DetailFrag_5.startind;
 
@@ -4729,7 +4736,7 @@ currentMetricIndex =0;
             DetailFrag_5.indiviminAngle.add(minAndMaxAngles.first);
             DetailFrag_5.indivipain.add(DetailFrag_5.pain);
         }
-        Log.d("Complete Report JSON", DetailFrag_5.reportarray.toString());
+        //Log.d("Complete Report JSON", DetailFrag_5.reportarray.toString());
     }
 
     private Pair<Float, Float> findMinMaxAngles(List<Float> values) {
@@ -5353,24 +5360,19 @@ currentMetricIndex =0;
                     DetailFrag_5.indiviCardAdapterpass.notifyDataSetChanged();
                     DetailFrag_5.exerciseListact.clear();
                     DetailFrag_5.indiviCardAdapteract.notifyDataSetChanged();
-                }
-                else if ("Dynamic Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                } else if ("Dynamic Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                     DetailFrag_5.dynamicbalancetestdata.clear();
                     DetailFrag_5.dynamicbalanceadapter.notifyDataSetChanged();
-                }
-                else if ("Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                } else if ("Static Balance Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                     staticbalancetestdata.clear();
                     DetailFrag_5.staticbalancetestadapter.notifyDataSetChanged();
-                }
-                else if ("Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                } else if ("Staircase Climbing Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                     staircaseclimbingtestdata.clear();
                     DetailFrag_5.staircaseclimbingadapter.notifyDataSetChanged();
-                }
-                else if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                } else if ("Mobility Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                     DetailFrag_5.mobilityCycleAssessments.clear();
                     DetailFrag_5.mobilityCycleAdapter.notifyDataSetChanged();
-                }
-                else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
+                } else if ("Proprioception Test".equalsIgnoreCase(DetailFrag_5.selectedExercise)) {
                     DetailFrag_5.exerciseListact.clear();
                     DetailFrag_5.proprioceptionAdapter.notifyDataSetChanged();
                 }
@@ -5384,6 +5386,7 @@ currentMetricIndex =0;
                     //DetailFrag_5.postdataobj = new JSONObject();
 
                     DetailFrag_5.postdataobj.put(DetailFrag_5.selectedExercise, DetailFrag_5.postexesubdata);
+                    Log.e("The posting dynamic balance data", String.valueOf(DetailFrag_5.postexesubdata));
                     DetailFrag_5.postexesubdata = new JSONObject();
                     DetailFrag_5.postexedata = new JSONObject();
                     Intent intent = new Intent(Assessment.this, DetailFrag_5.class);
@@ -5795,38 +5798,37 @@ currentMetricIndex =0;
 
         DetailFrag_5.extnangle = data.get(0);
         DetailFrag_5.leftlegwos.add(DetailFrag_5.extnangle);
-        if(DetailFrag_5.leftlegwos.size()>1) {
+        if (DetailFrag_5.leftlegwos.size() > 1) {
 
-            float change = DetailFrag_5.extnangle-DetailFrag_5.extnangle1;
+            float change = DetailFrag_5.extnangle - DetailFrag_5.extnangle1;
 
-            if(DetailFrag_5.extndens>=5){
-                if(DetailFrag_5.extnflag == 0) {
-                    Log.e("Inbasekar Extension Lag tes inside func deficit", String.valueOf(DetailFrag_5.extnangle)+" / "+DetailFrag_5.extnangle1+" / "+DetailFrag_5.extnactivemax+" / "+DetailFrag_5.extnpassivemax);
+            if (DetailFrag_5.extndens >= 5) {
+                if (DetailFrag_5.extnflag == 0) {
+                    Log.e("Inbasekar Extension Lag tes inside func deficit", String.valueOf(DetailFrag_5.extnangle) + " / " + DetailFrag_5.extnangle1 + " / " + DetailFrag_5.extnactivemax + " / " + DetailFrag_5.extnpassivemax);
                     Toasty.warning(Assessment.this, "Extension Deficit Detected", Toast.LENGTH_SHORT).show();
-                    DetailFrag_5.extnflag =1;
+                    DetailFrag_5.extnflag = 1;
                 }
                 if (change >= 0) {
                     if (DetailFrag_5.extnpassivemax > DetailFrag_5.extnangle) {
                         DetailFrag_5.extnpassivemax = DetailFrag_5.extnangle;
                     }
-                    if(DetailFrag_5.extnangle <=10){
-                        Log.e("Inbasekar Extension Lag tes inside func extension", String.valueOf(DetailFrag_5.extnangle)+" / "+DetailFrag_5.extnangle1+" / "+DetailFrag_5.extnactivemax+" / "+DetailFrag_5.extnpassivemax);
-                        Toasty.success(Assessment.this,"Extension Reached",Toast.LENGTH_SHORT).show();
+                    if (DetailFrag_5.extnangle <= 10) {
+                        Log.e("Inbasekar Extension Lag tes inside func extension", String.valueOf(DetailFrag_5.extnangle) + " / " + DetailFrag_5.extnangle1 + " / " + DetailFrag_5.extnactivemax + " / " + DetailFrag_5.extnpassivemax);
+                        Toasty.success(Assessment.this, "Extension Reached", Toast.LENGTH_SHORT).show();
                         //stopTimer();
                     }
                 }
-            }
-            else {
-                if (change <=0) {
+            } else {
+                if (change <= 0) {
                     if (DetailFrag_5.extnactivemax > DetailFrag_5.extnangle) {
                         DetailFrag_5.extnactivemax = DetailFrag_5.extnangle;
                     }
-                    if(DetailFrag_5.extnangle <=10){
-                        Log.e("Inbasekar Extension Lag tes inside func no extension", String.valueOf(DetailFrag_5.extnangle)+" / "+DetailFrag_5.extnangle1+" / "+DetailFrag_5.extnactivemax+" / "+DetailFrag_5.extnpassivemax);
-                        Toasty.success(Assessment.this,"No Extension Deficit",Toast.LENGTH_SHORT).show();
+                    if (DetailFrag_5.extnangle <= 10) {
+                        Log.e("Inbasekar Extension Lag tes inside func no extension", String.valueOf(DetailFrag_5.extnangle) + " / " + DetailFrag_5.extnangle1 + " / " + DetailFrag_5.extnactivemax + " / " + DetailFrag_5.extnpassivemax);
+                        Toasty.success(Assessment.this, "No Extension Deficit", Toast.LENGTH_SHORT).show();
                         //stopTimer();
                     }
-                } else if (change >0) {
+                } else if (change > 0) {
                     DetailFrag_5.extndens++;
                 }
             }
@@ -5841,10 +5843,9 @@ currentMetricIndex =0;
 //            DetailFrag_5.analysereportarray = new JSONArray();
 
 
-
         }
-        Log.e("Inbasekar Extension Lag tes inside func", String.valueOf(DetailFrag_5.extnangle)+" / "+DetailFrag_5.extnangle1+" / "+DetailFrag_5.extnactivemax+" / "+DetailFrag_5.extnpassivemax);
-        DetailFrag_5.extnangle1=DetailFrag_5.extnangle;
+        Log.e("Inbasekar Extension Lag tes inside func", String.valueOf(DetailFrag_5.extnangle) + " / " + DetailFrag_5.extnangle1 + " / " + DetailFrag_5.extnactivemax + " / " + DetailFrag_5.extnpassivemax);
+        DetailFrag_5.extnangle1 = DetailFrag_5.extnangle;
 
 //        Log.e("Inbasekar Extension Lag tes inside func",DetailFrag_5.extnactivemax+" / "+DetailFrag_5.extnpassivemax+" / "+DetailFrag_5.extnactivemax+DetailFrag_5.extnpassivemax);
 
@@ -5922,8 +5923,6 @@ currentMetricIndex =0;
 //                DetailFrag_5.tempRow = new ArrayList<>();
 //            }
 //        }
-
-
 
 
 //        for (int i = 0; i < objectElements.size() - 1; i++) {
@@ -6021,124 +6020,278 @@ currentMetricIndex =0;
 
     }
 
-    private void dynamicbalancetest(List<Float> data) {
-
-        Log.e("Inside Dynamic balance test", String.valueOf(data));
-
-        float angle = data.get(0);
-        float angle1 = data.get(1);
-//        for (float value : data) {
-//            angle = value;
-//            //DetailFrag_5.metricArray.add(new DetailFrag_5.Metric(index, value));
+//    private void dynamicbalancetest(List<Float> data, List<Float> data1) {
+//
+//        Log.e("Inside Dynamic balance test", String.valueOf(data));
+//
+//        float angle = data.get(0);
+//        float angle1 = data.get(1);
+//
+//        if ("active".equalsIgnoreCase(activepassive)) {
+//
+//            DetailFrag_5.leftlegwos.add(angle);
+//            DetailFrag_5.rightwos.add(angle1);
+//
+//            wos = "Without Support";
+//
+//            if (angle >= DetailFrag_5.SIT_ANGLE && angle1 >= DetailFrag_5.SIT_ANGLE && walkstarted == 0 && standtoshift == 0) {
+//                if (DetailFrag_5.sitToStandStartTime == 0) {
+//                    DetailFrag_5.sitToStandStartTime = DetailFrag_5.sec;
+//                }
+//                DetailFrag_5.sitToStandEndTime = DetailFrag_5.sec;
+//                Log.e("SittoStand Time", String.valueOf(DetailFrag_5.sitToStandStartTime) + " / " + String.valueOf(DetailFrag_5.sitToStandEndTime));
+//            } else if (angle < DetailFrag_5.STAND_ANGLE && angle1 < DetailFrag_5.STAND_ANGLE && walkstarted == 0) {
+//                if (DetailFrag_5.standToShiftStartTime == 0) {
+//                    DetailFrag_5.standToShiftStartTime = DetailFrag_5.sec;
+//                }
+//                standtoshift = 1;
+//                DetailFrag_5.standToShiftEndTime = DetailFrag_5.sec;
+//                Log.e("StandtoShift Time", String.valueOf(DetailFrag_5.standToShiftStartTime) + " / " + String.valueOf(DetailFrag_5.standToShiftEndTime) + " / " + standtoshift);
+//            } else if (angle1 > 5 && angle <= 75 && angle > 5 && angle1 <= 75 && standtoshift == 1) {
+//                if (DetailFrag_5.walkStartTime == 0) {
+//                    DetailFrag_5.walkStartTime = DetailFrag_5.sec;
+//                }
+//                walkstarted = 1;
+//                DetailFrag_5.walkEndTime = DetailFrag_5.sec;
+//                DetailFrag_5.sittostand = DetailFrag_5.walkStartTime - DetailFrag_5.sitToStandEndTime;
+//                Log.e("Walk Time inba", String.valueOf(DetailFrag_5.standToShiftEndTime) + " / " + String.valueOf(DetailFrag_5.walkEndTime));
+//            }
+//
+//            previousLeftKneeAngle = angle;
+//            previousRightKneeAngle = angle1;
 //        }
-        if ("active".equalsIgnoreCase(activepassive)) {
+//        else {
+//
+//            DetailFrag_5.leftlegws.add(angle);
+//            DetailFrag_5.rightws.add(angle1);
+//
+//            wos = "With Support";
+//
+//            Log.e("Inbasekar Dynamic Balance Test", DetailFrag_5.timestamps.toString() + " / " + currentMetricIndex);
+//
+//            if (angle >= DetailFrag_5.SIT_ANGLE && angle1 >= DetailFrag_5.SIT_ANGLE && walkstarted == 0 && standtoshift == 0) {
+//                if (DetailFrag_5.sitToStandStartTime == 0) {
+//                    DetailFrag_5.sitToStandStartTime = DetailFrag_5.sec;
+//                }
+//                DetailFrag_5.sitToStandEndTime = DetailFrag_5.sec;
+//                Log.e("SittoStand Time", String.valueOf(DetailFrag_5.sitToStandStartTime) + " / " + String.valueOf(DetailFrag_5.sitToStandEndTime));
+//            } else if (angle1 > 5 && angle <= 65 && angle > 5 && angle1 <= 65 && standtoshift == 0) {
+//                if (DetailFrag_5.walkStartTime == 0) {
+//                    DetailFrag_5.walkStartTime = DetailFrag_5.sec;
+//                }
+//                walkstarted = 1;
+//                DetailFrag_5.walkEndTime = DetailFrag_5.sec;
+//                DetailFrag_5.sittostand = DetailFrag_5.walkStartTime - DetailFrag_5.sitToStandEndTime;
+//                Log.e("Walk Time inba", String.valueOf(DetailFrag_5.standToShiftEndTime) + " / " + String.valueOf(DetailFrag_5.walkEndTime));
+//            } else if (angle <= DetailFrag_5.STAND_ANGLE && angle1 <= DetailFrag_5.STAND_ANGLE && walkstarted == 1) {
+//                if (DetailFrag_5.standToShiftStartTime == 0) {
+//                    DetailFrag_5.standToShiftStartTime = DetailFrag_5.sec;
+//                }
+//                standtoshift = 1;
+//                DetailFrag_5.standToShiftEndTime = DetailFrag_5.sec;
+//                Log.e("StandtoShift Time", String.valueOf(DetailFrag_5.standToShiftStartTime) + " / " + String.valueOf(DetailFrag_5.standToShiftEndTime));
+//            }
+//
+//            previousLeftKneeAngle = angle;
+//            previousRightKneeAngle = angle1;
+//        }
+//
+//
+//
+//        Log.e("Sit-to-Stand Starttime: ", DetailFrag_5.sitToStandStartTime + " seconds");
+//        Log.e("Sit-to-Stand endtime: ", DetailFrag_5.sitToStandEndTime + " seconds");
+//        Log.e("Sit-to-Stand Duration: ", (DetailFrag_5.sittostand) + " seconds");
+//        Log.e("Stand-to-Shift Starttime: ", DetailFrag_5.standToShiftStartTime + " seconds");
+//        Log.e("Stand-to-Shift endtime: ", DetailFrag_5.standToShiftEndTime + " seconds");
+//        Log.e("Stand-to-Shift Duration: ", (DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime) + " seconds");
+//        Log.e("Walk Starttime: ", DetailFrag_5.walkStartTime + " seconds");
+//        Log.e("Walk endtime: ", DetailFrag_5.walkEndTime + " seconds");
+//        Log.e("Walk Duration: ", (DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime) + " seconds");
+//        //System.out.println("Stand-to-Shift Duration: " + (DetailFrag_5.standToShiftEndTime - DetailFrag_5.standToShiftStartTime) / 1000.0 + " seconds");
+//        //System.out.println("Walk Duration: " + (DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime) / 1000.0 + " seconds");
+//    }
 
-            DetailFrag_5.leftlegwos.add(angle);
-            DetailFrag_5.rightwos.add(angle1);
+    private void dynamicbalancetest(List<Float> data, List<Float> data1) {
+        final float SIT_THRESHOLD_MIN = 65f;
+        final float STAND_THRESHOLD = 10f;
+        final int CONSISTENT_STAND_POINTS = 60; // 500 ms
+        final int CONSISTENT_SIT_POINTS = 25; // 500 ms
+        float maxangle = 0f;
 
-            wos = "Without Support";
+        boolean isSitting = true;
+        boolean isWalking = false;
+        boolean isStanding1 = false;
+        boolean isStanding2 = false;
 
-            if (angle >= DetailFrag_5.SIT_ANGLE && angle1 >= DetailFrag_5.SIT_ANGLE && walkstarted == 0 && standtoshift == 0) {
-                if (DetailFrag_5.sitToStandStartTime == 0) {
-                    DetailFrag_5.sitToStandStartTime = DetailFrag_5.sec;
-                }
-                DetailFrag_5.sitToStandEndTime = DetailFrag_5.sec;
-                Log.e("SittoStand Time", String.valueOf(DetailFrag_5.sitToStandStartTime) + " / " + String.valueOf(DetailFrag_5.sitToStandEndTime));
-            } else if (angle < DetailFrag_5.STAND_ANGLE && angle1 < DetailFrag_5.STAND_ANGLE && walkstarted == 0) {
-                if (DetailFrag_5.standToShiftStartTime == 0) {
-                    DetailFrag_5.standToShiftStartTime = DetailFrag_5.sec;
-                }
-                standtoshift = 1;
-                DetailFrag_5.standToShiftEndTime = DetailFrag_5.sec;
-                Log.e("StandtoShift Time", String.valueOf(DetailFrag_5.standToShiftStartTime) + " / " + String.valueOf(DetailFrag_5.standToShiftEndTime) + " / " + standtoshift);
-            } else if (angle1 > 5 && angle <= 75 && angle > 5 && angle1 <= 75 && standtoshift == 1) {
-                if (DetailFrag_5.walkStartTime == 0) {
-                    DetailFrag_5.walkStartTime = DetailFrag_5.sec;
-                }
-                walkstarted = 1;
-                DetailFrag_5.walkEndTime = DetailFrag_5.sec;
-                DetailFrag_5.sittostand = DetailFrag_5.walkStartTime - DetailFrag_5.sitToStandEndTime;
-                Log.e("Walk Time inba", String.valueOf(DetailFrag_5.standToShiftEndTime) + " / " + String.valueOf(DetailFrag_5.walkEndTime));
+        long sitToStandStart = 0;
+        long standingStart = 0;
+        long walkingStart = 0;
+        long standToSitStart = 0;
+
+        long sitToStandTime = 0;
+        long standBeforeWalkTime = 0;
+        long walkingTime = 0;
+        long standingAfterWalkTime = 0;
+        long standToSitTime = 0;
+        long standtemptime = 0;
+        long sittemptime = 0;
+
+        int standCount = 0;
+        int sitCount = 0;
+
+        for (int i = 0; i < data.size(); i++) {
+            float angle = data.get(i);
+            long timestamp = DetailFrag_5.timestamps.get(i);
+
+            if (isSitting && angle < SIT_THRESHOLD_MIN) {
+                // Sit to Stand
+                isSitting = false;
+                sitToStandStart = timestamp;
+                //Log.d("Dynamic Balance Test", "Patient sit to stand started at: " +sitToStandStart);
             }
 
-            previousLeftKneeAngle = angle;
-            previousRightKneeAngle = angle1;
+            else if (!isSitting && !isStanding1 && !isWalking && angle < STAND_THRESHOLD) {
+                // Standing before walking
+                sitToStandTime = timestamp - sitToStandStart ;
+                //Log.d("Dynamic Balance Test", "Sit to Stand time: " +timestamp);
+                //System.out.println("Sit to Stand time: " + sitToStandTime + " ms");
+                standingStart = timestamp;
+                isStanding1 = true;
+                //Log.d("Dynamic Balance Test", "Patient is standing before walking at: " +standingStart);
+                //System.out.println("Patient is standing before walking at: " + standingStart + " ms");
+            }
+
+            else if (isStanding1 && angle > STAND_THRESHOLD) {
+                // Walking starts
+                standBeforeWalkTime = timestamp - standingStart;
+                //Log.d("Dynamic Balance Test", "Standing before walking time: " +timestamp);
+                //System.out.println("Standing before walking time: " + standBeforeWalkTime + " ms");
+                walkingStart = timestamp;
+                isWalking = true;
+                isStanding1 = false;
+                //Log.d("Dynamic Balance Test", "Patient starts walking at: " +walkingStart);
+                //System.out.println("Patient starts walking at: " + walkingStart + " ms");
+            }
+
+            else if (isWalking) {
+                // Check for consistent standing angle
+                if (angle < STAND_THRESHOLD) {
+                    if(standtemptime == 0){
+                        standtemptime = timestamp;
+                    }
+                    standCount++;
+                    sitCount=0;
+                    sittemptime=0;
+                }
+                else if(angle >STAND_THRESHOLD){
+                    if(sittemptime == 0){
+                        sittemptime = timestamp;
+                    }
+                    if(maxangle<angle){
+                        maxangle=angle;
+                    }
+                    sitCount++;
+                    standCount=0;
+                    standtemptime=0;
+                }
+                else {
+                    standCount = 0;
+                    sitCount = 0;
+                    standtemptime=0;
+                    sittemptime=0;
+                    maxangle=0;
+                }
+//                Log.d("Dynamic Balance Test", "CONSISTENT_STAND_POINTS " +standCount + " / "+sitCount+" / "+maxangle);
+                if ((standCount >= CONSISTENT_STAND_POINTS) || (maxangle>=65)) {
+                    // Standing after walking
+                    if(standtemptime !=0) {
+                        walkingTime = standtemptime - walkingStart;
+                        //Log.d("Dynamic Balance Test", "Walking time: " +standtemptime);
+                        //System.out.println("Walking time: " + walkingTime + " ms");
+                        standingStart = standtemptime;
+                        standToSitTime = timestamp - standtemptime;
+                    }
+                    else{
+                        walkingTime = sittemptime - walkingStart;
+                        //Log.d("Dynamic Balance Test", "Walking time: " +sittemptime);
+                        //System.out.println("Walking time: " + walkingTime + " ms");
+                        standingStart = sittemptime;
+                        standToSitTime = timestamp - sittemptime;
+                    }
+
+                    isStanding2 = true;
+                    isWalking = false;
+                    standCount = 0;
+                    //Log.d("Dynamic Balance Test", "Patient is standing after walking at: " +standingStart);
+//                    System.out.println("Patient is standing after walking at: " + standingStart + " ms");
+                }
+            }
+
+//            else if (isStanding2 && angle >= SIT_THRESHOLD_MIN) {
+//                // Stand to Sit
+//                standingAfterWalkTime = timestamp - standingStart;
+//                Log.d("Dynamic Balance Test", "Standing after walking time: " +timestamp);
+//                //System.out.println("Standing after walking time: " + standingAfterWalkTime + " ms");
+//                standToSitStart = timestamp;
+//                isSitting = true;
+//                Log.d("Dynamic Balance Test", "Patient started stand to sit transition at: " +standToSitStart);
+//                //System.out.println("Patient started stand to sit transition at: " + standToSitStart + " ms");
+//
+//                standToSitTime = timestamp - standToSitStart;
+//                Log.d("Dynamic Balance Test", "Stand to Sit time: " +timestamp);
+//                //System.out.println("Stand to Sit time: " + standToSitTime + " ms");
+////                break;
+//            }
         }
-        else {
+        Log.d("Dynamic Balance Test", "Total Sit to Stand time: " + String.format("%.2f", sitToStandTime / 1000.0) + " s");
+//        Log.d("Dynamic Balance Test", "Total Standing before walking time: " + String.format("%.2f", standBeforeWalkTime / 1000.0) + " s");
+        Log.d("Dynamic Balance Test", "Total Walking time: " + String.format("%.2f", walkingTime / 1000.0) + " s");
+//        Log.d("Dynamic Balance Test", "Total Standing after walking time: " + String.format("%.2f", standingAfterWalkTime / 1000.0) + " s");
+        Log.d("Dynamic Balance Test", "Total Stand to Sit time: " + String.format("%.2f", standToSitTime / 1000.0) + " s");
 
-            DetailFrag_5.leftlegws.add(angle);
-            DetailFrag_5.rightws.add(angle1);
+        DetailFrag_5.sittostand = (Math.round(sitToStandTime / 10.0) / 100.0);
+        DetailFrag_5.standtosit = (Math.round(standToSitTime / 10.0) / 100.0);
+        DetailFrag_5.walktime = (Math.round(walkingTime / 10.0) / 100.0);
 
-            wos = "With Support";
-
-            Log.e("Inbasekar Dynamic Balance Test", DetailFrag_5.timestamps.toString() +" / "+ currentMetricIndex);
-
-            if (angle >= DetailFrag_5.SIT_ANGLE && angle1 >= DetailFrag_5.SIT_ANGLE && walkstarted == 0 && standtoshift == 0) {
-                if (DetailFrag_5.sitToStandStartTime == 0) {
-                    DetailFrag_5.sitToStandStartTime = DetailFrag_5.sec;
-                }
-                DetailFrag_5.sitToStandEndTime = DetailFrag_5.sec;
-                Log.e("SittoStand Time", String.valueOf(DetailFrag_5.sitToStandStartTime) + " / " + String.valueOf(DetailFrag_5.sitToStandEndTime));
-            }
-            else if (angle1 > 5 && angle <= 65 && angle > 5 && angle1 <= 65 && standtoshift == 0) {
-                if (DetailFrag_5.walkStartTime == 0) {
-                    DetailFrag_5.walkStartTime = DetailFrag_5.sec;
-                }
-                walkstarted = 1;
-                DetailFrag_5.walkEndTime = DetailFrag_5.sec;
-                DetailFrag_5.sittostand = DetailFrag_5.walkStartTime - DetailFrag_5.sitToStandEndTime;
-                Log.e("Walk Time inba", String.valueOf(DetailFrag_5.standToShiftEndTime) + " / " + String.valueOf(DetailFrag_5.walkEndTime));
-            }
-            else if (angle <= DetailFrag_5.STAND_ANGLE && angle1 <= DetailFrag_5.STAND_ANGLE && walkstarted == 1) {
-                if (DetailFrag_5.standToShiftStartTime == 0) {
-                    DetailFrag_5.standToShiftStartTime = DetailFrag_5.sec;
-                }
-                standtoshift = 1;
-                DetailFrag_5.standToShiftEndTime = DetailFrag_5.sec;
-                Log.e("StandtoShift Time", String.valueOf(DetailFrag_5.standToShiftStartTime) + " / " + String.valueOf(DetailFrag_5.standToShiftEndTime));
-            }
-
-            previousLeftKneeAngle = angle;
-            previousRightKneeAngle = angle1;
-        }
-        Log.e("Sit-to-Stand Starttime: ", DetailFrag_5.sitToStandStartTime + " seconds");
-        Log.e("Sit-to-Stand endtime: ", DetailFrag_5.sitToStandEndTime + " seconds");
-        Log.e("Sit-to-Stand Duration: ", (DetailFrag_5.sittostand) + " seconds");
-        Log.e("Stand-to-Shift Starttime: ", DetailFrag_5.standToShiftStartTime + " seconds");
-        Log.e("Stand-to-Shift endtime: ", DetailFrag_5.standToShiftEndTime + " seconds");
-        Log.e("Stand-to-Shift Duration: ", (DetailFrag_5.sitToStandStartTime - DetailFrag_5.standToShiftStartTime) + " seconds");
-        Log.e("Walk Starttime: ", DetailFrag_5.walkStartTime + " seconds");
-        Log.e("Walk endtime: ", DetailFrag_5.walkEndTime + " seconds");
-        Log.e("Walk Duration: ", (DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime) + " seconds");
-        //System.out.println("Stand-to-Shift Duration: " + (DetailFrag_5.standToShiftEndTime - DetailFrag_5.standToShiftStartTime) / 1000.0 + " seconds");
-        //System.out.println("Walk Duration: " + (DetailFrag_5.walkEndTime - DetailFrag_5.walkStartTime) / 1000.0 + " seconds");
     }
 
-    private void staticbalancetest(List<Float> data) {
+    private void staticbalancetest(List<Float> data)    {
         Log.e("Inside Static balance test", String.valueOf(data));
-        if (firstvalue == 0) {
-            firstvalue = 1;
-            DetailFrag_5.startTime = DetailFrag_5.sec;
-            Log.e("Raj ronald", String.valueOf(DetailFrag_5.startTime));
-        }
 
-        float angle = 0;
-        for (float value : data) {
-            angle = value;
-            //DetailFrag_5.metricArray.add(new DetailFrag_5.Metric(index, value));
-            Log.e("Raj ronald", String.valueOf(angle));
-            DetailFrag_5.staticbalanceangles.add(angle);
-        }
-//        DetailFrag_5.staticbalanceangles.add(angle);
-
-        if (DetailFrag_5.isTesting) {
-            if (Math.abs(angle) <= 7 && Math.abs(angle) >= 0) {
+        for(int i=0; i<data.size(); i++){
+            DetailFrag_5.staticbalanceangles.add(data.get(i));
+            if (Math.abs(data.get(i)) <= 7 && Math.abs(data.get(i)) >= 0 && DetailFrag_5.isTesting) {
                 DetailFrag_5.isTesting = false;
-                DetailFrag_5.endTime = DetailFrag_5.sec;
-                Log.e("Raj ronald shaw", DetailFrag_5.startTime + " " + String.valueOf(DetailFrag_5.endTime));
+                DetailFrag_5.endTime = timestamps.get(i);
+                //Log.e("Raj ronald shaw", DetailFrag_5.startTime + " " + String.valueOf(DetailFrag_5.endTime));
                 //DetailFrag_5.duration = (DetailFrag_5.endTime - DetailFrag_5.startTimegait)/1000;
             }
         }
+
+//        if (firstvalue == 0) {
+//            firstvalue = 1;
+//            DetailFrag_5.startTime = DetailFrag_5.sec;
+//            Log.e("Raj ronald", String.valueOf(DetailFrag_5.startTime));
+//        }
+
+//        float angle = 0;
+//        for (float value : data) {
+//            angle = value;
+//            //DetailFrag_5.metricArray.add(new DetailFrag_5.Metric(index, value));
+//            Log.e("Raj ronald", String.valueOf(angle));
+//            DetailFrag_5.staticbalanceangles.add(angle);
+//        }
+
+//        DetailFrag_5.staticbalanceangles.add(angle);
+
+//        if (DetailFrag_5.isTesting) {
+//            if (Math.abs(angle) <= 7 && Math.abs(angle) >= 0) {
+//                DetailFrag_5.isTesting = false;
+//                DetailFrag_5.endTime = DetailFrag_5.sec;
+//                Log.e("Raj ronald shaw", DetailFrag_5.startTime + " " + String.valueOf(DetailFrag_5.endTime));
+//                //DetailFrag_5.duration = (DetailFrag_5.endTime - DetailFrag_5.startTimegait)/1000;
+//            }
+//        }
 
 //        for(int i=0; i<objectElements.size(); i++) {
 //            if (DetailFrag_5.isTesting) {
@@ -6212,9 +6365,12 @@ currentMetricIndex =0;
 
         }
 
-        lascent = (DetailFrag_5.timestamps.get(ascentend)-DetailFrag_5.timestamps.get(ascentstart))/1000.0;
-        lturn = (DetailFrag_5.timestamps.get(turnend)-DetailFrag_5.timestamps.get(turnstart))/1000.0;
-        ldescent = (DetailFrag_5.timestamps.get(descentend)-DetailFrag_5.timestamps.get(descentstart))/1000.0;
+        lascent = Math.abs((DetailFrag_5.timestamps.get(ascentend) - DetailFrag_5.timestamps.get(ascentstart)) / 1000.0);
+        lturn = Math.abs((DetailFrag_5.timestamps.get(turnend) - DetailFrag_5.timestamps.get(turnstart)) / 1000.0);
+        ldescent = Math.abs((DetailFrag_5.timestamps.get(descentend) - DetailFrag_5.timestamps.get(descentstart)) / 1000.0);
+
+//        Log.e("Staircase Left Leg", String.valueOf(data));
+//        Log.e("Staircase Left Leg", String.valueOf(DetailFrag_5.timestamps));
 
         Log.e("Staircase Left Leg", String.valueOf(lascent));
         Log.e("Staircase Left Leg", String.valueOf(lturn));
@@ -6231,7 +6387,8 @@ currentMetricIndex =0;
         DetailFrag_5.tempRow = new ArrayList<>();
         ascentflag = 1;
         descentflag = 0;
-        turnflag =0;
+        turnflag = 0;
+
         for (int i = 0; i < data1.size() - 1; i++) {
             //float difference = angles[i] - angles[i - 1];
             DetailFrag_5.change = data1.get(i + 1) - data1.get(i);
@@ -6288,10 +6445,11 @@ currentMetricIndex =0;
             }
         }
 
-        rascent = (DetailFrag_5.timestamps.get(ascentend)-DetailFrag_5.timestamps.get(ascentstart))/1000.0;
-        rturn = (DetailFrag_5.timestamps.get(turnend)-DetailFrag_5.timestamps.get(turnstart))/1000.0;
-        rdescent = (DetailFrag_5.timestamps.get(descentend)-DetailFrag_5.timestamps.get(descentstart))/1000.0;
+        rascent = Math.abs((DetailFrag_5.timestamps.get(ascentend) - DetailFrag_5.timestamps.get(ascentstart)) / 1000.0);
+        rturn = Math.abs((DetailFrag_5.timestamps.get(turnend) - DetailFrag_5.timestamps.get(turnstart)) / 1000.0);
+        rdescent = Math.abs((DetailFrag_5.timestamps.get(descentend) - DetailFrag_5.timestamps.get(descentstart)) / 1000.0);
 
+//        Log.e("Staircase Right Leg", String.valueOf(data1));
 
         Log.e("Staircase Right Leg", String.valueOf(rascent));
         Log.e("Staircase Right Leg", String.valueOf(rturn));
@@ -6533,14 +6691,12 @@ currentMetricIndex =0;
 //        }
 
 
-
 //        DetailFrag_5.exerciseListact.add(new ExerciseCycleAssessment(minAndMaxAngles.second));
 //                            DetailFrag_5.exepain.put(DetailFrag_5.indivipain.get(k));
 
-        if("Active".equalsIgnoreCase(activepassive)){
+        if ("Active".equalsIgnoreCase(activepassive)) {
             propriopassvalue = minAndMaxAngles.second;
-        }
-        else{
+        } else {
             proprioactvalue = minAndMaxAngles.second;
         }
 
@@ -6589,23 +6745,23 @@ currentMetricIndex =0;
         int order = 4; // Filter order
 
         JSONArray la = new JSONArray();
-        for(int i=0; i<DetailFrag_5.leftaccl.size(); i++){
+        for (int i = 0; i < DetailFrag_5.leftaccl.size(); i++) {
             la.put(DetailFrag_5.leftaccl.get(i));
         }
         JSONArray ra = new JSONArray();
-        for(int i=0; i<DetailFrag_5.righttaccl.size(); i++){
+        for (int i = 0; i < DetailFrag_5.righttaccl.size(); i++) {
             ra.put(DetailFrag_5.righttaccl.get(i));
         }
         // Apply low-pass filter to raw acceleration data
         DetailFrag_5.leftacclfilter = LowPassFilterUtils.applyLowPassFilter(la, cutoff, fs, order);
         DetailFrag_5.righttacclfilter = LowPassFilterUtils.applyLowPassFilter(ra, cutoff, fs, order);
-        double leftprevstride=0,rightprevstrie=0;
+        double leftprevstride = 0, rightprevstrie = 0;
 
 //        Log.e("Acceleration Log for Walk gait",DetailFrag_5.leftaccl+" / "+DetailFrag_5.righttaccl);
 
         Log.e("Walk gait time", String.valueOf(DetailFrag_5.timestamps));
 
-        Log.e("Walk gait timestamps",String.valueOf(DetailFrag_5.entries.size()));
+        Log.e("Walk gait timestamps", String.valueOf(DetailFrag_5.entries.size()));
 
         DetailFrag_5.tempRow = new ArrayList<>();
         DetailFrag_5.tempRow1 = new ArrayList<>();
@@ -6617,8 +6773,8 @@ currentMetricIndex =0;
         JSONArray lefttimestamp = new JSONArray();
 
 
-        int leftstart=0, rightstart=0;
-        int leftend=0, rightend=0;
+        int leftstart = 0, rightstart = 0;
+        int leftend = 0, rightend = 0;
 
         List<Double> leftacc = new ArrayList<>();
         List<Double> rightacc = new ArrayList<>();
@@ -6633,10 +6789,10 @@ currentMetricIndex =0;
         }
 
         if (data.size() >= data1.size()) {
-            for (int i = 0; i < data1.size()-1; i++) {
+            for (int i = 0; i < data1.size() - 1; i++) {
                 //float difference = angles[i] - angles[i - 1];
-                DetailFrag_5.change = data.get(i+1) - data.get(i);
-                DetailFrag_5.change1 = data1.get(i+1) - data1.get(i);
+                DetailFrag_5.change = data.get(i + 1) - data.get(i);
+                DetailFrag_5.change1 = data1.get(i + 1) - data1.get(i);
 
                 Log.e("Change1", DetailFrag_5.change + " / " + DetailFrag_5.change1);
 
@@ -6654,8 +6810,7 @@ currentMetricIndex =0;
 
                         Log.e("Break Detected Started", "Break started at index: " + i + " / " + DetailFrag_5.breakStartTime / 1000);
                     }
-                }
-                else {
+                } else {
                     DetailFrag_5.consecutiveNoChangeCount = 0;
                     if (DetailFrag_5.isInBreak) {
                         DetailFrag_5.isInBreak = false;
@@ -6665,15 +6820,13 @@ currentMetricIndex =0;
                         //stance.add(DetailFrag_5.stepCountwalk + " " + String.valueOf((int) (breakEndTime - DetailFrag_5.breakStartTime) / 1000));
                         Log.e("Break Detected Ended", "Break started at index: " + i + " / " + breakEndTime / 1000);
                         DetailFrag_5.breakStartTime = 0;
-                    }
-                    else if (DetailFrag_5.breakStartTime != 0 && data1.get(i) < 10 && data.get(i) < 10) {
+                    } else if (DetailFrag_5.breakStartTime != 0 && data1.get(i) < 10 && data.get(i) < 10) {
                         long breakEndTime = DetailFrag_5.timestamps.get(i);
                         DetailFrag_5.totalstancepahse += (breakEndTime - DetailFrag_5.breakStartTime);
                         stance.add((long) ((breakEndTime - DetailFrag_5.breakStartTime) / 1000.0));
                         Log.e("Power Rangers Total Stance Phase", i + " / " + String.valueOf(DetailFrag_5.totalstancepahse));
                         DetailFrag_5.breakStartTime = 0;
-                    }
-                    else {
+                    } else {
                         // --- Step Detection for Right Leg ---
                         if (DetailFrag_5.change1 >= 0) {
                             DetailFrag_5.rightlegcyclewalkgait.add(data1.get(i));
@@ -6684,11 +6837,11 @@ currentMetricIndex =0;
 //                            }
                             rightacc.add(DetailFrag_5.righttaccl.get(i));
                             righttimestamp.put(DetailFrag_5.timestamps.get(i));
-                            if(rightstart == 0){
-                                rightstart =i;
+                            if (rightstart == 0) {
+                                rightstart = i;
                             }
 
-                                DetailFrag_5.isIncreasing = true;
+                            DetailFrag_5.isIncreasing = true;
 
 
                             DetailFrag_5.stepStartTime = DetailFrag_5.timestamps.get(i); // Start of swing phase
@@ -6700,8 +6853,7 @@ currentMetricIndex =0;
 //                                DetailFrag_5.totalBreakTime += (breakEndTime - DetailFrag_5.breakStartTime);
 //                                Log.e("Break Ended", "Break ended at index: " + i);
 //                            }
-                        }
-                        else if (DetailFrag_5.change1 < 0 && DetailFrag_5.isIncreasing) {
+                        } else if (DetailFrag_5.change1 < 0 && DetailFrag_5.isIncreasing) {
                             Log.e("Walk and Gait analysis Right", DetailFrag_5.rightlegcyclewalkgait.toString());
                             DetailFrag_5.rightlegcyclewalkgait.add(data1.get(i));
 //                            try {
@@ -6711,50 +6863,44 @@ currentMetricIndex =0;
 //                            }
                             rightacc.add(DetailFrag_5.righttaccl.get(i));
                             righttimestamp.put(DetailFrag_5.timestamps.get(i));
-                            rightend =i;
+                            rightend = i;
                             DetailFrag_5.isDecreasing = true;
                             DetailFrag_5.isIncreasing = false;
                             float maxangle = Collections.max(DetailFrag_5.rightlegcyclewalkgait);
                             if (maxangle >= 15) {
-                                if(rightstepflag == 0 && leftstepflag == 0){
-                                    rightstepflag =1;
+                                if (rightstepflag == 0 && leftstepflag == 0) {
+                                    rightstepflag = 1;
                                 }
                                 DetailFrag_5.walkgaitrightlegangles.add(maxangle);
                                 DetailFrag_5.stepCountwalk++;
                                 DetailFrag_5.rightcyclewalkgati++;
-                                Log.e("Log for Walk gait Right",rightacc+" / "+righttimestamp);
-                                double stride = stridecalc(rightacc,righttimestamp);
-                                if(rightprevstrie !=0) {
-                                    if(stride<35){
+                                Log.e("Log for Walk gait Right", rightacc + " / " + righttimestamp);
+                                double stride = stridecalc(rightacc, righttimestamp);
+                                if (rightprevstrie != 0) {
+                                    if (stride < 35) {
                                         double t = rightprevstrie - stride;
-                                        stride = stride + (Math.round(t/2)+Math.round(t/3)+Math.round(t/3));
-                                    }
-                                    else if(stride >=35 && stride <=50){
-                                        stride = stride*2;
-                                    }
-                                    else if(stride >=125){
-                                        if(rightprevstrie>=stride){
-                                            double t=rightprevstrie-stride;
-                                            stride=Math.abs(stride-(Math.round(t/2)));
-                                        }
-                                        else{
-                                            double t=stride-rightprevstrie;
-                                            stride=Math.abs(stride-(Math.round(t/2)));
+                                        stride = stride + (Math.round(t / 2) + Math.round(t / 3) + Math.round(t / 3));
+                                    } else if (stride >= 35 && stride <= 50) {
+                                        stride = stride * 2;
+                                    } else if (stride >= 125) {
+                                        if (rightprevstrie >= stride) {
+                                            double t = rightprevstrie - stride;
+                                            stride = Math.abs(stride - (Math.round(t / 2)));
+                                        } else {
+                                            double t = stride - rightprevstrie;
+                                            stride = Math.abs(stride - (Math.round(t / 2)));
                                         }
                                     }
-                                }
-                                else{
-                                    if(stride <=50){
-                                        double t=70-stride;
-                                        stride = stride+t;
-                                    }
-                                    else if(stride >50 && stride <=75){
-                                        double t=80-stride;
-                                        stride = stride+(t/2)+(t/3);
-                                    }
-                                    else if(stride >=125){
-                                        double t=stride-125;
-                                        stride=stride-t;
+                                } else {
+                                    if (stride <= 50) {
+                                        double t = 70 - stride;
+                                        stride = stride + t;
+                                    } else if (stride > 50 && stride <= 75) {
+                                        double t = 80 - stride;
+                                        stride = stride + (t / 2) + (t / 3);
+                                    } else if (stride >= 125) {
+                                        double t = stride - 125;
+                                        stride = stride - t;
                                     }
                                 }
                                 rightprevstrie = stride;
@@ -6791,10 +6937,10 @@ currentMetricIndex =0;
 //                            }
                             lefttimestamp.put(DetailFrag_5.timestamps.get(i));
                             leftacc.add(DetailFrag_5.leftaccl.get(i));
-                            if(leftstart == 0){
-                                leftstart =i;
+                            if (leftstart == 0) {
+                                leftstart = i;
                             }
-                                DetailFrag_5.isIncreasing1 = true;
+                            DetailFrag_5.isIncreasing1 = true;
 
                             DetailFrag_5.stepStartTime1 = DetailFrag_5.timestamps.get(i); // Start of swing phase
                             Log.e("Walk and Gait Time Index left start", String.valueOf(i));
@@ -6805,8 +6951,7 @@ currentMetricIndex =0;
 //                                DetailFrag_5.totalBreakTime += (breakEndTime - DetailFrag_5.breakStartTime);
 //                                Log.e("Break Ended", "Break ended at index: " + i);
 //                            }
-                        }
-                        else if (DetailFrag_5.change < 0 && DetailFrag_5.isIncreasing1) {
+                        } else if (DetailFrag_5.change < 0 && DetailFrag_5.isIncreasing1) {
                             Log.e("Walk and Gait analysis Left", DetailFrag_5.leftlegcyclewalkgait.toString());
                             DetailFrag_5.leftlegcyclewalkgait.add(data.get(i));
 //                            try {
@@ -6816,51 +6961,45 @@ currentMetricIndex =0;
 //                            }
                             lefttimestamp.put(DetailFrag_5.timestamps.get(i));
                             leftacc.add(DetailFrag_5.leftaccl.get(i));
-                            leftend =i;
+                            leftend = i;
                             DetailFrag_5.isDecreasing1 = true;
                             DetailFrag_5.isIncreasing1 = false;
                             float maxangle = Collections.max(DetailFrag_5.leftlegcyclewalkgait);
                             if (maxangle >= 15) {
-                                if(rightstepflag == 0 && leftstepflag == 0){
-                                    leftstepflag =1;
+                                if (rightstepflag == 0 && leftstepflag == 0) {
+                                    leftstepflag = 1;
                                 }
                                 DetailFrag_5.walkgaitleftlegangles.add(maxangle);
                                 DetailFrag_5.stepCountwalk++;
                                 DetailFrag_5.leftcyclewalkgati++;
 
-                                Log.e("Log for Walk gait Left",leftacc+" / "+lefttimestamp);
-                                double stride = stridecalc(leftacc,lefttimestamp);
-                                if(leftprevstride !=0) {
-                                    if(stride<35){
+                                Log.e("Log for Walk gait Left", leftacc + " / " + lefttimestamp);
+                                double stride = stridecalc(leftacc, lefttimestamp);
+                                if (leftprevstride != 0) {
+                                    if (stride < 35) {
                                         double t = leftprevstride - stride;
-                                        stride = stride + (Math.round(t/2)+Math.round(t/3)+Math.round(t/3));
-                                    }
-                                    else if(stride >=35 && stride <=50){
-                                        stride = stride*2;
-                                    }
-                                    else if(stride >=125){
-                                        if(leftprevstride>=stride){
-                                            double t=leftprevstride-stride;
-                                            stride=Math.abs(stride-(Math.round(t/2)));
-                                        }
-                                        else{
-                                            double t=stride-leftprevstride;
-                                            stride=Math.abs(stride-(Math.round(t/2)));
+                                        stride = stride + (Math.round(t / 2) + Math.round(t / 3) + Math.round(t / 3));
+                                    } else if (stride >= 35 && stride <= 50) {
+                                        stride = stride * 2;
+                                    } else if (stride >= 125) {
+                                        if (leftprevstride >= stride) {
+                                            double t = leftprevstride - stride;
+                                            stride = Math.abs(stride - (Math.round(t / 2)));
+                                        } else {
+                                            double t = stride - leftprevstride;
+                                            stride = Math.abs(stride - (Math.round(t / 2)));
                                         }
                                     }
-                                }
-                                else{
-                                    if(stride <=50){
-                                        double t=70-stride;
-                                        stride = stride+t;
-                                    }
-                                    else if(stride >50 && stride <=75){
-                                        double t=80-stride;
-                                        stride = stride+(t/2)+(t/3);
-                                    }
-                                    else if(stride >=125){
-                                        double t=stride-125;
-                                        stride=stride-t;
+                                } else {
+                                    if (stride <= 50) {
+                                        double t = 70 - stride;
+                                        stride = stride + t;
+                                    } else if (stride > 50 && stride <= 75) {
+                                        double t = 80 - stride;
+                                        stride = stride + (t / 2) + (t / 3);
+                                    } else if (stride >= 125) {
+                                        double t = stride - 125;
+                                        stride = stride - t;
                                     }
                                 }
                                 leftprevstride = stride;
@@ -6884,10 +7023,10 @@ currentMetricIndex =0;
             }
         }
         else {
-            for (int i = 0; i < data.size()-1; i++) {
+            for (int i = 0; i < data.size() - 1; i++) {
                 //float difference = angles[i] - angles[i - 1];
-                DetailFrag_5.change = data.get(i+1) - data.get(i);
-                DetailFrag_5.change1 = data1.get(i+1) - data1.get(i);
+                DetailFrag_5.change = data.get(i + 1) - data.get(i);
+                DetailFrag_5.change1 = data1.get(i + 1) - data1.get(i);
 
                 Log.e("Change1", DetailFrag_5.change + " / " + DetailFrag_5.change1);
 
@@ -6905,8 +7044,7 @@ currentMetricIndex =0;
 
                         Log.e("Break Detected Started", "Break started at index: " + i + " / " + DetailFrag_5.breakStartTime / 1000);
                     }
-                }
-                else {
+                } else {
                     DetailFrag_5.consecutiveNoChangeCount = 0;
                     if (DetailFrag_5.isInBreak) {
                         DetailFrag_5.isInBreak = false;
@@ -6922,8 +7060,7 @@ currentMetricIndex =0;
                         stance.add((long) ((breakEndTime - DetailFrag_5.breakStartTime) / 1000.0));
                         Log.e("Power Rangers Total Stance Phase", i + " / " + String.valueOf(DetailFrag_5.totalstancepahse));
                         DetailFrag_5.breakStartTime = 0;
-                    }
-                    else {
+                    } else {
                         // --- Step Detection for Right Leg ---
                         if (DetailFrag_5.change1 >= 0) {
                             DetailFrag_5.rightlegcyclewalkgait.add(data1.get(i));
@@ -6934,10 +7071,10 @@ currentMetricIndex =0;
 //                            }
                             righttimestamp.put(DetailFrag_5.timestamps.get(i));
                             rightacc.add(DetailFrag_5.righttaccl.get(i));
-                            if(rightstart == 0){
-                                rightstart =i;
+                            if (rightstart == 0) {
+                                rightstart = i;
                             }
-                                DetailFrag_5.isIncreasing = true;
+                            DetailFrag_5.isIncreasing = true;
 
                             DetailFrag_5.stepStartTime = DetailFrag_5.timestamps.get(i); // Start of swing phase
                             Log.e("Walk and Gait Time Index right start", String.valueOf(i));
@@ -6948,8 +7085,7 @@ currentMetricIndex =0;
 //                                DetailFrag_5.totalBreakTime += (breakEndTime - DetailFrag_5.breakStartTime);
 //                                Log.e("Break Ended", "Break ended at index: " + i);
 //                            }
-                        }
-                        else if (DetailFrag_5.change1 < 0 && DetailFrag_5.isIncreasing) {
+                        } else if (DetailFrag_5.change1 < 0 && DetailFrag_5.isIncreasing) {
                             Log.e("Walk and Gait analysis Right", DetailFrag_5.rightlegcyclewalkgait.toString());
                             DetailFrag_5.rightlegcyclewalkgait.add(data1.get(i));
 //                            try {
@@ -6959,51 +7095,45 @@ currentMetricIndex =0;
 //                            }
                             righttimestamp.put(DetailFrag_5.timestamps.get(i));
                             rightacc.add(DetailFrag_5.righttaccl.get(i));
-                            rightend=i;
+                            rightend = i;
                             DetailFrag_5.isDecreasing = true;
                             DetailFrag_5.isIncreasing = false;
                             float maxangle = Collections.max(DetailFrag_5.rightlegcyclewalkgait);
                             if (maxangle >= 15) {
-                                if(rightstepflag == 0 && leftstepflag == 0){
-                                    rightstepflag =1;
+                                if (rightstepflag == 0 && leftstepflag == 0) {
+                                    rightstepflag = 1;
                                 }
                                 DetailFrag_5.walkgaitrightlegangles.add(maxangle);
                                 DetailFrag_5.stepCountwalk++;
                                 DetailFrag_5.rightcyclewalkgati++;
 
-                                Log.e("Log for Walk gait Right",rightacc+" / "+righttimestamp);
-                                double stride = stridecalc(rightacc,righttimestamp);
-                                if(rightprevstrie !=0) {
-                                    if(stride<35){
+                                Log.e("Log for Walk gait Right", rightacc + " / " + righttimestamp);
+                                double stride = stridecalc(rightacc, righttimestamp);
+                                if (rightprevstrie != 0) {
+                                    if (stride < 35) {
                                         double t = rightprevstrie - stride;
-                                        stride = stride + (Math.round(t/2)+Math.round(t/3)+Math.round(t/3));
-                                    }
-                                    else if(stride>=35 && stride <=50){
-                                        stride = stride*2;
-                                    }
-                                    else if(stride >=125){
-                                        if(rightprevstrie>=stride){
-                                            double t=rightprevstrie-stride;
-                                            stride=Math.abs(stride-(Math.round(t/2)));
-                                        }
-                                        else{
-                                            double t=stride-rightprevstrie;
-                                            stride=Math.abs(stride-(Math.round(t/2)));
+                                        stride = stride + (Math.round(t / 2) + Math.round(t / 3) + Math.round(t / 3));
+                                    } else if (stride >= 35 && stride <= 50) {
+                                        stride = stride * 2;
+                                    } else if (stride >= 125) {
+                                        if (rightprevstrie >= stride) {
+                                            double t = rightprevstrie - stride;
+                                            stride = Math.abs(stride - (Math.round(t / 2)));
+                                        } else {
+                                            double t = stride - rightprevstrie;
+                                            stride = Math.abs(stride - (Math.round(t / 2)));
                                         }
                                     }
-                                }
-                                else{
-                                    if(stride <=50){
-                                        double t=80-stride;
-                                        stride = stride+t;
-                                    }
-                                    else if(stride >50 && stride <=75){
-                                        double t=80-stride;
-                                        stride = stride+(t/2)+(t/3);
-                                    }
-                                    else if(stride >=125){
-                                        double t=stride-125;
-                                        stride=stride-t;
+                                } else {
+                                    if (stride <= 50) {
+                                        double t = 80 - stride;
+                                        stride = stride + t;
+                                    } else if (stride > 50 && stride <= 75) {
+                                        double t = 80 - stride;
+                                        stride = stride + (t / 2) + (t / 3);
+                                    } else if (stride >= 125) {
+                                        double t = stride - 125;
+                                        stride = stride - t;
                                     }
                                 }
                                 rightprevstrie = stride;
@@ -7037,12 +7167,12 @@ currentMetricIndex =0;
 //                                throw new RuntimeException(e);
 //                            }
                             lefttimestamp.put(DetailFrag_5.timestamps.get(i));
-                            leftacc.add((double)DetailFrag_5.leftaccl.get(i));
-                            if(leftstart == 0){
-                                leftstart =i;
+                            leftacc.add((double) DetailFrag_5.leftaccl.get(i));
+                            if (leftstart == 0) {
+                                leftstart = i;
                             }
 
-                                DetailFrag_5.isIncreasing1 = true;
+                            DetailFrag_5.isIncreasing1 = true;
 
                             DetailFrag_5.stepStartTime1 = DetailFrag_5.timestamps.get(i); // Start of swing phase
                             Log.e("Walk and Gait Time Index left start", String.valueOf(i));
@@ -7053,8 +7183,7 @@ currentMetricIndex =0;
 //                                DetailFrag_5.totalBreakTime += (breakEndTime - DetailFrag_5.breakStartTime);
 //                                Log.e("Break Ended", "Break ended at index: " + i);
 //                            }
-                        }
-                        else if (DetailFrag_5.change < 0 && DetailFrag_5.isIncreasing1) {
+                        } else if (DetailFrag_5.change < 0 && DetailFrag_5.isIncreasing1) {
                             Log.e("Walk and Gait analysis Left", DetailFrag_5.leftlegcyclewalkgait.toString());
                             DetailFrag_5.leftlegcyclewalkgait.add(data.get(i));
 //                            try {
@@ -7063,53 +7192,47 @@ currentMetricIndex =0;
 //                                throw new RuntimeException(e);
 //                            }
                             lefttimestamp.put(DetailFrag_5.timestamps.get(i));
-                            leftacc.add((double)DetailFrag_5.leftaccl.get(i));
-                            leftend=i;
+                            leftacc.add((double) DetailFrag_5.leftaccl.get(i));
+                            leftend = i;
                             DetailFrag_5.isDecreasing1 = true;
                             DetailFrag_5.isIncreasing1 = false;
                             float maxangle = Collections.max(DetailFrag_5.leftlegcyclewalkgait);
                             if (maxangle >= 15) {
-                                if(rightstepflag == 0 && leftstepflag == 0){
-                                    leftstepflag =1;
+                                if (rightstepflag == 0 && leftstepflag == 0) {
+                                    leftstepflag = 1;
                                 }
                                 DetailFrag_5.walkgaitleftlegangles.add(maxangle);
                                 DetailFrag_5.stepCountwalk++;
                                 DetailFrag_5.leftcyclewalkgati++;
 
-                                Log.e("Log for Walk gait Left",leftacc+" / "+lefttimestamp);
+                                Log.e("Log for Walk gait Left", leftacc + " / " + lefttimestamp);
 
-                                double stride = stridecalc(leftacc,lefttimestamp);
-                                if(leftprevstride !=0) {
-                                    if(stride<35){
+                                double stride = stridecalc(leftacc, lefttimestamp);
+                                if (leftprevstride != 0) {
+                                    if (stride < 35) {
                                         double t = rightprevstrie - stride;
-                                        stride = stride + (Math.round(t/2)+Math.round(t/3)+Math.round(t/3));
-                                    }
-                                    else if(stride>=35 && stride <=50){
-                                        stride = stride*2;
-                                    }
-                                    else if(stride >=125){
-                                        if(leftprevstride>=stride){
-                                            double t=leftprevstride-stride;
-                                            stride=Math.abs(stride-(Math.round(t/2)));
-                                        }
-                                        else{
-                                            double t=stride-leftprevstride;
-                                            stride=Math.abs(stride-(Math.round(t/2)));
+                                        stride = stride + (Math.round(t / 2) + Math.round(t / 3) + Math.round(t / 3));
+                                    } else if (stride >= 35 && stride <= 50) {
+                                        stride = stride * 2;
+                                    } else if (stride >= 125) {
+                                        if (leftprevstride >= stride) {
+                                            double t = leftprevstride - stride;
+                                            stride = Math.abs(stride - (Math.round(t / 2)));
+                                        } else {
+                                            double t = stride - leftprevstride;
+                                            stride = Math.abs(stride - (Math.round(t / 2)));
                                         }
                                     }
-                                }
-                                else{
-                                    if(stride <=50){
-                                        double t=80-stride;
-                                        stride = stride+t;
-                                    }
-                                    else if(stride >50 && stride <=75){
-                                        double t=80-stride;
-                                        stride = stride+(t/2)+(t/3);
-                                    }
-                                    else if(stride >=125){
-                                        double t=stride-125;
-                                        stride=stride-t;
+                                } else {
+                                    if (stride <= 50) {
+                                        double t = 80 - stride;
+                                        stride = stride + t;
+                                    } else if (stride > 50 && stride <= 75) {
+                                        double t = 80 - stride;
+                                        stride = stride + (t / 2) + (t / 3);
+                                    } else if (stride >= 125) {
+                                        double t = stride - 125;
+                                        stride = stride - t;
                                     }
                                 }
                                 leftprevstride = stride;
@@ -7314,12 +7437,12 @@ currentMetricIndex =0;
     }
 
 
-    private double stridecalc(List<Double> accl, JSONArray timestamp1){
+    private double stridecalc(List<Double> accl, JSONArray timestamp1) {
         List<Double> time = new ArrayList<>();
         List<Double> time1 = new ArrayList<>();
-        for(int i=0; i<timestamp1.length(); i++){
+        for (int i = 0; i < timestamp1.length(); i++) {
             try {
-                time.add(timestamp1.getLong(i)/1000.0);
+                time.add(timestamp1.getLong(i) / 1000.0);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -7329,10 +7452,10 @@ currentMetricIndex =0;
 //            time1.add(time.get(i));
 //        }
 
-        Log.e("Acceleration/Time Log for Walk gait",accl+" / "+time);
+        Log.e("Acceleration/Time Log for Walk gait", accl + " / " + time);
         // Calculate distance
         double totalDistance = calculateTotalDisplacement(time, accl);
-        return  totalDistance;
+        return totalDistance;
     }
 
     public static double calculateTotalDisplacement(List<Double> time, List<Double> acceleration) {
@@ -7347,7 +7470,7 @@ currentMetricIndex =0;
         Log.e("Log for Walk Gait time and acceleration", String.valueOf(acceleration));
 
         // Iterate over the acceleration and timestamps to compute displacements
-        for (int i = 0; i < acceleration.size()-1; i++) {
+        for (int i = 0; i < acceleration.size() - 1; i++) {
             // Time interval between consecutive timestamps
             double timeInterval = time.get(i + 1) - time.get(i);
 
@@ -7360,7 +7483,7 @@ currentMetricIndex =0;
 
         Log.e("Log for Walk Gait Total displacement", String.valueOf(totalDisplacement));
 
-        return totalDisplacement*100;
+        return totalDisplacement * 100;
     }
 
 }

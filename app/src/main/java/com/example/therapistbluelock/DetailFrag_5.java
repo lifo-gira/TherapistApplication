@@ -149,7 +149,7 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
     public static long sitToStandStartTime, sitToStandEndTime;
     public static long standToShiftStartTime, standToShiftEndTime;
     public static long walkStartTime, walkEndTime;
-    public static long sittostand, standtosit;
+    public static double sittostand, standtosit,walktime;
     public static final int SIT_ANGLE = 75; // seated knee angle threshold
     public static final int STAND_ANGLE = 15; // standing knee angle threshold
     public static final int WALK_THRESHOLD = 40; // knee angle difference for walking
@@ -358,7 +358,7 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
             initializeAllExercises();
         }
 
-        Log.e("Navigated from assessment fragment",HomeFragment.userid);
+//        Log.e("Navigated from assessment fragment",HomeFragment.userid);
 
         try {
             finalexedata.put("exercises", exedata);
