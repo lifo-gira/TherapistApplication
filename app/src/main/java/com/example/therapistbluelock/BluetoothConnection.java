@@ -208,7 +208,8 @@ public class BluetoothConnection extends AppCompatActivity {
         if (bluetoothAdapter.isEnabled()) {
             listPairedDevices();
             startDiscovery();
-        } else {
+        }
+        else {
             new AlertDialog.Builder(BluetoothConnection.this)
                     .setTitle("Bluetooth Required")
                     .setMessage("Please turn on Bluetooth to refresh the device lists.")
@@ -376,12 +377,14 @@ public class BluetoothConnection extends AppCompatActivity {
                         }
                     }
                 }
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+            }
+            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 discoveryFinished = true;
                 if (availableDevicesList.isEmpty()) {
                     Log.e("No available devices found","");
                 }
-            } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
+            }
+            else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
                 final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
                 final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
 

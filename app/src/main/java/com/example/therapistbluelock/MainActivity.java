@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -348,7 +349,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 therapistuserid = uid;
                                 therapistname = pat;
                                 Log.e("Email Response", String.valueOf(response));
-                                fetchPatients(uid, username);
+                                Intent intent2 = new Intent(getApplicationContext(), Dashboard.class);
+                                startActivity(intent2);
+                                intent2.putExtra("email", therapistusername);
+//                                fetchPatients(uid, username);
 
                             } else {
                                 loginButton.setEnabled(true);
@@ -372,6 +376,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         });
+
+        // Set a custom retry policy (optional) to better handle slow responses
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000, // Timeout in ms (10 seconds)
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        ));
 
         queue.add(jsonObjectRequest);
     }
@@ -496,7 +507,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             password = response.getString("password");
                             String uid = response.getString("_id");
                             String pat = response.getString("name");
-                            fetchPatients(uid, username);
+                            Intent intent2 = new Intent(getApplicationContext(), Dashboard.class);
+                            startActivity(intent2);
+                            intent2.putExtra("email", therapistusername);
+//                            fetchPatients(uid, username);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -509,6 +523,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Set a custom retry policy (optional) to better handle slow responses
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000, // Timeout in ms (10 seconds)
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        ));
 
         queue.add(stringRequest);
 

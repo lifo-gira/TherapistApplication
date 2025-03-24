@@ -101,19 +101,21 @@ public class SimpleJSONToCSV {
 
     // Helper method to append JSON data
     private static void appendJsonData(FileWriter writer, int i, JSONArray jsonArray) {
-        if (i < jsonArray.length()) {
+        if(jsonArray.length() !=0) {
+            if (i < jsonArray.length()) {
+                try {
+                    writer.append(jsonArray.get(i).toString());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             try {
-                writer.append(jsonArray.get(i).toString());
+                writer.append(",");
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
             }
-        }
-        try {
-            writer.append(",");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

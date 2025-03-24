@@ -1,5 +1,6 @@
 package com.example.therapistbluelock;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
@@ -26,6 +27,7 @@ public class BluetoothConnectionManager {
         return instance;
     }
 
+    @SuppressLint("MissingPermission")
     public void connect(BluetoothDevice device) {
         // Check if device is already connected
         if (bluetoothDevices.contains(device)) {
@@ -60,13 +62,25 @@ public class BluetoothConnectionManager {
     public void handleDisconnection(BluetoothSocket socket) {
         if (socket != null) {
             try {
+                int index = bluetoothSockets.indexOf(socket);
+                if (index != -1) {
+                    bluetoothSockets.remove(index);
+                    bluetoothDevices.remove(index); // Also remove the device
+                    Log.d("BluetoothConnectionManager", "Socket closed and removed");
+                }
                 socket.close();
-                bluetoothSockets.remove(socket);
-                Log.d("BluetoothConnectionManager", "Socket closed and removed");
             } catch (IOException e) {
                 Log.e("BluetoothConnectionManager", "Error closing socket: " + e.getMessage());
             }
         }
+    }
+
+
+    public void reconnect(final BluetoothDevice device) {
+        new Thread(() -> {
+            handleDisconnection(getBluetoothSocket(device)); // Ensure any old socket is cleared
+            connect(device); // Attempt reconnection
+        }).start();
     }
 
     public void handleAllDisconnections() {
@@ -85,4 +99,6 @@ public class BluetoothConnectionManager {
 
         Log.d("BluetoothConnectionManager", "All sockets closed and devices removed");
     }
+
+
 }

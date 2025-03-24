@@ -132,9 +132,9 @@ public class AssessmentFragment extends Fragment {
         while(keys.hasNext()){
             String na=keys.next();
             assessmentlist.add(na);
-
+            Log.e("Sample Pat Assessment Keys", String.valueOf(assessmentlist));
         }
-        Log.e("Sample Pat Assessment Keys", String.valueOf(assessmentlist));
+
         assessmentadapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, assessmentlist);
         assessmentadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         assessmentspinner.setAdapter(assessmentadapter);
@@ -142,13 +142,6 @@ public class AssessmentFragment extends Fragment {
         exerciselist.clear();
         exerciselist1.clear();
         exerciselist2.clear();
-
-
-
-
-
-
-
 
 
         dicomimage = rootView.findViewById(R.id.dicomimage);
@@ -201,7 +194,8 @@ public class AssessmentFragment extends Fragment {
                 right_knee_chart.clear();
                 performance_chart.clear();
                 flexion_chart.clear();
-
+                leftrom.setText(String.valueOf("NA"));
+                rightrom.setText("NA");
                 parentjsonobject = new JSONObject();
                 try {
                     parentjsonobject = MainActivity.assessmentexercise.getJSONObject(selectedItem);
@@ -971,13 +965,14 @@ public class AssessmentFragment extends Fragment {
                         }
                         else if("Proprioception Test".equalsIgnoreCase(exerciseName)){
                             for (int index = 0; index < valueList.size(); index++) {
-                                if (index == 2) { // Odd index condition
+                                if (index == valueList.size()-1) { // Odd index condition
                                     Object subArray = valueList.get(index);
                                     if (subArray instanceof List && !((List<?>) subArray).isEmpty()) {
                                         filteredList.add(subArray);
                                     }
                                 }
                             }
+                            Log.e("Proprioception Table Data", String.valueOf(filteredList));
                         }
                         else {
                             for (int index = 0; index < valueList.size(); index++) {
@@ -1045,10 +1040,19 @@ public class AssessmentFragment extends Fragment {
                                     List<?> subArray = (List<?>) filteredList.get(i);
 //                                    Log.e("Params Anirudh", String.valueOf(filteredList));
                                     // Ensure subArray has the expected number of elements (at least 4)
+                                    String cycleNumber = "";
+                                    String prefix="";
                                     if (subArray.size() >= 4) {
                                         // Add the data for cycle number, leg, angles, velocity, and pain to the row
-                                        row.put("Cycle No", String.valueOf(i + 1)); // i+1 for cycle number
-                                        row.put("Leg/Mode", paramName);                   // leg name (e.g., leftleg or rightleg)
+                                        if (paramName.matches(".*-\\d+$")) { // Check if paramName ends with digits preceded by "-"
+                                            cycleNumber = paramName.replaceAll(".*-(\\d+)$", "$1"); // Extract digits after the last "-"
+                                        }
+                                        if (paramName.matches(".*-\\d+$")) {
+                                            prefix = paramName.replaceAll("-\\d+$", ""); // Remove last "-digits"
+                                        }
+
+                                        row.put("Cycle No", cycleNumber); // i+1 for cycle number
+                                        row.put("Leg/Mode", prefix);                   // leg name (e.g., leftleg or rightleg)
                                         row.put("Minimum-Extension", String.valueOf(subArray.get(0))); // Min Angle
                                         row.put("Maximum-Flexion", String.valueOf(subArray.get(1))); // Max Angle
 //                                        row.put("Velocity", String.valueOf(subArray.get(2))); // Velocity
@@ -1093,14 +1097,17 @@ public class AssessmentFragment extends Fragment {
                                     List<?> subArray = (List<?>) filteredList.get(i);
                                     Log.e("Table Extension", subArray.toString());
 //                                    Log.e("Params Anirudh", String.valueOf(filteredList));
-                                    // Ensure subArray has the expected number of elements (at least 4)
+                                    String cycleNumber="";
                                     if (subArray.size() == 3) {
                                         // Add the data for cycle number, leg, angles, velocity, and pain to the row
-                                        row.put("Cycle No", String.valueOf(i + 1)); // i+1 for cycle number
+                                        if (paramName.matches(".*-\\d+$")) { // Check if paramName ends with digits preceded by "-"
+                                            cycleNumber = paramName.replaceAll(".*-(\\d+)$", "$1"); // Extract digits after the last "-"
+                                        }
+                                        row.put("Cycle No", cycleNumber); // i+1 for cycle number
                                         int lastHyphenIndex = paramName.lastIndexOf('-');
                                         // Extract the substring up to the last hyphen
                                         String result = paramName.substring(0, lastHyphenIndex);
-                                        row.put("Leg", result);                   // leg name (e.g., leftleg or rightleg)
+                                        row.put("Leg", paramName.contains("left") ? "Left Leg" : "Right Leg");                   // leg name (e.g., leftleg or rightleg)
                                         row.put("Active ED", String.valueOf(subArray.get(0))); // Min Angle
                                         row.put("Passive ED", String.valueOf(subArray.get(1))); // Max Angle
                                         row.put("Total ED", String.valueOf(subArray.get(2)));
@@ -1170,29 +1177,35 @@ public class AssessmentFragment extends Fragment {
                 }
                 else if("Dynamic Balance Test".equalsIgnoreCase(exerciseName) ){
                     for (Map.Entry<String, Object> paramEntry : params.entrySet()) {
+
                         String paramName = paramEntry.getKey();
                         Object paramValue = paramEntry.getValue();
+                        if (paramName.contains("left")) {
 
+                            Log.e("Dynamic balance Table data", String.valueOf(paramName));
 
-                        // Create the row map for each cycle (i)
-                        // Iterate through all params to handle the data
-                        // For "Mobility" exercise, process the data
-                        // Check if paramValue is a List
-                        if (paramValue instanceof List) {
-                            List<?> valueList = (List<?>) paramValue;
+                            // Create the row map for each cycle (i)
+                            // Iterate through all params to handle the data
+                            // For "Mobility" exercise, process the data
+                            // Check if paramValue is a List
+                            if (paramValue instanceof List) {
+                                List<?> valueList = (List<?>) paramValue;
 
-                            // Filter out empty or null subarrays
-                            List<Object> filteredList = new ArrayList<>();
-                            for (Object subArray : valueList) {
-                                if (subArray instanceof List && !((List<?>) subArray).isEmpty()) {
-                                    filteredList.add(subArray);
+                                // Filter out empty or null subarrays
+                                List<Object> filteredList = new ArrayList<>();
+                                for (Object subArray : valueList) {
+                                    if (subArray instanceof List && !((List<?>) subArray).isEmpty()) {
+                                        filteredList.add(subArray);
+                                    }
                                 }
-                            }
-                            for (int i = 0; i < filteredList.size(); i++) {
-                                Map<String, String> row = new HashMap<>();
-                                // If the filtered list has enough subarrays for the current index `i`
-                                if (filteredList.size() != 0) {
+
+                                for (int i = 0; i < filteredList.size(); i++) {
+                                    Map<String, String> row = new HashMap<>();
+                                    // If the filtered list has enough subarrays for the current index `i`
+//                                    if(((i+1) % 2) != 0) {
+
                                     List<?> subArray = (List<?>) filteredList.get(i);
+
                                     // Ensure subArray has the expected number of elements (at least 4)
                                     if (subArray.size() == 3) {
                                         // Add the data for cycle number, leg, angles, velocity, and pain to the row
@@ -1201,20 +1214,25 @@ public class AssessmentFragment extends Fragment {
                                             cycleNumber = paramName.replaceAll(".*-(\\d+)$", "$1"); // Extract digits after the last "-"
                                         }
                                         row.put("Cycle No", cycleNumber); // i+1 for cycle number
-                                        row.put("Leg/Mode", paramName);                   // leg name (e.g., leftleg or rightleg)
+                                        if (paramName.contains("wos")) {
+                                            row.put("Mode", "Without Support");    // leg name (e.g., leftleg or rightleg)
+                                        } else {
+                                            row.put("Mode", "With Support");
+                                        }
                                         row.put("Sit-to-Stand", String.valueOf(subArray.get(0))); // Min Angle
                                         row.put("Stand-to-Sit", String.valueOf(subArray.get(1))); // Max Angle
                                         row.put("Walk-Time", String.valueOf(subArray.get(2))); // Velocity
                                     }
                                     details.add(new TableDetail(i, row));
                                     Log.e("Cycle Row Data", String.valueOf(row));
+
+
                                 }
 
                             }
+                            // Debug log to see the row data for each cycle
 
                         }
-                        // Debug log to see the row data for each cycle
-
                     }
                 }
                 else if("Static Balance Test".equalsIgnoreCase(exerciseName)){
@@ -1246,11 +1264,16 @@ public class AssessmentFragment extends Fragment {
                                     if (subArray.size() == 1) {
                                         // Add the data for cycle number, leg, angles, velocity, and pain to the row
                                         String cycleNumber = "";
+                                        String prefix="";
                                         if (paramName.matches(".*-\\d+$")) { // Check if paramName ends with digits preceded by "-"
                                             cycleNumber = paramName.replaceAll(".*-(\\d+)$", "$1"); // Extract digits after the last "-"
                                         }
+                                        if (paramName.matches(".*-\\d+$")) {
+                                            prefix = paramName.replaceAll("-\\d+$", ""); // Remove last "-digits"
+                                        }
+
                                         row.put("Cycle No", cycleNumber); // i+1 for cycle number
-                                        row.put("Leg/Mode", paramName);                   // leg name (e.g., leftleg or rightleg)
+                                        row.put("Leg/Mode", prefix);                   // leg name (e.g., leftleg or rightleg)
                                         row.put("Balance Time (sec)", String.valueOf(subArray.get(0))); // Velocity
                                     }
                                     details.add(new TableDetail(i, row));
@@ -1301,14 +1324,14 @@ public class AssessmentFragment extends Fragment {
                                             cycleNumber = paramName.replaceAll(".*-(\\d+)$", "$1"); // Extract digits after the last "-"
                                         }
                                         row.put("Cycle No", cycleNumber); // i+1 for cycle number
-                                        row.put("Leg/Mode", paramName);                   // leg name (e.g., leftleg or rightleg)
+                                        row.put("Leg", paramName.contains("left") ? "Left Leg" : "Right Leg");                   // leg name (e.g., leftleg or rightleg)
                                         row.put("Distance", String.valueOf(subArray.get(0))); // Velocity
                                         row.put("Stand-Time", String.valueOf(subArray.get(1)));
-                                        row.put("Average-Swing-Time", String.valueOf(subArray.get(2)));
+                                        row.put("Swing-Time", String.valueOf(subArray.get(2)));
                                         row.put("Stance-Phase", String.valueOf(subArray.get(3)));
-                                        row.put("Average-Stride-Length", String.valueOf(subArray.get(4)));
-                                        row.put("Average-Stride-Length-%h", String.valueOf(subArray.get(5)));
-                                        row.put("Average-Step-Length", String.valueOf(subArray.get(6)));
+                                        row.put("Stride-Length", String.valueOf(subArray.get(4)));
+                                        row.put("Stride-Length-%h", String.valueOf(subArray.get(5)));
+                                        row.put("Step-Length", String.valueOf(subArray.get(6)));
                                         row.put("Mean-Velocity", String.valueOf(subArray.get(7)));
                                         row.put("Cadence", String.valueOf(subArray.get(8)));
                                         row.put("Step-Count", String.valueOf(subArray.get(9)));
@@ -1330,47 +1353,50 @@ public class AssessmentFragment extends Fragment {
                         String paramName = paramEntry.getKey();
                         Object paramValue = paramEntry.getValue();
 
+                        if(paramName.contains("left")) {
 
-                        // Create the row map for each cycle (i)
-                        // Iterate through all params to handle the data
-                        // For "Mobility" exercise, process the data
-                        // Check if paramValue is a List
-                        if (paramValue instanceof List) {
-                            List<?> valueList = (List<?>) paramValue;
 
-                            // Filter out empty or null subarrays
-                            List<Object> filteredList = new ArrayList<>();
-                            for (Object subArray : valueList) {
-                                if (subArray instanceof List && !((List<?>) subArray).isEmpty()) {
-                                    filteredList.add(subArray);
-                                }
-                            }
-//                            Log.e("Params Anirudh", String.valueOf(filteredList));
-                            for (int i = 0; i < filteredList.size(); i++) {
-                                Map<String, String> row = new HashMap<>();
-                                // If the filtered list has enough subarrays for the current index `i`
-                                if (filteredList.size() != 0) {
-                                    List<?> subArray = (List<?>) filteredList.get(i);
-                                    // Ensure subArray has the expected number of elements (at least 4)
-                                    if (subArray.size() == 4) {
-                                        // Add the data for cycle number, leg, angles, velocity, and pain to the row
-                                        String cycleNumber = "";
-                                        if (paramName.matches(".*-\\d+$")) { // Check if paramName ends with digits preceded by "-"
-                                            cycleNumber = paramName.replaceAll(".*-(\\d+)$", "$1"); // Extract digits after the last "-"
-                                        }
-                                        row.put("Cycle No", cycleNumber); // i+1 for cycle number
-                                        row.put("Leg/Mode", paramName);                   // leg name (e.g., leftleg or rightleg)
-                                        row.put("Step-Count", String.valueOf(subArray.get(0))); // Velocity
-                                        row.put("Ascent-Time", String.valueOf(subArray.get(1)));
-                                        row.put("Descent-Time", String.valueOf(subArray.get(2)));
-                                        row.put("Turn-Time", String.valueOf(subArray.get(3)));
+                            // Create the row map for each cycle (i)
+                            // Iterate through all params to handle the data
+                            // For "Mobility" exercise, process the data
+                            // Check if paramValue is a List
+                            if (paramValue instanceof List) {
+                                List<?> valueList = (List<?>) paramValue;
+
+                                // Filter out empty or null subarrays
+                                List<Object> filteredList = new ArrayList<>();
+                                for (Object subArray : valueList) {
+                                    if (subArray instanceof List && !((List<?>) subArray).isEmpty()) {
+                                        filteredList.add(subArray);
                                     }
-                                    details.add(new TableDetail(i, row));
-                                    Log.e("Cycle Row Data", String.valueOf(row));
+                                }
+//                            Log.e("Params Anirudh", String.valueOf(filteredList));
+                                for (int i = 0; i < filteredList.size(); i++) {
+                                    Map<String, String> row = new HashMap<>();
+                                    // If the filtered list has enough subarrays for the current index `i`
+                                    if (filteredList.size() != 0) {
+                                        List<?> subArray = (List<?>) filteredList.get(i);
+                                        // Ensure subArray has the expected number of elements (at least 4)
+                                        if (subArray.size() == 4) {
+                                            // Add the data for cycle number, leg, angles, velocity, and pain to the row
+                                            String cycleNumber = "";
+                                            if (paramName.matches(".*-\\d+$")) { // Check if paramName ends with digits preceded by "-"
+                                                cycleNumber = paramName.replaceAll(".*-(\\d+)$", "$1"); // Extract digits after the last "-"
+                                            }
+                                            row.put("Cycle No", cycleNumber); // i+1 for cycle number
+                                            row.put("Mode", paramName.contains("wos") ? "Without Support" : "With Support");                   // leg name (e.g., leftleg or rightleg)
+                                            row.put("Step-Count", String.valueOf(subArray.get(0))); // Velocity
+                                            row.put("Ascent-Time", String.valueOf(subArray.get(1)));
+                                            row.put("Descent-Time", String.valueOf(subArray.get(2)));
+                                            row.put("Turn-Time", String.valueOf(subArray.get(3)));
+                                        }
+                                        details.add(new TableDetail(i, row));
+                                        Log.e("Cycle Row Data", String.valueOf(row));
+                                    }
+
                                 }
 
                             }
-
                         }
                         // Debug log to see the row data for each cycle
 
@@ -1403,7 +1429,7 @@ public class AssessmentFragment extends Fragment {
                 }
                 else if("Dynamic Balance Test".equalsIgnoreCase(exerciseName)){
                     headers.add("Cycle No");
-                    headers.add("Leg/Mode");
+                    headers.add("Mode");
                     headers.add("Sit-to-Stand");
                     headers.add("Stand-to-Sit");
                     headers.add("Walk-Time");
@@ -1415,14 +1441,14 @@ public class AssessmentFragment extends Fragment {
                 }
                 else if("Walk and Gait Analysis".equalsIgnoreCase(exerciseName)){
                     headers.add("Cycle No");
-                    headers.add("Leg/Mode");
+                    headers.add("Leg");
                     headers.add("Distance");
                     headers.add("Stand-Time");
-                    headers.add("Average-Swing-Time");
+                    headers.add("Swing-Time");
                     headers.add("Stance-Phase");
-                    headers.add("Average-Stride-Length");
-                    headers.add("Average-Stride-Length-%h");
-                    headers.add("Average-Step-Length");
+                    headers.add("Stride-Length");
+                    headers.add("Stride-Length-%h");
+                    headers.add("Step-Length");
                     headers.add("Mean-Velocity");
                     headers.add("Cadence");
                     headers.add("Step-Count");
@@ -1430,7 +1456,7 @@ public class AssessmentFragment extends Fragment {
                 }
                 else if("Staircase Climbing Test".equalsIgnoreCase(exerciseName)){
                     headers.add("Cycle No");
-                    headers.add("Leg/Mode");
+                    headers.add("Mode");
                     headers.add("Step-Count");
                     headers.add("Ascent-Time");
                     headers.add("Descent-Time");
@@ -1457,7 +1483,7 @@ public class AssessmentFragment extends Fragment {
 
         JSONArray jsonArray = new JSONArray();
         JSONObject subobj = new JSONObject();
-        Log.e("Tabular Value", String.valueOf(MainActivity.assessmentexercise));
+//        Log.e("Tabular Value", String.valueOf(MainActivity.assessmentexercise));
         Iterator<String> keys1 = MainActivity.assessmentexercise.keys();
         while(keys1.hasNext()){
             Log.e("Tabular Value", String.valueOf(keys1.next()));

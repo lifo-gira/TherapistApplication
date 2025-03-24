@@ -115,9 +115,9 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
     public static JSONObject mainreportobject = new JSONObject();
     public static JSONArray datareportarray = new JSONArray();
     public static List<ExerciseCycleAssessment> exerciseListact, exerciseListpass, exerciseListtotal;
-    public static List<ExtensionlagCycleAssessment> extensionlagCycleAssessments;
+    public static List<ExtensionlagCycleAssessment> extensionlagCycleAssessmentsleft,extensionlagCycleAssessmentsright,extensionlagCycleAssessments;
     public static List<Dynamicbalancetestdata> dynamicbalancetestdata;
-    public static List<Staticbalancetestdata> staticbalancetestdata;
+    public static List<Staticbalancetestdata> staticbalancetestdata,staticbalancetestdataleft,staticbalancetestdataright;
     public static List<Staircaseclimbingtestdata> staircaseclimbingtestdata;
     public static LineData lineData = new LineData();
     public static LineData lineData1 = new LineData();
@@ -138,7 +138,7 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
     public static Staircaseclimbingadapter staircaseclimbingadapter;
     public static ProprioceptionAdapter proprioceptionAdapter;
     public static ArrayList<ExerciseCycleAssessment> exerciseCycleAssessment = new ArrayList<>();
-    public static ArrayList<MobilityCycleAssessment> mobilityCycleAssessments = new ArrayList<>();
+    public static ArrayList<MobilityCycleAssessment> mobilityCycleAssessments,mobilityCycleAssessmentsleft,mobilityCycleAssessmentsright;
     public static Walkgaittestadapter walkgaittestadapter;
     public static ArrayList<Walkgaittestdata> walkgaittestdata = new ArrayList<>();
 
@@ -162,7 +162,8 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
 
     public static int leftcyclewalkgati = 0, rightcyclewalkgati = 0;
 
-    public static long startTime = 0, endTime = 0, duration = 0, chartstarttime = 0;
+    public static long startTime = 0, duration = 0, chartstarttime = 0;
+    public static double endTime = 0;
     public static boolean isTesting = true;
     public static final double TARGET_ANGLE = 0.0; // Target knee angle for balance (in degrees)
     public static final double ANGLE_THRESHOLD = 5.0; // Acceptable deviation (in degrees)
@@ -294,7 +295,7 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
     public static boolean isIncreasing = false, isIncreasing1 = false;
     public static boolean isDecreasing = false, isDecreasing1 = false;
     public static boolean cycleReady = false; // New flag to ensure stabilization
-    public static int ct = 0;
+    public static int ascentct = 0, descentct=0;
     public static float localMinimum = Float.MAX_VALUE; // Initialize to a very high value
 
 
@@ -337,7 +338,16 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
     public static float extnpassivemax=361;
 
     public static float extnangle=0,extnangle1=0;
-    public static int extndens=0,extnflag=0;
+    public static int extndens=0,extnflag=0,extnflag1=0,propriolegswitchflag=1;
+    public static int countflag=0,countflag1=0;
+
+    int submitbtnflag=0;
+
+    public static JSONArray adjustedrolldataleft = new JSONArray();
+    public static JSONArray adjustedrolldataright = new JSONArray();
+
+    public static JSONArray rolldataleft = new JSONArray();
+    public static JSONArray rolldataright = new JSONArray();
 
 
     @Override
@@ -352,6 +362,11 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
             }
         };
         this.getOnBackPressedDispatcher().addCallback(this, callback);
+
+        adjustedrolldataleft = new JSONArray();
+        adjustedrolldataright = new JSONArray();
+        rolldataleft = new JSONArray();
+        rolldataright = new JSONArray();
 
         if(MainActivity.detailfragflag == 0){
             MainActivity.detailfragflag =1;
@@ -423,9 +438,17 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
         dynamicbalancetestdata.clear();
         staticbalancetestdata = new ArrayList<>();
         staticbalancetestdata.clear();
+        staticbalancetestdataleft = new ArrayList<>();
+        staticbalancetestdataleft.clear();
+        staticbalancetestdataright = new ArrayList<>();
+        staticbalancetestdataright.clear();
         staircaseclimbingtestdata = new ArrayList<>();
         staircaseclimbingtestdata.clear();
         mobilityCycleAssessments = new ArrayList<>();
+        mobilityCycleAssessments.clear();
+        mobilityCycleAssessmentsleft = new ArrayList<>();
+        mobilityCycleAssessments.clear();
+        mobilityCycleAssessmentsright = new ArrayList<>();
         mobilityCycleAssessments.clear();
         leftrom = new ArrayList<>();
         leftrom.clear();
@@ -466,6 +489,12 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
         reportobject = new JSONObject();
         datareportarray = new JSONArray();
         mainreportobject = new JSONObject();
+
+        extensionlagCycleAssessmentsleft = new ArrayList<>();
+        extensionlagCycleAssessmentsleft.clear();
+
+        extensionlagCycleAssessmentsright = new ArrayList<>();
+        extensionlagCycleAssessmentsright.clear();
 
         extensionlagCycleAssessments = new ArrayList<>();
         extensionlagCycleAssessments.clear();
@@ -689,17 +718,17 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
         decorView.setSystemUiVisibility(flags);
     }
 
-    private void cleanupBluetoothSockets() {
-        if (bluetoothSockets != null) {
-            for (BluetoothSocket socket : bluetoothSockets) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+//    private void cleanupBluetoothSockets() {
+//        if (bluetoothSockets != null) {
+//            for (BluetoothSocket socket : bluetoothSockets) {
+//                try {
+//                    socket.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 
     public static class Metric {
         int index;
@@ -747,18 +776,18 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
 //                .setView(customView)
 //                .create();
 
+        if(submitbtnflag == 0) {
+            submitbtnflag =1;
+            boolean mobilityTestPresent = false;
+            boolean proprioceptionTestPresent = false;
+            JSONArray jsonArray = new JSONArray();
 
-
-        boolean mobilityTestPresent = false;
-        boolean proprioceptionTestPresent = false;
-        JSONArray jsonArray = new JSONArray();
-
-        try {
-            // Parse the JSON data into a JSONArray
-            postexedata.put("exercises", postdataobj);
-            Iterator<String> keys = postdataobj.keys();
-            postdata.put(postexedata);
-            Log.e("Final Posting Data", String.valueOf(postdataobj));
+            try {
+                // Parse the JSON data into a JSONArray
+                postexedata.put("exercises", postdataobj);
+                Iterator<String> keys = postdataobj.keys();
+                postdata.put(postexedata);
+                Log.e("Final Posting Data", String.valueOf(postdataobj));
 
 
 //            mobleftcheck.setImageResource(R.drawable.cross);
@@ -777,25 +806,25 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
 //            propriorightcheck.setImageResource(R.drawable.cross);
 
 
-            while (keys.hasNext()) {
-                String key = keys.next();
-                if ("Mobility Test".equalsIgnoreCase(key)) {
-                    mobilityTestPresent = true;
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    if ("Mobility Test".equalsIgnoreCase(key)) {
+                        mobilityTestPresent = true;
 //                    mobleftcheck.setImageResource(R.drawable.tick);
 //                    mobrightcheck.setImageResource(R.drawable.tick);
-                } else if ("Proprioception Test".equalsIgnoreCase(key)) {
-                    proprioceptionTestPresent = true;
+                    } else if ("Proprioception Test".equalsIgnoreCase(key)) {
+                        proprioceptionTestPresent = true;
 //                    proprioleftcheck.setImageResource(R.drawable.tick);
 //                    propriorightcheck.setImageResource(R.drawable.tick);
+                    }
+                    // If both are found, no need to continue
+                    if (mobilityTestPresent && proprioceptionTestPresent) {
+                        sumbitflag = 1;
+                        break;
+                    } else {
+                        sumbitflag = 0;
+                    }
                 }
-                // If both are found, no need to continue
-                if (mobilityTestPresent && proprioceptionTestPresent) {
-                    sumbitflag = 1;
-                    break;
-                } else {
-                    sumbitflag = 0;
-                }
-            }
 
 
 //            if (sumbitflag == 1) {
@@ -839,9 +868,9 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
 //                }
 //            }
 
-            //jsonArray = new JSONArray(jsonData);
-            Log.e("Final Posting Data", String.valueOf(postdata));
-            // Iterate through each object in the JSONArray
+                //jsonArray = new JSONArray(jsonData);
+                Log.e("Final Posting Data", String.valueOf(postdata));
+                // Iterate through each object in the JSONArray
 //                    for (int i = 0; i < jsonArray.length(); i++) {
 //                        JSONObject testObject = jsonArray.getJSONObject(i);
 //
@@ -855,69 +884,75 @@ public class DetailFrag_5 extends AppCompatActivity implements DetailCollectionA
 //                            Log.d("Inba Test Details", testDetails.toString());
 //                        }
 //                    }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.PUT,
-                "https://api-wo6.onrender.com/update-assessment-info/" + HomeFragment.userid + "/" + 0,
-                postdata,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            // Convert the first item in the JSONArray to a JSONObject
-                            JSONObject responseObj = response.getJSONObject(0);
-                            Log.e("Posting Response", String.valueOf(response));
-
-                            if ("Assessment information updated successfully".equals(responseObj.getString("message"))) {
-                                cleanupBluetoothSockets();
-                                SharedPreferences.Editor editor = getSharedPreferences("BluetoothPrefs", MODE_PRIVATE).edit();
-                                editor.putBoolean("isConnected", false);
-                                editor.apply();
-//                                            dialog.dismiss();
-                                MainActivity.patflag = 0;
-                                SharedData.detailItems.clear();
-                                ALL_EXERCISES.clear();
-                                completedExercisesMap.clear();
-                                postdata = new JSONArray();
-                                postexevalues = new JSONArray();
-                                postdataobj = new JSONObject();
-                                postexedata = new JSONObject();
-                                postexeparameters = new JSONArray();
-                                postexesubdata = new JSONObject();
-                                Intent intent = new Intent(DetailFrag_5.this, Dashboard.class);
-                                startActivity(intent);
-                            }
-                            Log.d("Exercise Submit Response", responseObj.getString("message"));
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Exercise Submit Error", error.toString());
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("Content-Type", "application/json");
-                return params;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        };
+
+
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                    Request.Method.PUT,
+                    "https://api-wo6.onrender.com/update-assessment-info/" + HomeFragment.userid + "/" + 0,
+                    postdata,
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            try {
+                                // Convert the first item in the JSONArray to a JSONObject
+                                JSONObject responseObj = response.getJSONObject(0);
+                                Log.e("Posting Response", String.valueOf(response));
+
+                                if ("Assessment information updated successfully".equals(responseObj.getString("message"))) {
+//                                    cleanupBluetoothSockets();
+                                    SharedPreferences.Editor editor = getSharedPreferences("BluetoothPrefs", MODE_PRIVATE).edit();
+                                    editor.putBoolean("isConnected", false);
+                                    editor.apply();
+//                                            dialog.dismiss();
+                                    MainActivity.patflag = 0;
+                                    SharedData.detailItems.clear();
+                                    ALL_EXERCISES.clear();
+                                    completedExercisesMap.clear();
+                                    postdata = new JSONArray();
+                                    postexevalues = new JSONArray();
+                                    postdataobj = new JSONObject();
+                                    postexedata = new JSONObject();
+                                    postexeparameters = new JSONArray();
+                                    postexesubdata = new JSONObject();
+                                    Intent intent = new Intent(DetailFrag_5.this, Dashboard.class);
+                                    BluetoothConnectionManager.getInstance().handleAllDisconnections();
+                                    startActivity(intent);
+                                }
+                                Log.d("Exercise Submit Response", responseObj.getString("message"));
+                            } catch (JSONException e) {
+                                Toasty.warning(DetailFrag_5.this, "Unexpected data submission response", Toasty.LENGTH_SHORT).show();
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            submitbtnflag=0;
+                            Toasty.warning(DetailFrag_5.this, "Data submission Stalled", Toasty.LENGTH_SHORT).show();
+                            Log.e("Exercise Submit Error", error.toString());
+                        }
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("Content-Type", "application/json");
+                    return params;
+                }
+            };
 
 //                 Add the request to the RequestQueue
-        requestQueue.add(jsonArrayRequest);
+            requestQueue.add(jsonArrayRequest);
 
-
+        }
+        else{
+            Toasty.warning(DetailFrag_5.this, "Submission in Progress", Toasty.LENGTH_SHORT).show();
+        }
     }
 
     private void initializeAllExercises() {

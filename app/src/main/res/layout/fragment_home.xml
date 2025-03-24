@@ -81,6 +81,16 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/downloadbtn"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="25dp"
+                android:layout_gravity="center"
+                android:src="@drawable/download_icon"
+                android:contentDescription="Image 1"/>
+
+            <ImageView
                 android:id="@+id/image1"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
@@ -346,6 +356,8 @@
                         android:textStyle="bold"
                         android:translationY="-5dp"
                         android:layout_weight="1" />
+
+
 
                     <!-- Second TextView on the far right -->
                     <LinearLayout

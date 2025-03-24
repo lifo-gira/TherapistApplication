@@ -142,6 +142,7 @@ public class OverviewFragment extends Fragment {
             if(MainActivity.selectedpatientdata.getInt("flag")>=3) {
                 MainActivity.selectedpatientexercisedata = MainActivity.selectedpatientdata.getJSONArray("Model_Recovery");
             }
+            MainActivity.assessmentexercise=new JSONObject();
             for (int i = 0; i < MainActivity.selectedpatientassesementdata.length(); i++) {
                 MainActivity.assessmentmain = MainActivity.selectedpatientassesementdata.getJSONObject(i);
                 MainActivity.assessmentexercise.put( "Assessment "+String.valueOf(i+1),MainActivity.assessmentmain.getJSONObject("exercises"));

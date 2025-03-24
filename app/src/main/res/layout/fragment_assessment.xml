@@ -140,7 +140,7 @@
                                         android:id="@+id/leftrom"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="75"
+                                        android:text="NA"
                                         android:layout_marginStart="10dp"
                                         android:translationY="2dp"
                                         android:textColor="@color/black"
@@ -162,7 +162,8 @@
                                     android:layout_marginEnd="8dp"
                                     app:cardCornerRadius="5dp"
                                     android:layout_margin="2dp"
-                                    app:cardBackgroundColor="#F8DEBD">
+                                    app:cardBackgroundColor="#F8DEBD"
+                                    android:visibility="invisible">
 
                                     <TextView
                                         android:layout_width="wrap_content"
@@ -235,7 +236,7 @@
                                         android:id="@+id/rightrom"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="40"
+                                        android:text="NA"
                                         android:layout_marginStart="10dp"
                                         android:translationY="2dp"
                                         android:textColor="@color/black"
@@ -257,7 +258,8 @@
                                     android:layout_marginEnd="8dp"
                                     app:cardCornerRadius="5dp"
                                     android:layout_margin="2dp"
-                                    app:cardBackgroundColor="#FBF0F3">
+                                    app:cardBackgroundColor="#FBF0F3"
+                                    android:visibility="invisible">
 
                                     <TextView
                                         android:layout_width="wrap_content"

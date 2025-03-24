@@ -246,7 +246,7 @@
                                 android:layout_marginStart="20dp"
                                 android:layout_marginEnd="10dp"
                                 android:src="@drawable/model_video_icon"
-                                android:visibility="invisible"/>
+                                android:visibility="visible"/>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -293,7 +293,7 @@
                                         android:layout_height="match_parent"
                                         android:clipChildren="true"
                                         android:clipToPadding="true"
-                                        android:visibility="gone">
+                                        android:visibility="visible">
 
                                         <ProgressBar
                                             android:id="@+id/progress_bar"
@@ -309,7 +309,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="3dp"
                                             android:orientation="horizontal"
-                                            android:visibility="gone">
+                                            android:visibility="visible">
 
                                             <ImageView
                                                 android:id="@+id/icon_image"
